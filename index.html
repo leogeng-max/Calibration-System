@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Intelligent Investing — Calibration System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #000000;
+      --surface: #232627;
+      --divider: #1C1C1C;
+      --p:       #FFFFFF;
+      --s:       #C7C7C7;
+      --t:       #929292;
+      --d:       #565B5E;
+      --neg:     #A86B6B;
+      --font:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --ease:    cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    html, body {
+      height: 100%;
+      background: #0d0d0d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ─── Phone shell ─────────────────────────────── */
+    .shell {
+      position: relative;
+      width: 393px;
+      height: 852px;
+      background: var(--bg);
+      border-radius: 55px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px #2a2a2a,
+        0 0 0 2.5px #111,
+        0 60px 120px rgba(0,0,0,0.95),
+        inset 0 0 0 1px rgba(255,255,255,0.07);
+      flex-shrink: 0;
+    }
+
+    .island {
+      position: absolute;
+      top: 13px; left: 50%;
+      transform: translateX(-50%);
+      width: 126px; height: 36px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 200;
+    }
+
+    .home-bar {
+      position: absolute;
+      bottom: 9px; left: 50%;
+      transform: translateX(-50%);
+      width: 138px; height: 5px;
+      background: rgba(255,255,255,0.28);
+      border-radius: 3px;
+      z-index: 200;
+    }
+
+    /* Status bar */
+    .sbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 59px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 30px 10px;
+      z-index: 150;
+      pointer-events: none;
+    }
+    .sbar-time { font-size: 15px; font-weight: 600; color: var(--p); letter-spacing: -0.01em; }
+    .sbar-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* ─── Screens ─────────────────────────────────── */
+    .scr {
+      position: absolute;
+      inset: 0;
+      padding: 72px 26px 36px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      transition: opacity 220ms var(--ease);
+    }
+    .scr::-webkit-scrollbar { display: none; }
+    .scr.on { opacity: 1; pointer-events: all; }
+
+    /* ─── Type scale ──────────────────────────────── */
+    .lbl {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--t);
+      font-weight: 400;
+      line-height: 1;
+    }
+    .h1 { font-size: 22px; font-weight: 400; letter-spacing: -0.06em; color: var(--p); line-height: 1.2; }
+    .h2 { font-size: 18px; font-weight: 400; letter-spacing: -0.02em; color: var(--p); line-height: 1.2; }
+    .body-lg { font-size: 15px; line-height: 1.45; color: var(--p); }
+    .body-md  { font-size: 14px; line-height: 1.45; color: var(--p); }
+    .body-sm  { font-size: 13px; line-height: 1.45; color: var(--s); }
+    .body-xs  { font-size: 11px; line-height: 1.45; color: var(--t); }
+
+    .n2xl { font-size: 40px; font-weight: 300; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--p); }
+    .nlg  { font-size: 22px; font-weight: 400; font-variant-numeric: tabular-nums; color: var(--p); }
+    .nsm  { font-size: 15px; font-variant-numeric: tabular-nums; color: var(--p); }
+
+    /* ─── Shared components ───────────────────────── */
+    .div { height: 1px; background: var(--divider); border: none; }
+
+    .btn {
+      width: 100%;
+      padding: 18px 16px;
+      background: var(--surface);
+      border: 1px solid var(--divider);
+      color: var(--p);
+      font-family: var(--font);
+      font-size: 15px; font-weight: 500;
+      text-align: center;
+      cursor: pointer; border-radius: 0; line-height: 1;
+      transition: background 150ms var(--ease);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { background: #2d3133; }
+    .btn-hi  { border-color: var(--p); }
+    .btn-lo  { background: transparent; border-color: var(--divider); color: var(--s); }
+    .btn-lo:active { background: rgba(255,255,255,0.03); }
+
+    /* ─── Back button — just ← ────────────────────── */
+    .back-btn {
+      background: none; border: none;
+      color: var(--t);
+      font-family: var(--font);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 0 28px;
+      align-self: flex-start;
+      -webkit-tap-highlight-color: transparent;
+      line-height: 1;
+    }
+
+    /* ─── Bottom action row (← Cancel / →) ───────── */
+    .act-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+    }
+    .act-btn {
+      background: none; border: none;
+      color: var(--s);
+      font-family: var(--font);
+      font-size: 15px;
+      cursor: pointer;
+      padding: 4px 0;
+      display: flex; align-items: center; gap: 7px;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 150ms var(--ease);
+    }
+    .act-btn:active { color: var(--p); }
+    .act-arrow {
+      font-size: 20px;
+      color: var(--s);
+      line-height: 1;
+    }
+
+    /* ─── Screen 0: Stock page ────────────────────── */
+    #s0 { padding-top: 56px; }
+    .s0-topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .s0-exit {
+      background: none; border: none;
+      color: var(--p); font-family: var(--font);
+      font-size: 15px; cursor: pointer; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .s0-item {
+      font-size: 15px; color: var(--p);
+      padding: 15px 0;
+      border-bottom: 1px solid var(--divider);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .s0-item:last-child { border-bottom: none; }
+    .s0-item.accent { color: var(--p); }
+
+    /* ─── Screen 1: Allocate ──────────────────────── */
+    #s1 { justify-content: space-between; }
+    .s1-top { display: flex; flex-direction: column; gap: 6px; }
+    .s1-mid {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px;
+    }
+    .amt-input {
+      font-size: 40px; font-weight: 300;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      color: var(--p); font-family: var(--font);
+      background: none; border: none; outline: none;
+      text-align: center; width: 100%;
+      caret-color: var(--p);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .s1-bot { display: flex; flex-direction: column; gap: 0; }
+
+    /* ─── Screen 2: Define the bet ────────────────── */
+    #s2 { padding-top: 60px; gap: 0; }
+
+    .sec { padding: 24px 0; border-bottom: 1px solid var(--divider); }
+    .sec:last-of-type { border-bottom: none; }
+
+    /* Confidence number */
+    .conf-num {
+      font-size: 28px; font-weight: 300;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+      color: var(--p);
+      text-align: center;
+      padding: 14px 0 18px;
+      transition: opacity 140ms var(--ease);
+    }
+
+    /* ─── Discrete slider ─────────────────────────── */
+    /* Track is at top:12px from .dslider top.
+       Stops have no top padding → dot top=8px (padding-top on .dslider),
+       dot height=8px → dot center=12px → aligned with track. */
+    .dslider { position: relative; padding-top: 8px; }
+    .dslider-track {
+      position: absolute; top: 12px;
+      left: 0; right: 0;
+      height: 1px; background: var(--divider);
+    }
+    .dslider-fill {
+      position: absolute; top: 12px; left: 0;
+      height: 1px; background: var(--p);
+      transition: width 160ms var(--ease);
+    }
+    .dslider-stops {
+      display: flex; justify-content: space-between;
+      position: relative;
+    }
+    .dstop {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      cursor: pointer;
+      padding: 0 2px; /* no top padding → dot aligns with track */
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    /* Unselected: no dot visible */
+    .dstop-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: transparent;
+      border: none;
+      flex-shrink: 0;
+    }
+    /* Selected: white filled dot appears */
+    .dstop.sel .dstop-dot { background: var(--p); }
+
+    .dstop-lbl {
+      font-size: 10px; font-variant-numeric: tabular-nums;
+      color: var(--d);
+      transition: color 160ms var(--ease);
+      line-height: 1;
+    }
+    .dstop.sel .dstop-lbl { color: var(--p); }
+
+    /* ─── Horizon range slider ────────────────────── */
+    .horiz-num {
+      font-size: 28px; font-weight: 300;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+      color: var(--p);
+      padding: 14px 0 18px;
+      transition: opacity 140ms var(--ease);
+    }
+    .horiz-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 1px;
+      outline: none;
+      cursor: pointer;
+      /* dynamic fill via JS */
+      background: var(--divider);
+      display: block;
+    }
+    .horiz-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--p);
+      cursor: pointer;
+      border: none;
+    }
+    .horiz-range::-moz-range-thumb {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--p);
+      border: none;
+      cursor: pointer;
+    }
+    .horiz-ends {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 9px;
+    }
+
+    /* Outcome row */
+    .row-spread { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+
+    /* Thesis */
+    .thesis {
+      width: 100%;
+      background: none; border: none;
+      border-bottom: 1px solid var(--divider);
+      color: var(--p); font-family: var(--font);
+      font-size: 14px; line-height: 1.5;
+      padding: 8px 0; margin-top: 10px;
+      outline: none;
+      transition: border-color 150ms var(--ease);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .thesis:focus { border-bottom-color: var(--p); }
+    .thesis::placeholder { color: var(--d); }
+    .char-ct {
+      font-size: 11px; color: var(--d);
+      text-align: right; margin-top: 5px;
+      height: 14px; line-height: 14px;
+      opacity: 0; transition: opacity 150ms;
+    }
+    .char-ct.show { opacity: 1; }
+
+    /* ─── Screen 3: Calibration check ────────────── */
+    #s3 { justify-content: center; align-items: stretch; }
+    .check-inner {
+      flex: 1;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+    }
+    .check-h { font-size: 22px; font-weight: 400; letter-spacing: -0.06em; color: var(--p); line-height: 1.2; margin-bottom: 14px; }
+    .check-b { font-size: 15px; color: var(--s); line-height: 1.6; max-width: 30ch; margin-bottom: 48px; }
+    .check-acts { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ─── Screen 4: Confirmation ──────────────────── */
+    #s4 { justify-content: center; align-items: center; text-align: center; }
+    .cfade {
+      opacity: 0; transform: translateY(7px);
+      transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+    }
+    .cfade.in { opacity: 1; transform: translateY(0); }
+
+    /* ─── Screen 5: Dashboard ─────────────────────── */
+    #s5 { gap: 0; }
+    .dash-hdr { padding: 4px 0 12px; }
+    .hero { padding: 26px 0 22px; }
+    .hero-n {
+      font-size: 40px; font-weight: 300;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      color: var(--p);
+      margin: 6px 0 4px;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+    }
+    .hero-n.in { opacity: 1; transform: translateY(0); }
+    .chart-area { padding: 16px 0 6px; }
+    .metrics { display: flex; justify-content: space-between; padding: 20px 0; }
+    .met { display: flex; flex-direction: column; gap: 6px; }
+    .met-v {
+      opacity: 0; transform: translateY(5px);
+      transition: opacity 250ms var(--ease), transform 250ms var(--ease);
+    }
+    .met-v.in { opacity: 1; transform: translateY(0); }
+    .verdict { padding: 18px 0; }
+    .exec-area { padding-top: 16px; }
+    .drow { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--divider); }
+    .drow:last-child { border-bottom: none; }
+
+    /* ─── Dot info panel ──────────────────────────── */
+    .dot-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 290;
+      opacity: 0; pointer-events: none;
+      transition: opacity 200ms var(--ease);
+    }
+    .dot-overlay.show { opacity: 1; pointer-events: all; }
+
+    .dot-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid #3F3F46;
+      padding: 22px 26px 44px;
+      z-index: 300;
+      opacity: 0; transform: translateY(12px); pointer-events: none;
+      transition: opacity 200ms var(--ease), transform 200ms var(--ease);
+    }
+    .dot-info.show { opacity: 1; transform: translateY(0); pointer-events: all; }
+
+    .di-close {
+      background: none; border: none;
+      color: var(--t); font-family: var(--font);
+      font-size: 18px; line-height: 1;
+      cursor: pointer; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .di-stat { display: flex; flex-direction: column; gap: 7px; }
+    .di-num  {
+      font-size: 28px; font-weight: 300;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+      color: var(--p);
+    }
+
+    /* ─── Nav dots ────────────────────────────────── */
+    .navdots {
+      position: absolute;
+      bottom: 22px; left: 0; right: 0;
+      display: flex; justify-content: center; gap: 5px;
+      pointer-events: none; z-index: 100;
+      transition: opacity 200ms var(--ease);
+    }
+    .navdots.hidden { opacity: 0; }
+    .nd {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--d);
+      transition: background 200ms var(--ease), width 200ms var(--ease);
+    }
+    .nd.on { background: var(--p); width: 14px; border-radius: 2px; }
+
+    /* ─── Capital Decision / Account / Shares ────────── */
+    .radio-opt {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0; border-bottom: 1px solid var(--divider);
+      cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none;
+    }
+    .radio-opt:last-child { border-bottom: none; }
+    .radio-circle {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 1.5px solid var(--d);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: border-color 160ms var(--ease);
+    }
+    .radio-circle.on { border-color: var(--p); }
+    .radio-circle.on::after {
+      content: ''; width: 8px; height: 8px;
+      border-radius: 50%; background: var(--p);
+    }
+    .acct-opt {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 0; border-bottom: 1px solid var(--divider);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .acct-opt:last-child { border-bottom: none; }
+    .form-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 0; border-bottom: 1px solid var(--divider);
+    }
+    .form-row:last-child { border-bottom: none; }
+    /* Screen 8 overrides default scr padding */
+    #s8 { padding: 0; }
+    .s8-inner { padding: 72px 26px 0; flex: 1; overflow-y: auto; }
+    .s8-actions {
+      padding: 12px 26px; display: flex;
+      justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--divider);
+    }
+    /* Numpad */
+    .numpad {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      background: #111314;
+      gap: 1px; border-top: 1px solid var(--divider);
+    }
+    .np-key {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 16px 0;
+      background: #1a1d1e;
+      cursor: pointer; user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 80ms;
+    }
+    .np-key:active { background: #2a2d2e; }
+    .np-empty { cursor: default; background: #111314; }
+    .np-empty:active { background: #111314; }
+    .np-main { font-size: 22px; font-weight: 300; color: var(--p); line-height: 1; }
+    .np-sub  { font-size: 8px; letter-spacing: 0.08em; color: var(--t); margin-top: 3px; line-height: 1; }
+
+    /* ─── Mobile full-bleed ───────────────────────── */
+    @media (max-width: 430px) {
+      html, body { background: #000; align-items: stretch; }
+      .shell { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="island"></div>
+  <div class="home-bar"></div>
+
+  <!-- Status bar -->
+  <div class="sbar">
+    <span class="sbar-time">9:41</span>
+    <div class="sbar-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0"    y="7"   width="3" height="5"   rx="0.5" fill="white" opacity="0.35"/>
+        <rect x="4.5"  y="5"   width="3" height="7"   rx="0.5" fill="white" opacity="0.35"/>
+        <rect x="9"    y="2.5" width="3" height="9.5"  rx="0.5" fill="white"/>
+        <rect x="13.5" y="0"   width="3" height="12"  rx="0.5" fill="white"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <circle cx="8" cy="11" r="1.5" fill="white"/>
+        <path d="M4.5 7.8A5 5 0 0 1 8 6.5a5 5 0 0 1 3.5 1.3l1.1-1.2A6.8 6.8 0 0 0 8 5a6.8 6.8 0 0 0-4.6 1.6z" fill="white" opacity="0.5"/>
+        <path d="M1.8 5A9 9 0 0 1 8 2.5a9 9 0 0 1 6.2 2.5l1.1-1.2A10.8 10.8 0 0 0 8 1a10.8 10.8 0 0 0-7.3 2.8z" fill="white" opacity="0.25"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="white" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="17" height="8" rx="2" fill="white"/>
+        <path d="M23 4v4a2 2 0 000-4z" fill="white" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 0 — STOCK PAGE
+       ══════════════════════════════════ -->
+  <div class="scr on" id="s0">
+
+    <!-- Top bar: back + exit -->
+    <div class="s0-topbar">
+      <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(0)">‹</button>
+      <button class="s0-exit" onclick="go(0)">Exit</button>
+    </div>
+    <hr class="div">
+
+    <!-- Open orders -->
+    <div style="margin-top:22px">
+      <span class="body-sm">Open Orders (2)</span>
+    </div>
+
+    <!-- Company + price — right aligned -->
+    <div style="text-align:right;margin-top:44px">
+      <div style="font-size:18px;font-weight:400;letter-spacing:-0.02em;color:var(--p)">Apple Inc · AAPL</div>
+      <div style="display:flex;justify-content:flex-end;align-items:baseline;gap:14px;margin-top:8px">
+        <span class="body-sm" style="color:var(--t)">Last Price</span>
+        <span class="body-sm">192.35 USD</span>
+      </div>
+    </div>
+
+    <!-- Portfolio % -->
+    <div style="margin-top:44px">
+      <span class="body-lg">12.2% of Portfolio</span>
+    </div>
+
+    <!-- Description -->
+    <div style="margin-top:24px;line-height:1.55">
+      <span class="body-sm" style="color:var(--s)">Apple Inc., together with its subsidiaries, designs, manufactures and sells smartphones, personal computers, tablets, wearables and accessories...</span>
+      <span style="color:var(--p);font-size:13px;margin-left:4px">→</span>
+    </div>
+
+    <!-- Menu items -->
+    <div style="margin-top:32px">
+      <div class="s0-item">History</div>
+      <div class="s0-item">Market</div>
+      <div class="s0-item">Media</div>
+      <div class="s0-item">Research</div>
+      <div class="s0-item" onclick="go(5)" style="cursor:pointer">Calibration</div>
+    </div>
+
+    <!-- Bottom CTA -->
+    <div style="margin-top:auto;display:flex;justify-content:flex-end;padding:24px 0 8px">
+      <button class="act-btn" onclick="go(6)">
+        <span class="act-arrow">→</span>
+        <span>Capital Decision</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 1 — ALLOCATE CAPITAL
+       ══════════════════════════════════ -->
+  <div class="scr" id="s1">
+    <div class="s1-top">
+      <span class="lbl">AAPL</span>
+      <span class="body-sm">Current position: 420 shares · $87,234</span>
+    </div>
+
+    <div class="s1-mid">
+      <span class="lbl">AMOUNT</span>
+      <input class="amt-input" id="amt" type="text" inputmode="numeric"
+             value="$12,000" autocomplete="off" spellcheck="false">
+      <span class="body-xs" id="pct-lbl">4.2% of portfolio</span>
+    </div>
+
+    <div class="s1-bot">
+      <hr class="div">
+      <div class="act-row">
+        <button class="act-btn" onclick="go(0)">
+          <span class="act-arrow">←</span>
+          <span>Cancel</span>
+        </button>
+        <button class="act-btn" onclick="go(2)">
+          <span class="act-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 2 — DEFINE THE BET
+       ══════════════════════════════════ -->
+  <div class="scr" id="s2">
+    <!-- Back: just ← , left-aligned -->
+    <button class="back-btn" onclick="go(1)">←</button>
+
+    <!-- Confidence -->
+    <div class="sec">
+      <div class="h1" style="text-align:center">How confident are you?</div>
+      <div class="conf-num" id="cnum">70%</div>
+      <div class="dslider">
+        <div class="dslider-track"></div>
+        <div class="dslider-fill" id="dfill"></div>
+        <div class="dslider-stops" id="dstops"></div>
+      </div>
+    </div>
+
+    <!-- Outcome -->
+    <div class="sec">
+      <span class="lbl">OUTCOME</span>
+      <div class="row-spread" style="margin-top:10px">
+        <span class="body-md" style="color:var(--s)">Outperform S&P 500</span>
+      </div>
+    </div>
+
+    <!-- Horizon — range slider 1–75 years -->
+    <div class="sec">
+      <span class="lbl">HORIZON</span>
+      <div class="horiz-num" id="horiz-disp">1 year</div>
+      <input
+        class="horiz-range"
+        id="horiz-range"
+        type="range"
+        min="1" max="3" value="1" step="1"
+        oninput="updateHorizon(this.value)"
+      >
+      <div class="horiz-ends">
+        <span class="body-xs">1Y</span>
+        <span class="body-xs">3Y</span>
+      </div>
+    </div>
+
+    <!-- Thesis -->
+    <div class="sec">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="lbl">WHY DOES THIS WORK?</span>
+        <span class="body-xs">OPTIONAL</span>
+      </div>
+      <input class="thesis" type="text" maxlength="80"
+             placeholder="State your reasoning."
+             oninput="thesisIn(this)">
+      <div class="char-ct" id="cct"></div>
+    </div>
+
+    <div style="margin-top:auto;padding-top:20px">
+      <button class="btn" id="cbtn" onclick="doCommit()">Commit Capital</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 3 — CALIBRATION CHECK
+       ══════════════════════════════════ -->
+  <div class="scr" id="s3">
+    <div class="check-inner">
+      <div class="check-h" id="ck-title">Your estimates are misaligned.</div>
+      <div class="check-b"  id="ck-body">You've historically overstated probability by 14%.</div>
+      <div class="check-acts" id="ck-acts">
+        <button class="btn btn-hi" onclick="go(2)">Adjust Probability</button>
+        <button class="btn btn-lo" onclick="go(4)">Proceed Anyway</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 4 — CONFIRMATION
+       ══════════════════════════════════ -->
+  <div class="scr" id="s4">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+      <div class="h2 cfade" id="cf1">Position recorded.</div>
+      <div class="body-sm cfade" style="margin-top:10px" id="cf2">
+        Outcome evaluated in <span id="horiz-lbl">1 year</span>.
+      </div>
+      <div class="body-xs cfade" style="margin-top:6px;color:var(--d)" id="cf3">22 Apr 2026</div>
+    </div>
+    <button class="btn" style="margin-top:auto" onclick="go(5)">View Dashboard →</button>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 5 — DASHBOARD
+       ══════════════════════════════════ -->
+  <div class="scr" id="s5">
+    <div class="dash-hdr" style="display:flex;justify-content:space-between;align-items:center">
+      <button class="back-btn" style="padding:0;font-size:20px" onclick="go(0)">←</button>
+      <span class="lbl" style="letter-spacing:0.16em">INTELLIGENT INVESTING</span>
+    </div>
+    <hr class="div">
+
+    <div class="hero">
+      <span class="lbl">YOUR CALIBRATION</span>
+      <div class="hero-n" id="hero-n">54%</div>
+      <div class="body-sm">You estimate 71%.</div>
+    </div>
+    <hr class="div">
+
+    <div class="chart-area">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <span class="lbl">PREDICTED vs ACTUAL</span>
+        <span class="body-xs" style="color:var(--d)">Tap a circle to inspect</span>
+      </div>
+      <div class="body-xs" style="color:var(--d);margin-bottom:12px">
+        Each circle is a prediction. Tap to inspect.
+      </div>
+      <svg width="100%" viewBox="0 0 341 202" style="display:block;overflow:visible">
+        <!-- Axes -->
+        <line x1="38" y1="2"   x2="38"  y2="162" stroke="#1C1C1C" stroke-width="1"/>
+        <line x1="38" y1="162" x2="338" y2="162" stroke="#1C1C1C" stroke-width="1"/>
+        <!-- Perfect calibration diagonal -->
+        <line x1="38" y1="162" x2="338" y2="2" stroke="#3F3F46" stroke-width="1" stroke-dasharray="3 3"/>
+        <!-- Diagonal label -->
+        <text x="326" y="12" font-family="Inter,sans-serif" font-size="8" fill="#3F3F46" text-anchor="end">Calibrated</text>
+        <!-- Region labels -->
+        <text x="240" y="148" font-family="Inter,sans-serif" font-size="7.5" fill="#3F3F46" text-anchor="middle">Overconfident</text>
+        <text x="100" y="30"  font-family="Inter,sans-serif" font-size="7.5" fill="#3F3F46" text-anchor="middle">Underconfident</text>
+        <!-- Y-axis ticks -->
+        <text x="30" y="165" font-family="Inter,sans-serif" font-size="8" fill="#565B5E" text-anchor="end">50%</text>
+        <text x="30" y="85"  font-family="Inter,sans-serif" font-size="8" fill="#565B5E" text-anchor="end">65%</text>
+        <text x="30" y="6"   font-family="Inter,sans-serif" font-size="8" fill="#565B5E" text-anchor="end">80%</text>
+        <!-- Y-axis title (rotated) -->
+        <text transform="rotate(-90)" x="-82" y="12" font-family="Inter,sans-serif" font-size="8" fill="#929292" text-anchor="middle">Actual Accuracy</text>
+        <!-- X-axis ticks -->
+        <text x="38"  y="176" font-family="Inter,sans-serif" font-size="8" fill="#565B5E" text-anchor="middle">50%</text>
+        <text x="188" y="176" font-family="Inter,sans-serif" font-size="8" fill="#565B5E" text-anchor="middle">65%</text>
+        <text x="338" y="176" font-family="Inter,sans-serif" font-size="8" fill="#565B5E" text-anchor="middle">80%</text>
+        <!-- X-axis title -->
+        <text x="188" y="190" font-family="Inter,sans-serif" font-size="8" fill="#929292" text-anchor="middle">Your Predicted Confidence</text>
+        <!-- Dots injected by JS -->
+        <g id="cdots"></g>
+      </svg>
+    </div>
+    <hr class="div">
+
+    <div class="metrics">
+      <div class="met">
+        <span class="lbl">AVG CONF.</span>
+        <span class="nlg met-v" id="mv1">71%</span>
+      </div>
+      <div class="met" style="align-items:center">
+        <span class="lbl">ACTUAL ACC.</span>
+        <span class="nlg met-v" id="mv2">54%</span>
+      </div>
+      <div class="met" style="align-items:flex-end">
+        <span class="lbl">GAP</span>
+        <span class="nlg met-v" id="mv3" style="color:var(--neg)">−17%</span>
+      </div>
+    </div>
+    <hr class="div">
+
+    <div class="verdict">
+      <span class="body-lg" style="color:var(--s)">You are overconfident.</span>
+    </div>
+    <hr class="div">
+
+    <div class="exec-area">
+      <span class="lbl">EXECUTION vs JUDGMENT</span>
+      <div style="margin-top:8px">
+        <div class="drow">
+          <span class="body-md" style="color:var(--s);max-width:68%">You exited early on correct positions</span>
+          <span class="nsm">42%</span>
+        </div>
+        <div class="drow">
+          <span class="body-md" style="color:var(--s);max-width:68%">You held underperforming positions</span>
+          <span class="nsm">65%</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding-bottom:24px"></div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 6 — CAPITAL DECISION
+       ══════════════════════════════════ -->
+  <div class="scr" id="s6">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;margin-top:-8px">
+      <button class="back-btn" style="padding:0;font-size:20px" onclick="go(0)">←</button>
+    </div>
+    <hr class="div">
+
+    <div style="text-align:right;margin:48px 0 52px">
+      <div class="body-sm" style="color:var(--t);margin-bottom:6px">AAPL</div>
+      <div class="h1" style="font-size:26px;letter-spacing:-0.04em">Capital Decision</div>
+    </div>
+
+    <div>
+      <div class="radio-opt" onclick="selectCD('increase')">
+        <span class="body-lg">Increase exposure</span>
+        <div class="radio-circle on" id="cd-increase"></div>
+      </div>
+      <div class="radio-opt" onclick="selectCD('reduce')">
+        <span class="body-lg">Reduce exposure</span>
+        <div class="radio-circle" id="cd-reduce"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:auto">
+      <div class="act-row">
+        <button class="act-btn" onclick="go(0)">
+          <span class="act-arrow">←</span><span>Cancel</span>
+        </button>
+        <button class="act-btn" onclick="goToAcct()">
+          <span class="act-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 7 — SELECT ACCOUNT
+       ══════════════════════════════════ -->
+  <div class="scr" id="s7">
+    <div style="display:flex;align-items:center;margin-bottom:16px;margin-top:-8px">
+      <button class="back-btn" style="padding:0;font-size:20px" onclick="go(6)">←</button>
+    </div>
+    <hr class="div">
+
+    <div style="text-align:right;margin:48px 0 36px">
+      <span class="body-sm" style="color:var(--t)">AAPL</span>
+      <span class="h2" id="s7-action" style="margin-left:10px">Buy</span>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <span class="body-sm" style="color:var(--t)">Select account</span>
+    </div>
+
+    <div id="acct-list"></div>
+
+    <div style="margin-top:auto">
+      <div class="act-row">
+        <button class="act-btn" onclick="go(0)">
+          <span class="act-arrow">←</span><span>Cancel</span>
+        </button>
+        <button class="act-btn" onclick="goToShares()">
+          <span class="act-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 8 — ENTER SHARES
+       ══════════════════════════════════ -->
+  <div class="scr" id="s8" style="padding:0">
+    <!-- Top bar -->
+    <div style="padding:72px 26px 0 26px;flex-shrink:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <button class="back-btn" style="padding:0;font-size:20px" onclick="go(7)">←</button>
+        <button style="background:none;border:none;color:var(--s);font-family:var(--font);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;-webkit-tap-highlight-color:transparent">
+          Market Order <span style="font-size:9px;color:var(--t)">▾</span>
+        </button>
+      </div>
+      <hr class="div">
+
+      <!-- Header: ticker + action -->
+      <div style="text-align:right;margin:24px 0 6px">
+        <span class="body-sm" style="color:var(--t)">AAPL</span>
+        <span class="h2" id="s8-action" style="margin-left:10px">Buy</span>
+      </div>
+      <div style="text-align:right;margin-bottom:28px">
+        <span class="body-sm" id="s8-acct-name" style="color:var(--t)">Non-Registered</span>
+        <span class="body-sm" id="s8-acct-detail" style="color:var(--t);margin-left:10px">500.00 CAD</span>
+      </div>
+
+      <!-- Form rows -->
+      <div class="form-row">
+        <span class="body-md" style="color:var(--s)">Estimated Portfolio Weight</span>
+        <span class="body-md" id="s8-weight" style="color:var(--t)">−</span>
+      </div>
+      <div class="form-row">
+        <span class="body-md" style="color:var(--s)">Shares</span>
+        <span class="body-md" id="s8-shares-disp" style="color:var(--p);font-variant-numeric:tabular-nums">0<span style="opacity:0.35">|</span></span>
+      </div>
+      <div class="form-row">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span class="body-md" style="color:var(--s)">Market Price</span>
+          <span style="width:14px;height:14px;border-radius:50%;border:1px solid var(--d);display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--d);flex-shrink:0">i</span>
+        </div>
+        <span class="body-md">192.35 CAD</span>
+      </div>
+      <div class="form-row">
+        <span class="body-md" style="color:var(--s)" id="s8-cost-lbl">Estimated Cost</span>
+        <span class="body-md" id="s8-cost" style="color:var(--t)">−</span>
+      </div>
+    </div>
+
+    <!-- Spacer -->
+    <div style="flex:1"></div>
+
+    <!-- Action bar -->
+    <div class="act-row" style="flex-shrink:0;padding:0 26px 12px">
+      <button class="act-btn" onclick="go(0)">
+        <span class="act-arrow">←</span><span>Cancel</span>
+      </button>
+      <button class="act-btn" onclick="go(2)">
+        <span>→ Review</span>
+      </button>
+    </div>
+
+    <!-- Numpad -->
+    <div class="numpad" style="flex-shrink:0">
+      <div class="np-key" onclick="numpadTap('1')"><span class="np-main">1</span></div>
+      <div class="np-key" onclick="numpadTap('2')"><span class="np-main">2</span><span class="np-sub">ABC</span></div>
+      <div class="np-key" onclick="numpadTap('3')"><span class="np-main">3</span><span class="np-sub">DEF</span></div>
+      <div class="np-key" onclick="numpadTap('4')"><span class="np-main">4</span><span class="np-sub">GHI</span></div>
+      <div class="np-key" onclick="numpadTap('5')"><span class="np-main">5</span><span class="np-sub">JKL</span></div>
+      <div class="np-key" onclick="numpadTap('6')"><span class="np-main">6</span><span class="np-sub">MNO</span></div>
+      <div class="np-key" onclick="numpadTap('7')"><span class="np-main">7</span><span class="np-sub">PQRS</span></div>
+      <div class="np-key" onclick="numpadTap('8')"><span class="np-main">8</span><span class="np-sub">TUV</span></div>
+      <div class="np-key" onclick="numpadTap('9')"><span class="np-main">9</span><span class="np-sub">WXYZ</span></div>
+      <div class="np-key np-empty"></div>
+      <div class="np-key" onclick="numpadTap('0')"><span class="np-main">0</span></div>
+      <div class="np-key" onclick="numpadTap('del')"><span class="np-main" style="font-size:18px">⌫</span></div>
+    </div>
+  </div>
+
+  <!-- Dot info overlay + panel -->
+  <div class="dot-overlay" id="dot-overlay" onclick="hideDotInfo()"></div>
+  <div class="dot-info" id="dot-info">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <span class="lbl" id="di-ticker">MSFT · MAR 2024</span>
+      <button class="di-close" onclick="hideDotInfo()">×</button>
+    </div>
+    <div style="display:flex;gap:36px;margin-bottom:20px">
+      <div class="di-stat">
+        <span class="lbl">YOUR CONFIDENCE</span>
+        <span class="di-num" id="di-conf">65%</span>
+      </div>
+      <div class="di-stat">
+        <span class="lbl">OUTCOME</span>
+        <span class="body-lg" id="di-outcome" style="color:var(--s)">Underperformed</span>
+        <span class="body-xs" id="di-vs" style="margin-top:3px">−2.1% vs S&P 500</span>
+      </div>
+    </div>
+    <hr class="div" style="margin-bottom:14px">
+    <span class="body-sm" id="di-note" style="color:var(--t)">At this confidence level, your accuracy is 55%.</span>
+  </div>
+
+</div>
+
+<script>
+  /* ── State ─────────────────────────────────────── */
+  let cur      = 0;
+  let confIdx  = 3;        // default: index 3 → 70%
+  let horizYrs = 1;        // default: 1 year
+  const STOPS  = [55, 60, 65, 70, 75, 80];
+  const PORT   = 285000;
+
+  /* ── Amount input ───────────────────────────────── */
+  const amtEl = document.getElementById('amt');
+  amtEl.addEventListener('input', () => {
+    const raw = amtEl.value.replace(/[^0-9]/g, '');
+    if (raw) {
+      const n = parseInt(raw, 10);
+      amtEl.value = '$' + n.toLocaleString('en-US');
+      document.getElementById('pct-lbl').textContent =
+        ((n / PORT) * 100).toFixed(1) + '% of portfolio';
+    }
+  });
+  amtEl.addEventListener('focus', () => {
+    amtEl.value = amtEl.value.replace(/[^0-9]/g, '');
+  });
+  amtEl.addEventListener('blur', () => {
+    const raw = amtEl.value.replace(/[^0-9]/g, '');
+    amtEl.value = raw ? '$' + parseInt(raw, 10).toLocaleString('en-US') : '$0';
+  });
+
+  /* ── Discrete slider (confidence) ─────────────── */
+  function buildSlider() {
+    const wrap = document.getElementById('dstops');
+    wrap.innerHTML = '';
+    STOPS.forEach((v, i) => {
+      const el = document.createElement('div');
+      el.className = 'dstop' + (i === confIdx ? ' sel' : '');
+      el.innerHTML = `<div class="dstop-dot"></div><div class="dstop-lbl">${v}%</div>`;
+      const pick = () => pickStop(i);
+      el.addEventListener('click', pick);
+      el.addEventListener('touchend', e => { e.preventDefault(); pick(); });
+      wrap.appendChild(el);
+    });
+    updateFill();
+  }
+
+  function pickStop(i) {
+    confIdx = i;
+    document.querySelectorAll('.dstop').forEach((el, j) => el.classList.toggle('sel', j === i));
+    const cv = document.getElementById('cnum');
+    cv.style.opacity = '0.25';
+    cv.textContent   = STOPS[i] + '%';
+    setTimeout(() => cv.style.opacity = '1', 110);
+    updateFill();
+  }
+
+  function updateFill() {
+    const pct = (confIdx / (STOPS.length - 1)) * 100;
+    document.getElementById('dfill').style.width = pct + '%';
+  }
+
+  /* ── Horizon slider ─────────────────────────────── */
+  function updateHorizon(val) {
+    horizYrs = parseInt(val, 10);
+    const pct = ((horizYrs - 1) / 2 * 100).toFixed(2);
+    const el  = document.getElementById('horiz-range');
+    el.style.background =
+      `linear-gradient(to right, var(--p) ${pct}%, var(--divider) ${pct}%)`;
+    const lbl = horizYrs === 1 ? '1 year' : horizYrs + ' years';
+    const disp = document.getElementById('horiz-disp');
+    disp.style.opacity = '0.3';
+    disp.textContent = lbl;
+    setTimeout(() => disp.style.opacity = '1', 80);
+  }
+
+  /* ── Thesis char count ──────────────────────────── */
+  function thesisIn(el) {
+    const left = 80 - el.value.length;
+    const c    = document.getElementById('cct');
+    if (left <= 10) { c.textContent = left + ' left'; c.classList.add('show'); }
+    else            { c.classList.remove('show'); }
+  }
+
+  /* ── Commit ─────────────────────────────────────── */
+  function doCommit() {
+    const btn = document.getElementById('cbtn');
+    btn.textContent    = '·  ·  ·';
+    btn.disabled       = true;
+    btn.style.color    = 'var(--t)';
+    btn.style.letterSpacing = '0.15em';
+
+    setTimeout(() => {
+      btn.textContent    = 'Commit Capital';
+      btn.disabled       = false;
+      btn.style.color    = '';
+      btn.style.letterSpacing = '';
+
+      const conf    = STOPS[confIdx];
+      const horizLbl = horizYrs === 1 ? '1 year' : horizYrs + ' years';
+      document.getElementById('horiz-lbl').textContent = horizLbl;
+
+      if (conf >= 75 && horizYrs <= 1) {
+        /* Case B: high confidence + 1-year horizon */
+        document.getElementById('ck-title').textContent = 'A note before you commit.';
+        document.getElementById('ck-body').textContent  =
+          'High-confidence predictions over short horizons are rarely accurate.';
+        document.getElementById('ck-acts').innerHTML =
+          `<button class="btn btn-lo" onclick="go(4)" style="border-color:var(--divider)">Continue</button>`;
+        go(3);
+      } else if (conf >= 70) {
+        /* Case A: overconfidence */
+        const gap = Math.round((conf - 54) * 0.88);
+        document.getElementById('ck-title').textContent = 'Your estimates are misaligned.';
+        document.getElementById('ck-body').textContent  =
+          `You've historically overstated probability by ${gap}%.`;
+        document.getElementById('ck-acts').innerHTML = `
+          <button class="btn btn-hi"  onclick="go(2)">Adjust Probability</button>
+          <button class="btn btn-lo"  onclick="go(4)">Proceed Anyway</button>`;
+        go(3);
+      } else {
+        go(4);
+      }
+    }, 620);
+  }
+
+  /* ── Navigation ─────────────────────────────────── */
+  function go(n) {
+    document.getElementById('s' + cur).classList.remove('on');
+    const next = document.getElementById('s' + n);
+    next.scrollTop = 0;
+    requestAnimationFrame(() => next.classList.add('on'));
+    cur = n;
+    updateNav(n);
+    if (n === 4) animConfirm();
+    if (n === 5) animDash();
+  }
+
+  function updateNav(n) { /* nav dots removed */ }
+
+  /* ── Confirm animation ──────────────────────────── */
+  function animConfirm() {
+    ['cf1','cf2','cf3'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.classList.remove('in');
+      void el.offsetWidth;
+      setTimeout(() => el.classList.add('in'), 80 + i * 130);
+    });
+  }
+
+  /* ── Dashboard animation ────────────────────────── */
+  function animDash() {
+    const hn = document.getElementById('hero-n');
+    hn.classList.remove('in');
+    void hn.offsetWidth;
+    setTimeout(() => hn.classList.add('in'), 80);
+
+    ['mv1','mv2','mv3'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.classList.remove('in');
+      void el.offsetWidth;
+      setTimeout(() => el.classList.add('in'), 220 + i * 90);
+    });
+
+    buildDots();
+  }
+
+  /* ── Chart dots ─────────────────────────────────── */
+  let _selDot = null;
+
+  /* Scattered: ~4 above diagonal, ~2 near, ~11 below — net overconfident */
+  const DOT_DATA = [
+    { pred:55, act:63, ticker:'AMZN', date:'Oct 2023', outcome:'Outperformed',   vs:'+4.8% vs S&P' },  // above
+    { pred:58, act:50, ticker:'TSLA', date:'Nov 2023', outcome:'Underperformed', vs:'−4.7% vs S&P' },  // below
+    { pred:60, act:68, ticker:'NVDA', date:'Dec 2023', outcome:'Outperformed',   vs:'+11.2% vs S&P' }, // well above
+    { pred:62, act:53, ticker:'META', date:'Jan 2024', outcome:'Underperformed', vs:'−2.9% vs S&P' },  // below
+    { pred:65, act:51, ticker:'NFLX', date:'Feb 2024', outcome:'Underperformed', vs:'−6.1% vs S&P' },  // well below
+    { pred:65, act:66, ticker:'MSFT', date:'Mar 2024', outcome:'Outperformed',   vs:'+1.3% vs S&P' },  // just above
+    { pred:68, act:55, ticker:'JPM',  date:'Apr 2024', outcome:'Underperformed', vs:'−4.2% vs S&P' },  // below
+    { pred:70, act:50, ticker:'AAPL', date:'May 2024', outcome:'Underperformed', vs:'−9.3% vs S&P' },  // well below
+    { pred:70, act:74, ticker:'AMD',  date:'Jun 2024', outcome:'Outperformed',   vs:'+5.8% vs S&P' },  // above
+    { pred:72, act:57, ticker:'DIS',  date:'Jul 2024', outcome:'Underperformed', vs:'−5.4% vs S&P' },  // below
+    { pred:73, act:54, ticker:'CRM',  date:'Aug 2024', outcome:'Underperformed', vs:'−7.1% vs S&P' },  // below
+    { pred:75, act:60, ticker:'UBER', date:'Sep 2024', outcome:'Underperformed', vs:'−6.8% vs S&P' },  // below
+    { pred:75, act:79, ticker:'PLTR', date:'Oct 2024', outcome:'Outperformed',   vs:'+9.4% vs S&P' },  // well above
+    { pred:77, act:58, ticker:'COIN', date:'Nov 2024', outcome:'Underperformed', vs:'−5.2% vs S&P' },  // below
+    { pred:79, act:61, ticker:'INTC', date:'Dec 2024', outcome:'Underperformed', vs:'−8.1% vs S&P' },  // below
+    { pred:80, act:63, ticker:'BABA', date:'Jan 2025', outcome:'Underperformed', vs:'−4.9% vs S&P' },  // below
+    { pred:80, act:70, ticker:'GOOGL',date:'Feb 2025', outcome:'Underperformed', vs:'−1.8% vs S&P' },  // below, closer
+  ];
+
+  function buildDots() {
+    const g = document.getElementById('cdots');
+    g.innerHTML = '';
+    _selDot = null;
+
+    const xp = p => 38 + ((p - 50) / 30) * 300;
+    const yp = p => 162 - ((p - 50) / 30) * 160;
+
+    DOT_DATA.forEach((d, i) => {
+      const cx = xp(d.pred).toFixed(1);
+      const cy = yp(d.act).toFixed(1);
+
+      /* Visible circle */
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', '5');
+      c.setAttribute('fill', 'none');
+      c.setAttribute('stroke', '#FFFFFF');
+      c.setAttribute('stroke-width', '1.5');
+      c.style.opacity    = '0';
+      c.style.transition = `opacity 180ms var(--ease) ${i * 38 + 360}ms, fill 150ms, r 150ms`;
+      c.style.cursor     = 'pointer';
+      g.appendChild(c);
+
+      /* Large invisible hit area for easy tapping */
+      const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      hit.setAttribute('cx', cx);
+      hit.setAttribute('cy', cy);
+      hit.setAttribute('r', '14');
+      hit.setAttribute('fill', 'transparent');
+      hit.style.cursor = 'pointer';
+      g.appendChild(hit);
+
+      const tap = () => {
+        if (_selDot) {
+          _selDot.setAttribute('fill', 'none');
+          _selDot.setAttribute('r', '5');
+        }
+        c.setAttribute('fill', 'rgba(255,255,255,0.18)');
+        c.setAttribute('r', '6');
+        _selDot = c;
+        showDotInfo(d);
+      };
+      hit.addEventListener('click', tap);
+      hit.addEventListener('touchend', e => { e.preventDefault(); tap(); });
+      c.addEventListener('click', tap);
+
+      requestAnimationFrame(() => requestAnimationFrame(() => { c.style.opacity = '1'; }));
+    });
+  }
+
+  function showDotInfo(d) {
+    document.getElementById('di-ticker').textContent  = d.ticker + ' · ' + d.date.toUpperCase();
+    document.getElementById('di-conf').textContent    = d.pred + '%';
+    document.getElementById('di-outcome').textContent = d.outcome;
+    document.getElementById('di-vs').textContent      = d.vs;
+    document.getElementById('di-note').textContent    =
+      `At ${d.pred}% confidence, your historical accuracy is ${d.act}%.`;
+    document.getElementById('dot-overlay').classList.add('show');
+    document.getElementById('dot-info').classList.add('show');
+  }
+
+  function hideDotInfo() {
+    document.getElementById('dot-overlay').classList.remove('show');
+    document.getElementById('dot-info').classList.remove('show');
+    if (_selDot) {
+      _selDot.setAttribute('fill', 'none');
+      _selDot.setAttribute('r', '5');
+      _selDot = null;
+    }
+  }
+
+  /* ── Capital Decision / Account / Shares ────────── */
+  let cdChoice   = 'increase';
+  let acctChoice = 'non-reg';
+  let sharesStr  = '';
+  const ACCOUNTS = [
+    { id:'non-reg', name:'Non-Registered', cash:'500.00',   currency:'CAD', shares:null },
+    { id:'tfsa',    name:'TFSA',           cash:'531.23',   currency:'CAD', shares:'300 Shares' },
+    { id:'rrsp',    name:'RRSP',           cash:'1,545.19', currency:'CAD', shares:'100 Shares' },
+  ];
+
+  function selectCD(choice) {
+    cdChoice = choice;
+    document.getElementById('cd-increase').classList.toggle('on', choice === 'increase');
+    document.getElementById('cd-reduce').classList.toggle('on',   choice === 'reduce');
+  }
+
+  function goToAcct() {
+    document.getElementById('s7-action').textContent = cdChoice === 'increase' ? 'Buy' : 'Sell';
+    buildAcctList();
+    go(7);
+  }
+
+  function buildAcctList() {
+    const wrap = document.getElementById('acct-list');
+    wrap.innerHTML = '';
+    ACCOUNTS.forEach(a => {
+      const div = document.createElement('div');
+      div.className = 'acct-opt';
+      div.innerHTML = `<div><div class="body-lg">${a.name}</div><div class="body-sm" style="margin-top:3px">${a.cash} ${a.currency} Available</div>${a.shares ? `<div class="body-sm" style="margin-top:1px">${a.shares}</div>` : ''}</div><div class="radio-circle${acctChoice===a.id?' on':''}" id="acct-radio-${a.id}"></div>`;
+      div.addEventListener('click', () => selectAcct(a.id));
+      wrap.appendChild(div);
+    });
+  }
+
+  function selectAcct(id) {
+    acctChoice = id;
+    document.querySelectorAll('[id^="acct-radio-"]').forEach(el => el.classList.remove('on'));
+    document.getElementById('acct-radio-' + id).classList.add('on');
+  }
+
+
+  function goToShares() {
+    const acct = ACCOUNTS.find(a => a.id === acctChoice);
+    const isBuy = cdChoice === 'increase';
+    document.getElementById('s8-action').textContent     = isBuy ? 'Buy' : 'Sell';
+    document.getElementById('s8-acct-name').textContent  = acct.name;
+    document.getElementById('s8-acct-detail').textContent = acct.shares ? acct.shares : acct.cash + ' ' + acct.currency;
+    document.getElementById('s8-cost-lbl').textContent   = isBuy ? 'Estimated Cost' : 'Estimated Value';
+    sharesStr = '';
+    updateSharesCalc();
+    go(8);
+  }
+
+  const MKTPRICE = 192.35, PORTVAL = 285000;
+
+  function numpadTap(val) {
+    if (val === 'del') { sharesStr = sharesStr.slice(0, -1); }
+    else if (sharesStr.length < 6) { sharesStr = (sharesStr + val).replace(/^0+(\d)/, '$1'); }
+    updateSharesCalc();
+  }
+
+  function updateSharesCalc() {
+    const n = parseInt(sharesStr, 10) || 0;
+    document.getElementById('s8-shares-disp').innerHTML = (sharesStr || '0') + '<span style="opacity:0.35">|</span>';
+    if (n > 0) {
+      const cost = n * MKTPRICE;
+      document.getElementById('s8-weight').textContent = (cost / PORTVAL * 100).toFixed(2) + '%';
+      document.getElementById('s8-cost').textContent   = cost.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' CAD';
+      document.getElementById('s8-weight').style.color = 'var(--p)';
+      document.getElementById('s8-cost').style.color   = 'var(--p)';
+    } else {
+      document.getElementById('s8-weight').textContent = '−';
+      document.getElementById('s8-cost').textContent   = '−';
+      document.getElementById('s8-weight').style.color = 'var(--t)';
+      document.getElementById('s8-cost').style.color   = 'var(--t)';
+    }
+  }
+
+  /* ── Init ───────────────────────────────────────── */
+  buildSlider();
+  updateHorizon(1);
+  updateNav(0);
+</script>
+</body>
+</html>
