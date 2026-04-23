@@ -788,6 +788,16 @@
         <span class="body-md" style="color:var(--s);flex-shrink:0" id="s4-cost-lbl">Estimated Cost</span>
         <span class="body-md" id="s4-cost">421.57 CAD</span>
       </div>
+      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
+        <span class="body-md" style="color:var(--s);flex-shrink:0">Prediction Confidence</span>
+        <span class="body-md" id="s4-conf">60%</span>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
+        <span class="body-md" style="color:var(--s);flex-shrink:0">To be judged by</span>
+        <span class="body-md" id="s4-judgment">Jul 1, 2028</span>
+      </div>
     </div>
 
     <!-- Bottom action bar -->
@@ -1424,7 +1434,9 @@
     document.getElementById('s4-cost').textContent     = n
       ? totalCAD.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' CAD'
       : '—';
-    document.getElementById('s4-exec-lbl').textContent = 'Execute ' + action;
+    document.getElementById('s4-exec-lbl').textContent  = 'Execute ' + action;
+    document.getElementById('s4-conf').textContent      = confPct + '%';
+    document.getElementById('s4-judgment').textContent  = JUDGE_DATES[judgePeriod];
     go(4);
   }
 
