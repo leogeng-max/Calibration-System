@@ -430,19 +430,92 @@
     }
     .hero-n.in { opacity: 1; transform: translateY(0); }
     .chart-area { padding: 16px 0 6px; }
-    .metrics { display: flex; justify-content: space-between; padding: 20px 0; }
+    .metrics { display: flex; justify-content: space-between; padding: 28px 0; }
     .met { display: flex; flex-direction: column; gap: 6px; }
     .met-v {
       opacity: 0; transform: translateY(5px);
       transition: opacity 250ms var(--ease), transform 250ms var(--ease);
     }
     .met-v.in { opacity: 1; transform: translateY(0); }
-    .verdict { padding: 18px 0; }
-    .exec-area { padding-top: 16px; }
+    .verdict { padding: 32px 0; }
+    .exec-area { padding-top: 32px; padding-bottom: 16px; }
     .drow { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--divider); }
     .drow:last-child { border-bottom: none; }
 
     /* ─── Dot info panel ──────────────────────────── */
+    /* ─── Calibration mode dropdown ─────────────── */
+    .cal-mode-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: none;
+      font-family: var(--font); font-size: 14px;
+      color: var(--s); letter-spacing: -0.01em;
+      cursor: pointer; padding: 4px 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cal-mode-btn:active { color: var(--p); }
+
+    .cal-mode-menu {
+      position: absolute; right: 0; top: calc(100% + 6px);
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      z-index: 400; min-width: 140px;
+      opacity: 0; pointer-events: none; transform: translateY(-6px);
+      transition: opacity 160ms var(--ease), transform 160ms var(--ease);
+    }
+    .cal-mode-menu.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+
+    .cal-mode-opt {
+      padding: 13px 16px;
+      font-family: var(--font); font-size: 14px;
+      color: var(--s); cursor: pointer; display: flex;
+      align-items: center; justify-content: space-between;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cal-mode-opt:hover { color: var(--p); background: rgba(255,255,255,0.04); }
+    .cal-mode-opt.active { color: var(--p); }
+    .cal-mode-tick { font-size: 11px; color: var(--t); }
+    .cal-mode-opt.active .cal-mode-tick { color: var(--p); }
+
+    /* Hypothetical banner */
+    #hypo-banner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 0;
+      overflow: hidden;
+      max-height: 0; opacity: 0;
+      transition: max-height 320ms var(--ease), opacity 280ms var(--ease);
+    }
+    #hypo-banner.show { max-height: 40px; opacity: 1; }
+    .hypo-badge {
+      font-family: var(--font); font-size: 10px;
+      letter-spacing: 0.08em; color: var(--t);
+      border: 1px solid #333; padding: 3px 8px;
+    }
+
+    /* Chart transition for mode switch */
+    .chart-area { transition: opacity 220ms ease; }
+
+    /* ─── s5 extra stats ─────────────────────────── */
+    .hero-trend {
+      font-size: 12px; font-family: var(--font);
+      letter-spacing: -0.01em; margin-top: 5px; line-height: 1;
+    }
+    .trend-up   { color: var(--p); }
+    .trend-flat { color: var(--p); }
+    .trend-down { color: var(--p); }
+
+    .s5-row {
+      display: flex; align-items: center;
+      justify-content: space-between; padding: 22px 0;
+    }
+
+    /* Bucket bars */
+    .bkt-val { font-size: 13px; font-family: var(--font); color: var(--p); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+
+    /* Conviction-to-capital */
+    .ctc-row { display: flex; align-items: baseline; justify-content: space-between; padding: 11px 0; }
+    .ctc-label { font-size: 13px; color: var(--s); font-family: var(--font); letter-spacing: -0.01em; }
+    .ctc-val   { font-size: 15px; color: var(--p); font-family: var(--font); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+
     /* ─── Calibration info modal ─────────────────── */
     #cal-modal {
       position: absolute;
@@ -1103,11 +1176,11 @@
         </div>
       </div>
       <input class="horiz-range" id="conf-range" type="range"
-             min="0" max="100" value="60" step="1"
+             min="50" max="100" value="60" step="1"
              oninput="updateConf(this.value)">
       <div style="display:flex;justify-content:space-between;margin-top:9px">
-        <span class="body-xs">0%</span>
         <span class="body-xs">50%</span>
+        <span class="body-xs">75%</span>
         <span class="body-xs">100%</span>
       </div>
     </div>
@@ -1238,7 +1311,31 @@
   <div class="scr" id="s5">
     <div class="dash-hdr" style="display:flex;justify-content:space-between;align-items:center">
       <button class="back-btn" style="padding:0;font-size:20px" onclick="go(10)">←</button>
+
+      <!-- Mode switcher -->
+      <div style="position:relative">
+        <button class="cal-mode-btn" onclick="toggleCalDropdown()">
+          <span id="cal-mode-label">Actual</span>
+          <svg width="9" height="6" viewBox="0 0 9 6" fill="none" style="margin-top:1px;flex-shrink:0">
+            <path d="M1 1L4.5 5L8 1" stroke="#929292" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="cal-mode-menu" id="cal-mode-menu">
+          <div class="cal-mode-opt active" id="opt-realtime" onclick="setCalMode('realtime')">
+            Actual <span class="cal-mode-tick">✓</span>
+          </div>
+          <div class="cal-mode-opt" id="opt-hypo" onclick="setCalMode('hypothetical')">
+            Hypothetical <span class="cal-mode-tick"></span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Hypothetical banner (hidden by default) -->
+    <div id="hypo-banner">
+      <span style="font-size:12px;color:var(--p);font-family:var(--font);letter-spacing:-0.01em">Sample data · not your actual record</span>
+    </div>
+
     <hr class="div">
 
     <div class="hero">
@@ -1252,7 +1349,8 @@
         </button>
       </div>
       <div class="hero-n" id="hero-n">54%</div>
-      <div class="body-sm">You estimate 71%.</div>
+      <div id="hero-trend" class="hero-trend trend-up">↑ +4% vs 6 months</div>
+      <div class="body-sm" style="margin-top:6px;color:var(--t)" id="s5-hero-sub">Avg stated confidence: 71%</div>
     </div>
     <hr class="div">
 
@@ -1275,16 +1373,16 @@
         <!-- Diagonal label -->
         <text x="314" y="13" font-family="Inter,sans-serif" font-size="9.5" fill="#3F3F46" text-anchor="end">Calibrated</text>
         <!-- Region labels -->
-        <text x="230" y="164" font-family="Inter,sans-serif" font-size="9" fill="#3F3F46" text-anchor="middle">Overconfident</text>
-        <text x="96"  y="26"  font-family="Inter,sans-serif" font-size="9" fill="#3F3F46" text-anchor="middle">Underconfident</text>
+        <text x="240" y="164" font-family="Inter,sans-serif" font-size="9" fill="#3F3F46" text-anchor="middle">Overconfident</text>
+        <text x="100" y="26"  font-family="Inter,sans-serif" font-size="9" fill="#3F3F46" text-anchor="middle">Underconfident</text>
         <!-- Y-axis ticks -->
-        <text x="22" y="183" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">50%</text>
-        <text x="22" y="95"  font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">65%</text>
-        <text x="22" y="7"   font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">80%</text>
+        <text x="22" y="183" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">0%</text>
+        <text x="22" y="95"  font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">50%</text>
+        <text x="22" y="7"   font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">100%</text>
         <!-- X-axis ticks -->
-        <text x="28"  y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">50%</text>
-        <text x="173" y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">65%</text>
-        <text x="318" y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">80%</text>
+        <text x="28"  y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">0%</text>
+        <text x="173" y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">50%</text>
+        <text x="318" y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">100%</text>
         <!-- Dots injected by JS -->
         <g id="cdots"></g>
       </svg>
@@ -1302,31 +1400,121 @@
       </div>
       <div class="met" style="align-items:flex-end">
         <span class="lbl">Gap</span>
-        <span class="nlg met-v" id="mv3" style="color:var(--neg)">−17%</span>
+        <span class="nlg met-v" id="mv3" style="color:var(--p)">−17%</span>
       </div>
+    </div>
+    <hr class="div">
+
+    <!-- Pending predictions -->
+    <div class="s5-row">
+      <span class="body-md" style="color:var(--s)">Awaiting judgment</span>
+      <span class="body-md" id="s5-pending">3</span>
     </div>
     <hr class="div">
 
     <div class="verdict">
-      <span class="body-lg" style="color:var(--s)">You are overconfident.</span>
+      <span class="body-lg" style="color:var(--s)" id="s5-verdict">Stated confidence exceeds actual accuracy.</span>
     </div>
     <hr class="div">
 
+    <!-- Calibration over time -->
     <div class="exec-area">
-      <span class="lbl">Execution vs judgment</span>
-      <div style="margin-top:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span class="lbl">Calibration over time</span>
+        <span class="body-xs" id="cal-hist-delta" style="color:var(--t)"></span>
+      </div>
+      <span class="body-xs" style="color:var(--d);display:block;margin-top:3px;margin-bottom:14px">Gap between stated confidence and actual accuracy</span>
+      <svg id="cal-history-svg" width="100%" viewBox="0 0 320 96" style="overflow:visible;display:block"></svg>
+      <div style="display:flex;gap:18px;margin-top:10px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <svg width="18" height="8" viewBox="0 0 18 8"><line x1="0" y1="4" x2="18" y2="4" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="3 2.5"/></svg>
+          <span class="body-xs" style="color:var(--t)">Stated confidence</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <svg width="18" height="8" viewBox="0 0 18 8"><line x1="0" y1="4" x2="18" y2="4" stroke="#fff" stroke-width="1.5"/></svg>
+          <span class="body-xs" style="color:var(--t)">Actual accuracy</span>
+        </div>
+      </div>
+    </div>
+    <hr class="div">
+
+    <!-- Execution discipline -->
+    <div class="exec-area">
+      <span class="lbl">Execution discipline</span>
+      <span class="body-xs" style="color:var(--d);display:block;margin-top:3px;margin-bottom:8px">Among positions where the prediction proved correct</span>
+      <div>
         <div class="drow">
-          <span class="body-md" style="color:var(--s);max-width:68%">You exited early on correct positions</span>
-          <span class="nsm">42%</span>
+          <span class="body-md" style="color:var(--s);max-width:68%">Closed before judgment date</span>
+          <span class="nsm" id="exec-early" style="font-variant-numeric:normal">0 of 1</span>
+        </div>
+        <div class="drow" style="border-bottom:none">
+          <span class="body-md" style="color:var(--s);max-width:68%">Held through underperformance</span>
+          <span class="nsm" id="exec-held" style="font-variant-numeric:normal">1 of 1</span>
+        </div>
+      </div>
+    </div>
+    <hr class="div">
+
+    <!-- Exit timing score -->
+    <div class="exec-area">
+      <span class="lbl">Exit timing score</span>
+      <span class="body-xs" style="color:var(--d);display:block;margin-top:3px;margin-bottom:8px">Of positions closed before the judgment date</span>
+      <div>
+        <div class="drow">
+          <span class="body-md" style="color:var(--s);max-width:68%">Continued in predicted direction after exit</span>
+          <span class="nsm" id="exit-continued" style="font-variant-numeric:normal;color:var(--d)">—</span>
+        </div>
+        <div class="drow" style="border-bottom:none">
+          <span class="body-md" style="color:var(--s);max-width:68%">Reversed after exit</span>
+          <span class="nsm" id="exit-reversed" style="font-variant-numeric:normal;color:var(--d)">—</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:14px 0;border-top:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span class="body-md" style="color:var(--t)">Avg missed gain on early exits</span>
+          <span class="nsm" id="exit-missed" style="color:var(--d)">—</span>
+        </div>
+      </div>
+    </div>
+    <hr class="div">
+
+    <!-- Accuracy by stated confidence -->
+    <div class="exec-area">
+      <span class="lbl">Accuracy by stated confidence</span>
+      <span class="body-xs" style="color:var(--d);display:block;margin-top:3px;margin-bottom:4px">Actual hit rate for each confidence range</span>
+      <div>
+        <div class="drow">
+          <span class="body-md" style="color:var(--s)">50–60% confidence</span>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="nsm" id="bkt-val-50" style="color:var(--d)">—</span>
+            <span class="body-xs" id="bkt-tag-50" style="color:var(--d);min-width:72px;text-align:right">No data</span>
+          </div>
         </div>
         <div class="drow">
-          <span class="body-md" style="color:var(--s);max-width:68%">You held underperforming positions</span>
-          <span class="nsm">65%</span>
+          <span class="body-md" style="color:var(--s)">60–70% confidence</span>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="nsm" id="bkt-val-60">—</span>
+            <span class="body-xs" id="bkt-tag-60" style="min-width:72px;text-align:right"></span>
+          </div>
+        </div>
+        <div class="drow">
+          <span class="body-md" style="color:var(--s)">70–80% confidence</span>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="nsm" id="bkt-val-70">—</span>
+            <span class="body-xs" id="bkt-tag-70" style="min-width:72px;text-align:right"></span>
+          </div>
+        </div>
+        <div class="drow" style="border-bottom:none">
+          <span class="body-md" style="color:var(--s)">80–100% confidence</span>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="nsm" id="bkt-val-80" style="color:var(--d)">—</span>
+            <span class="body-xs" id="bkt-tag-80" style="color:var(--d);min-width:72px;text-align:right">No data</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <div style="padding-bottom:24px"></div>
+    <div style="padding-bottom:40px"></div>
   </div>
 
   <!-- ══════════════════════════════════
@@ -1983,25 +2171,22 @@
       _pendingNewDot = null;
     }
 
-    // Compute metrics dynamically from current DOT_DATA
-    const avgConf   = Math.round(DOT_DATA.reduce((s,d) => s + d.pred, 0) / DOT_DATA.length);
-    const actualAcc = Math.round(DOT_DATA.reduce((s,d) => s + d.act,  0) / DOT_DATA.length);
-    const gap       = actualAcc - avgConf;
+    // Reset to real-time mode on each entry
+    _calMode = 'realtime';
+    document.getElementById('cal-mode-label').textContent = 'Actual';
+    document.getElementById('opt-realtime').classList.add('active');
+    document.getElementById('opt-hypo').classList.remove('active');
+    document.querySelector('#opt-realtime .cal-mode-tick').textContent = '✓';
+    document.querySelector('#opt-hypo .cal-mode-tick').textContent = '';
+    document.getElementById('hypo-banner').classList.remove('show');
 
-    // Update hero
+    // Animate hero number
     const hn = document.getElementById('hero-n');
-    hn.textContent = actualAcc + '%';
     hn.classList.remove('in');
     void hn.offsetWidth;
     setTimeout(() => hn.classList.add('in'), 80);
-    document.querySelector('#s5 .hero .body-sm').textContent = 'You estimate ' + avgConf + '%.';
 
-    // Update metric tiles
-    document.getElementById('mv1').textContent = avgConf + '%';
-    document.getElementById('mv2').textContent = actualAcc + '%';
-    const gapEl = document.getElementById('mv3');
-    gapEl.textContent = (gap >= 0 ? '+' : '−') + Math.abs(gap) + '%';
-    gapEl.style.color = gap >= 0 ? 'var(--p)' : 'var(--neg)';
+    // Animate metric tiles
     ['mv1','mv2','mv3'].forEach((id, i) => {
       const el = document.getElementById(id);
       el.classList.remove('in');
@@ -2009,28 +2194,34 @@
       setTimeout(() => el.classList.add('in'), 220 + i * 90);
     });
 
-    buildDots();
+    _renderCalDash();
   }
 
   /* ── Chart dots ─────────────────────────────────── */
   let _selDot = null;
   let _pendingNewDot = null;
 
-  /* Start with just 2 historical predictions */
   let DOT_DATA = [
-    { pred:68, act:74, ticker:'MSFT', date:'Jan 2025', outcome:'Outperformed',   vs:'+3.2% vs S&P', isNew:false },
-    { pred:75, act:52, ticker:'TSLA', date:'Mar 2025', outcome:'Underperformed', vs:'−8.4% vs S&P', isNew:false },
+    // Completed — exited positions (grey filled) — volatile, mostly overconfident
+    { pred:82, act:44, ticker:'TSLA',  date:'Mar 2025', outcome:'Underperformed', vs:'−14.6% vs S&P', isNew:false },
+    { pred:65, act:71, ticker:'MSFT',  date:'Jan 2025', outcome:'Outperformed',   vs:'+4.1% vs S&P',  isNew:false },
+    { pred:79, act:38, ticker:'AMZN',  date:'Dec 2024', outcome:'Closed early',   vs:'Exited early · −9.2% after exit', isNew:false },
+    { pred:61, act:66, ticker:'GOOGL', date:'Oct 2024', outcome:'Closed early',   vs:'Exited early · +2.3% after exit', isNew:false },
+    // Holding — purchased, still in position (solid stroke)
+    { pred:77, act:77, ticker:'NVDA',  date:'Mar 2026', outcome:'Pending judgment', vs:'Holding · judgment Apr 2029', isNew:false },
+    // Pending fill — order placed, not yet executed (dashed)
+    { pred:71, act:71, ticker:'META',  date:'Apr 2026', outcome:'Pending fill',    vs:'Limit order · awaiting fill', isNew:false },
   ];
 
-  /* Ghost dots — preview positions, always rendered first */
+  /* Ghost dots — preview positions, skewed overconfident (high pred, low act) */
   const GHOST_DOTS = [
-    { pred:53, act:56 },
-    { pred:58, act:51 },
-    { pred:62, act:71 },
-    { pred:66, act:57 },
-    { pred:70, act:63 },
-    { pred:74, act:73 },
-    { pred:78, act:59 },
+    { pred:64, act:44 },
+    { pred:68, act:50 },
+    { pred:71, act:46 },
+    { pred:74, act:53 },
+    { pred:76, act:49 },
+    { pred:79, act:55 },
+    { pred:81, act:52 },
   ];
 
   function buildDots() {
@@ -2038,8 +2229,8 @@
     g.innerHTML = '';
     _selDot = null;
 
-    const xp = p => 28 + ((p - 50) / 30) * 290;
-    const yp = p => 180 - ((p - 50) / 30) * 176;
+    const xp = p => 28 + (p / 100) * 290;
+    const yp = p => 180 - (p / 100) * 176;
 
     /* Render ghost dots first (hidden until info modal opens) */
     GHOST_DOTS.forEach(d => {
@@ -2058,12 +2249,20 @@
       g.appendChild(ghost);
     });
 
-    DOT_DATA.forEach((d, i) => {
+    const activeDots = _calMode === 'hypothetical' ? HYPO_DOT_DATA : DOT_DATA;
+    const allDashed  = _calMode === 'hypothetical';
+
+    activeDots.forEach((d, i) => {
       const cx = xp(d.pred).toFixed(1);
       const cy = yp(d.act).toFixed(1);
       const delay = i * 55 + 360;
 
-      if (d.isNew) {
+      // Three states: dashed = pending fill, stroke = holding, grey filled = completed
+      const isPendingFill = d.outcome === 'Pending fill';
+      const isHolding     = d.outcome === 'Pending judgment';
+      const isDashed      = allDashed || isPendingFill;
+
+      if (d.isNew && !allDashed) {
         /* ── Pulse ring behind the new dot ── */
         const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         pulse.setAttribute('cx', cx);
@@ -2117,15 +2316,36 @@
         }));
 
       } else {
-        /* ── Standard historical dot ── */
+        /* ── Three states: dashed stroke / solid stroke / dark grey filled ── */
         const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         c.setAttribute('cx', cx); c.setAttribute('cy', cy);
         c.setAttribute('r', '5');
-        c.setAttribute('fill', 'none');
-        c.setAttribute('stroke', '#FFFFFF');
-        c.setAttribute('stroke-width', '1.5');
+
+        if (isDashed) {
+          // Pending fill — order not yet executed
+          c.setAttribute('fill', 'none');
+          c.setAttribute('stroke', '#FFFFFF');
+          c.setAttribute('stroke-width', '1.5');
+          c.setAttribute('stroke-dasharray', '2.5 2.5');
+          c._origFill   = 'none';
+          c._origStroke = '#FFFFFF';
+        } else if (isHolding) {
+          // Holding — purchased, not yet exited
+          c.setAttribute('fill', 'none');
+          c.setAttribute('stroke', '#FFFFFF');
+          c.setAttribute('stroke-width', '1.5');
+          c._origFill   = 'none';
+          c._origStroke = '#FFFFFF';
+        } else {
+          // Completed — exited position
+          c.setAttribute('fill', '#3F3F46');
+          c.setAttribute('stroke', 'none');
+          c._origFill   = '#3F3F46';
+          c._origStroke = 'none';
+        }
+
         c.style.opacity    = '0';
-        c.style.transition = `opacity 180ms var(--ease) ${delay}ms, fill 150ms`;
+        c.style.transition = `opacity 180ms var(--ease) ${delay}ms`;
         c.style.cursor     = 'pointer';
         g.appendChild(c);
 
@@ -2136,8 +2356,15 @@
         g.appendChild(hit);
 
         const tap = () => {
-          if (_selDot) { _selDot.setAttribute('fill', 'none'); _selDot.setAttribute('r', '5'); }
+          if (_selDot) {
+            // Restore previous dot to its original visual state
+            _selDot.setAttribute('fill', _selDot._origFill);
+            _selDot.setAttribute('stroke', _selDot._origStroke);
+            _selDot.setAttribute('r', '5');
+          }
+          // Highlight selected dot
           c.setAttribute('fill', 'rgba(255,255,255,0.18)');
+          c.setAttribute('stroke', '#FFFFFF');
           c.setAttribute('r', '6');
           _selDot = c;
           showDotInfo(d);
@@ -2162,8 +2389,296 @@
     document.getElementById('dot-info').classList.add('show');
   }
 
+  /* ── Calibration mode switcher ──────────────────── */
+  let _calMode = 'realtime';
+
+  const HYPO_DOT_DATA = [
+    { pred:54, act:56, ticker:'—', date:'Sample', outcome:'Outperformed',   vs:'+2.3% vs S&P' },
+    { pred:59, act:57, ticker:'—', date:'Sample', outcome:'Outperformed',   vs:'+1.1% vs S&P' },
+    { pred:63, act:67, ticker:'—', date:'Sample', outcome:'Outperformed',   vs:'+4.2% vs S&P' },
+    { pred:67, act:64, ticker:'—', date:'Sample', outcome:'Underperformed', vs:'−1.5% vs S&P' },
+    { pred:71, act:73, ticker:'—', date:'Sample', outcome:'Outperformed',   vs:'+3.8% vs S&P' },
+    { pred:75, act:71, ticker:'—', date:'Sample', outcome:'Underperformed', vs:'−2.0% vs S&P' },
+    { pred:78, act:77, ticker:'—', date:'Sample', outcome:'Outperformed',   vs:'+0.9% vs S&P' },
+  ];
+
+  function toggleCalDropdown() {
+    document.getElementById('cal-mode-menu').classList.toggle('open');
+  }
+  function closeCalDropdown() {
+    document.getElementById('cal-mode-menu').classList.remove('open');
+  }
+
+  function setCalMode(mode) {
+    if (_calMode === mode) { closeCalDropdown(); return; }
+    _calMode = mode;
+    closeCalDropdown();
+
+    // Update dropdown labels
+    document.getElementById('cal-mode-label').textContent =
+      mode === 'realtime' ? 'Actual' : 'Hypothetical';
+    document.getElementById('opt-realtime').classList.toggle('active', mode === 'realtime');
+    document.getElementById('opt-hypo').classList.toggle('active', mode === 'hypothetical');
+    document.querySelector('#opt-realtime .cal-mode-tick').textContent = mode === 'realtime' ? '✓' : '';
+    document.querySelector('#opt-hypo .cal-mode-tick').textContent     = mode === 'hypothetical' ? '✓' : '';
+
+    // Toggle hypothetical banner
+    document.getElementById('hypo-banner').classList.toggle('show', mode === 'hypothetical');
+
+    // Animate chart transition
+    const chart = document.querySelector('#s5 .chart-area');
+    chart.style.opacity = '0';
+
+    if (mode === 'hypothetical') {
+      // Brief "entering simulation" pause before redraw
+      setTimeout(() => {
+        _renderCalDash();
+        requestAnimationFrame(() => { chart.style.opacity = '1'; });
+      }, 320);
+    } else {
+      setTimeout(() => {
+        _renderCalDash();
+        requestAnimationFrame(() => { chart.style.opacity = '1'; });
+      }, 220);
+    }
+  }
+
+  /* ── Calibration history data ───────────────────── */
+  // Real: 2 data points derived directly from DOT_DATA
+  const REAL_HISTORY = [
+    { label: "Q3'24", conf: 90, acc: 50 },
+    { label: "Q4'24", conf: 80, acc: 55 },
+    { label: "Q1'25", conf: 75, acc: 45 },
+    { label: "Q2'25", conf: 50, acc: 50 },
+    { label: "Q1'26", conf: 50, acc: 65 },
+  ];
+  const HYPO_HISTORY = [
+    { label: "Q3'24", conf: 76, acc: 48 },
+    { label: "Q4'24", conf: 74, acc: 55 },
+    { label: "Q1'25", conf: 71, acc: 63 },
+    { label: "Q2'25", conf: 69, acc: 68 },
+    { label: "Q1'26", conf: 67, acc: 67 },
+  ];
+
+  function buildCalHistory() {
+    const svg = document.getElementById('cal-history-svg');
+    if (!svg) return;
+    svg.innerHTML = '';
+    const ns = 'http://www.w3.org/2000/svg';
+    const data = _calMode === 'hypothetical' ? HYPO_HISTORY : REAL_HISTORY;
+    const n = data.length;
+
+    const L = 4, R = 36, T = 6, B = 22;
+    const W = 320, H = 96;
+    const cW = W - L - R, cH = H - T - B;
+    const minV = 0, maxV = 100;
+    const xp = i  => L + i * (cW / (n - 1));
+    const yp = v  => T + cH - (v - minV) / (maxV - minV) * cH;
+
+    // Shaded gap area between the two lines
+    const areaPts = data.map((d,i) => `${i===0?'M':'L'}${xp(i).toFixed(1)},${yp(d.conf).toFixed(1)}`).join(' ')
+      + ' ' + [...data].reverse().map((d,i,a) => `L${xp(n-1-i).toFixed(1)},${yp(d.acc).toFixed(1)}`).join(' ') + ' Z';
+    const area = document.createElementNS(ns,'path');
+    area.setAttribute('d', areaPts);
+    area.setAttribute('fill','rgba(255,255,255,0.05)');
+    svg.appendChild(area);
+
+    // Horizontal gridlines at 0%, 50%, 100%
+    [0,50,100].forEach(v => {
+      const gl = document.createElementNS(ns,'line');
+      gl.setAttribute('x1', L); gl.setAttribute('x2', W - R);
+      gl.setAttribute('y1', yp(v).toFixed(1)); gl.setAttribute('y2', yp(v).toFixed(1));
+      gl.setAttribute('stroke','#1e1e1e'); gl.setAttribute('stroke-width','1');
+      svg.appendChild(gl);
+      const gt = document.createElementNS(ns,'text');
+      gt.setAttribute('x', W - R + 5); gt.setAttribute('y', (yp(v) + 3).toFixed(1));
+      gt.setAttribute('font-family','Inter,sans-serif'); gt.setAttribute('font-size','8');
+      gt.setAttribute('fill','#3a3a3a');
+      gt.textContent = v + '%';
+      svg.appendChild(gt);
+    });
+
+    // Build polyline path string helper
+    const makePath = key => data.map((d,i) => `${i===0?'M':'L'}${xp(i).toFixed(1)},${yp(d[key]).toFixed(1)}`).join(' ');
+
+    // Confidence line — dashed, dimmer
+    const confLine = document.createElementNS(ns,'path');
+    confLine.setAttribute('d', makePath('conf'));
+    confLine.setAttribute('fill','none');
+    confLine.setAttribute('stroke','rgba(255,255,255,0.35)');
+    confLine.setAttribute('stroke-width','1.5');
+    confLine.setAttribute('stroke-dasharray','3 2.5');
+    confLine.setAttribute('stroke-linecap','round');
+    svg.appendChild(confLine);
+
+    // Accuracy line — solid, bright
+    const accLine = document.createElementNS(ns,'path');
+    accLine.setAttribute('d', makePath('acc'));
+    accLine.setAttribute('fill','none');
+    accLine.setAttribute('stroke','#FFFFFF');
+    accLine.setAttribute('stroke-width','1.5');
+    accLine.setAttribute('stroke-linecap','round');
+    accLine.setAttribute('stroke-linejoin','round');
+    // Animate draw-in
+    const len = accLine.getTotalLength ? accLine.getTotalLength() : 300;
+    accLine.style.strokeDasharray  = len;
+    accLine.style.strokeDashoffset = len;
+    accLine.style.transition = 'stroke-dashoffset 700ms cubic-bezier(0.4,0,0.2,1) 200ms';
+    svg.appendChild(accLine);
+    requestAnimationFrame(() => requestAnimationFrame(() => { accLine.style.strokeDashoffset = '0'; }));
+
+    // Dots at each data point
+    data.forEach((d, i) => {
+      ['conf','acc'].forEach(key => {
+        const dot = document.createElementNS(ns,'circle');
+        dot.setAttribute('cx', xp(i).toFixed(1));
+        dot.setAttribute('cy', yp(d[key]).toFixed(1));
+        dot.setAttribute('r','2.5');
+        dot.setAttribute('fill', key==='acc' ? '#fff' : 'rgba(255,255,255,0.35)');
+        svg.appendChild(dot);
+      });
+    });
+
+    // X-axis labels
+    data.forEach((d,i) => {
+      const lbl = document.createElementNS(ns,'text');
+      lbl.setAttribute('x', xp(i).toFixed(1));
+      lbl.setAttribute('y', H - 2);
+      lbl.setAttribute('text-anchor','middle');
+      lbl.setAttribute('font-family','Inter,sans-serif');
+      lbl.setAttribute('font-size','9');
+      lbl.setAttribute('fill','#565B5E');
+      lbl.textContent = d.label;
+      svg.appendChild(lbl);
+    });
+
+    // Delta badge top-right
+    const firstGap = Math.abs(data[0].conf - data[0].acc);
+    const lastGap  = Math.abs(data[n-1].conf - data[n-1].acc);
+    const delta = firstGap - lastGap;
+    const deltaEl = document.getElementById('cal-hist-delta');
+    if (deltaEl) {
+      if (delta > 0)      deltaEl.textContent = '↓ ' + delta + '% gap reduction';
+      else if (delta < 0) deltaEl.textContent = '↑ gap widening';
+      else                deltaEl.textContent = 'Gap unchanged';
+    }
+  }
+
+  /* Extra stats data — real vs hypothetical
+   * REAL values — overconfident profile
+   *   Avg stated confidence ~73%, avg actual accuracy ~53%
+   *   Persistent ~20% gap, not narrowing over time
+   */
+  const REAL_EXTRA = {
+    trend:   { arrow: '↓', val: '−2%', period: '6 months', positive: false },
+    pending: 0,
+    exec: { early: '2 of 4', held: '2 of 4' },
+    buckets: {
+      '50': { actual: 46, midConf: 55 },
+      '60': { actual: 51, midConf: 65 },
+      '70': { actual: 54, midConf: 75 },
+      '80': { actual: 49, midConf: 90 },
+    },
+    exitScore: { continued: '1 of 2', reversed: '1 of 2', missedGain: '6.8% avg' }
+  };
+  const HYPO_EXTRA = {
+    trend:   { arrow: '↑', val: '+8%', period: '6 months', positive: true },
+    pending: 4,
+    exec: { early: '3 of 8', held: '5 of 8' },
+    buckets: {
+      '50': { actual: 57, midConf: 55 },
+      '60': { actual: 65, midConf: 65 },
+      '70': { actual: 73, midConf: 75 },
+      '80': { actual: 87, midConf: 90 },
+    },
+    exitScore: { continued: '2 of 3', reversed: '1 of 3', missedGain: '2.8% avg' }
+  };
+
+  function _updateExtraStats() {
+    const extra = _calMode === 'hypothetical' ? HYPO_EXTRA : REAL_EXTRA;
+
+    // Calibration history chart
+    buildCalHistory();
+
+    // Trend
+    const trendEl = document.getElementById('hero-trend');
+    trendEl.textContent = extra.trend.arrow + ' ' + extra.trend.val + ' vs ' + extra.trend.period;
+    trendEl.className = 'hero-trend ' + (extra.trend.positive ? 'trend-up' : 'trend-down');
+
+    // Pending — live count from DOT_DATA (dashed dots on chart)
+    const pendingCount = _calMode === 'hypothetical'
+      ? extra.pending
+      : DOT_DATA.filter(d => d.outcome === 'Pending judgment').length;
+    document.getElementById('s5-pending').textContent = pendingCount;
+
+    // Execution vs judgment
+    document.getElementById('exec-early').textContent = extra.exec.early;
+    document.getElementById('exec-held').textContent  = extra.exec.held;
+
+    // Exit timing score — null means no early exits yet
+    const noExits = !extra.exitScore;
+    const dim = 'var(--d)';
+    document.getElementById('exit-continued').textContent = noExits ? '—' : extra.exitScore.continued;
+    document.getElementById('exit-continued').style.color = noExits ? dim : 'var(--p)';
+    document.getElementById('exit-reversed').textContent  = noExits ? '—' : extra.exitScore.reversed;
+    document.getElementById('exit-reversed').style.color  = noExits ? dim : 'var(--p)';
+    document.getElementById('exit-missed').textContent    = noExits ? '—' : extra.exitScore.missedGain;
+    document.getElementById('exit-missed').style.color    = noExits ? dim : 'var(--p)';
+
+    // Verdict
+    const data = _calMode === 'hypothetical' ? HYPO_DOT_DATA : DOT_DATA;
+    const avgConf   = Math.round(data.reduce((s,d) => s + d.pred, 0) / data.length);
+    const actualAcc = Math.round(data.reduce((s,d) => s + d.act,  0) / data.length);
+    const gap = actualAcc - avgConf;
+    const verdictEl = document.getElementById('s5-verdict');
+    if (Math.abs(gap) <= 3) verdictEl.textContent = 'Well calibrated.';
+    else if (gap < 0)        verdictEl.textContent = 'Stated confidence exceeds actual accuracy.';
+    else                     verdictEl.textContent = 'Actual accuracy exceeds stated confidence.';
+
+    // Buckets — simple stat rows, no bars
+    ['50','60','70','80'].forEach(b => {
+      const bkt   = extra.buckets[b];
+      const valEl = document.getElementById('bkt-val-' + b);
+      const tagEl = document.getElementById('bkt-tag-' + b);
+
+      if (!bkt.actual) {
+        valEl.textContent = '—';   valEl.style.color = 'var(--d)';
+        tagEl.textContent = 'No data'; tagEl.style.color = 'var(--d)';
+      } else {
+        const diff = bkt.actual - bkt.midConf;
+        valEl.textContent = bkt.actual + '%'; valEl.style.color = 'var(--p)';
+        if (Math.abs(diff) <= 5) { tagEl.textContent = 'Calibrated';     tagEl.style.color = 'var(--t)'; }
+        else if (diff > 5)       { tagEl.textContent = 'Underconfident'; tagEl.style.color = 'var(--t)'; }
+        else                     { tagEl.textContent = 'Overconfident';  tagEl.style.color = 'var(--t)'; }
+      }
+    });
+
+  }
+
+  // Shared render — called by animDash and setCalMode
+  function _renderCalDash() {
+    const data = _calMode === 'hypothetical' ? HYPO_DOT_DATA : DOT_DATA;
+    const completed = data.filter(d => d.outcome !== 'Pending judgment' && d.outcome !== 'Pending fill');
+    const avgConf   = Math.round(data.reduce((s,d) => s + d.pred, 0) / data.length);
+    const actualAcc = completed.length
+      ? Math.round(completed.reduce((s,d) => s + d.act, 0) / completed.length)
+      : avgConf;
+    const gap       = actualAcc - avgConf;
+
+    document.getElementById('hero-n').textContent = actualAcc + '%';
+    document.getElementById('s5-hero-sub').textContent = 'Avg stated confidence: ' + avgConf + '%';
+    document.getElementById('mv1').textContent = avgConf + '%';
+    document.getElementById('mv2').textContent = actualAcc + '%';
+    const gapEl = document.getElementById('mv3');
+    gapEl.textContent = (gap >= 0 ? '+' : '−') + Math.abs(gap) + '%';
+    gapEl.style.color = 'var(--p)';
+    buildDots();
+    _updateExtraStats();
+  }
+
   /* ── Calibration info modal ─────────────────────── */
   function showCalInfo() {
+    closeCalDropdown();
     document.getElementById('cal-modal').classList.add('show');
     document.querySelectorAll('.ghost-dot').forEach(el => el.style.opacity = '0.5');
     // Scroll s5 so the chart sits fully in the upper half above the modal
@@ -2178,7 +2693,8 @@
     document.getElementById('dot-overlay').classList.remove('show');
     document.getElementById('dot-info').classList.remove('show');
     if (_selDot) {
-      _selDot.setAttribute('fill', 'none');
+      _selDot.setAttribute('fill', _selDot._origFill);
+      _selDot.setAttribute('stroke', _selDot._origStroke);
       _selDot.setAttribute('r', '5');
       _selDot = null;
     }
@@ -2211,16 +2727,17 @@
     if (acc === null) { el.textContent = '—'; el.style.color = 'var(--t)'; return; }
     const gap = Math.abs(confPct - acc);
     el.textContent = acc + '%';
-    el.style.color = gap > 15 ? 'var(--neg)' : 'var(--t)';
+    el.style.color = 'var(--t)';
   }
 
   function updateConf(val) {
     confPct = parseInt(val, 10);
     document.getElementById('conf-pct-lbl').textContent = confPct + '%';
-    const pct = confPct.toFixed(2);
     const el = document.getElementById('conf-range');
+    const min = parseFloat(el.min), max = parseFloat(el.max);
+    const trackPct = ((confPct - min) / (max - min) * 100).toFixed(2);
     el.style.background =
-      `linear-gradient(to right, var(--p) ${pct}%, var(--divider) ${pct}%)`;
+      `linear-gradient(to right, var(--p) ${trackPct}%, var(--divider) ${trackPct}%)`;
     const bucket = document.getElementById('conf-bucket');
     if (bucket) bucket.textContent = getConfBucket(confPct);
     updateS2Accuracy();
@@ -2436,6 +2953,14 @@
     shell.style.transform = scale < 0.999 ? `scale(${scale.toFixed(4)})` : '';
   }
   window.addEventListener('resize', fitShell);
+
+  // Close cal dropdown when clicking outside
+  document.addEventListener('click', e => {
+    const menu = document.getElementById('cal-mode-menu');
+    if (menu && !menu.contains(e.target) && !e.target.closest('.cal-mode-btn')) {
+      menu.classList.remove('open');
+    }
+  });
   fitShell();
 
   /* ── Search ─────────────────────────────────────── */
