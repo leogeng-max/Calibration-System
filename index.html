@@ -107,8 +107,7 @@
     /* ─── Type scale ──────────────────────────────── */
     .lbl {
       font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      letter-spacing: 0.06em;
       color: var(--t);
       font-weight: 400;
       line-height: 1;
@@ -184,7 +183,7 @@
     }
 
     /* ─── Screen 0: Stock page ────────────────────── */
-    #s0 { padding-top: 56px; }
+    #s0 { padding: 0; }
     .s0-topbar {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 14px;
@@ -228,23 +227,20 @@
 
     /* ─── Screen 2: Confidence & Judgment ─────────── */
     #s2 { gap: 0; }
-    .s2-sec { padding: 32px 0; border-bottom: 1px solid var(--divider); }
-    .s2-sec:last-of-type { border-bottom: none; }
+    .s2-sec { padding: 32px 0; }
 
     .period-wrap { display: flex; gap: 8px; margin-top: 14px; }
     .period-btn {
       flex: 1; padding: 10px 0;
       background: none;
-      border: 1px solid var(--divider);
-      border-radius: 8px;
-      color: var(--t); font-family: var(--font);
+      border: none;
+      border-radius: 0;
+      color: var(--d); font-family: var(--font);
       font-size: 13px; font-weight: 400;
-      cursor: pointer; transition: all 140ms var(--ease);
+      cursor: pointer; transition: color 140ms var(--ease);
       -webkit-tap-highlight-color: transparent;
     }
     .period-btn.on {
-      background: var(--surface);
-      border-color: var(--s);
       color: var(--p);
     }
 
@@ -380,15 +376,36 @@
     .char-ct.show { opacity: 1; }
 
     /* ─── Screen 3: Calibration check ────────────── */
-    #s3 { justify-content: center; align-items: stretch; }
-    .check-inner {
-      flex: 1;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: center; text-align: center;
+    /* ─── Screen 3: Calibration Check (bottom sheet) ── */
+    #s3 {
+      padding: 0;
+      justify-content: flex-end;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
     }
-    .check-h { font-size: 22px; font-weight: 400; letter-spacing: -0.06em; color: var(--p); line-height: 1.2; margin-bottom: 14px; }
-    .check-b { font-size: 15px; color: var(--s); line-height: 1.6; max-width: 30ch; margin-bottom: 48px; }
-    .check-acts { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+    .check-sheet {
+      background: var(--surface);
+      border-radius: 0;
+      padding: 28px 24px 48px;
+      position: relative;
+      transform: translateY(100%);
+      transition: transform 320ms cubic-bezier(0.32,0.72,0,1);
+    }
+    #s3.on .check-sheet {
+      transform: translateY(0);
+    }
+    .check-close {
+      position: absolute; top: 20px; right: 20px;
+      background: none; border: none;
+      color: var(--t); font-size: 18px;
+      cursor: pointer; padding: 4px;
+      line-height: 1; font-family: var(--font);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .check-close:active { color: var(--p); }
+    .check-h { font-size: 18px; font-weight: 500; letter-spacing: -0.03em; color: var(--p); line-height: 1.25; margin-bottom: 10px; }
+    .check-b  { font-size: 14px; color: var(--s); line-height: 1.55; margin-bottom: 28px; }
+    .check-acts { display: flex; flex-direction: column; gap: 4px; }
 
     /* ─── Screen 4: Review & Execute ─────────────── */
     #s4 { justify-content: flex-start; align-items: stretch; text-align: left; }
@@ -426,6 +443,48 @@
     .drow:last-child { border-bottom: none; }
 
     /* ─── Dot info panel ──────────────────────────── */
+    /* ─── Calibration info modal ─────────────────── */
+    #cal-modal {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      background: #0f0f0f;
+      border-top: 1px solid #222;
+      z-index: 310;
+      opacity: 0;
+      transform: translateY(100%);
+      pointer-events: none;
+      transition: opacity 240ms var(--ease), transform 300ms cubic-bezier(0.32,0.72,0,1);
+      overflow-y: auto;
+      padding: 22px 24px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    #cal-modal::-webkit-scrollbar { display: none; }
+    #cal-modal.show { opacity: 1; transform: translateY(0); pointer-events: all; }
+
+    .cal-info-btn {
+      background: none; border: none; padding: 0; cursor: pointer;
+      display: inline-flex; align-items: center;
+      -webkit-tap-highlight-color: transparent;
+      line-height: 1;
+    }
+    .cal-info-btn:active svg circle { stroke: var(--s); }
+
+    .cal-modal-close {
+      background: none; border: none;
+      color: var(--t); font-family: var(--font);
+      font-size: 18px; line-height: 1;
+      cursor: pointer; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cal-modal-close:active { color: var(--p); }
+
+    .cal-block { display: flex; flex-direction: column; gap: 5px; }
+    .cal-block-label { font-size: 11px; letter-spacing: 0.06em; color: var(--d); font-family: var(--font); }
+    .cal-block-body  { font-size: 13px; line-height: 1.55; color: var(--s); font-family: var(--font); letter-spacing: -0.01em; }
+
     .dot-overlay {
       position: absolute; inset: 0;
       background: rgba(0,0,0,0.55);
@@ -531,7 +590,7 @@
       align-items: center; justify-content: center;
       padding: 13px 0;
       background: #3A3A3C;
-      border-radius: 10px;
+      border-radius: 0;
       cursor: pointer; user-select: none;
       -webkit-tap-highlight-color: transparent;
       transition: background 80ms;
@@ -541,6 +600,128 @@
     .np-empty:active { background: transparent !important; }
     .np-main { font-size: 28px; font-weight: 400; color: var(--p); line-height: 1; }
     .np-sub  { font-size: 10px; letter-spacing: 0.12em; color: rgba(255,255,255,0.85); margin-top: 4px; line-height: 1; }
+
+    /* ─── New-dot pulse animation (SVG) ─────────────── */
+    @keyframes svgPulse {
+      0%   { r: 6px;  opacity: 0.5; }
+      70%  { r: 18px; opacity: 0;   }
+      100% { r: 18px; opacity: 0;   }
+    }
+    @keyframes svgBlink {
+      0%, 100% { opacity: 1;   }
+      50%      { opacity: 0.15; }
+    }
+    .dot-new-pulse { animation: svgPulse 1s ease-out infinite; }
+    .dot-new-core  { animation: svgBlink 1s ease-in-out 3; }
+
+    /* ─── Hide scrollbar on inner scroll divs ───────── */
+    div::-webkit-scrollbar { display: none; }
+
+    /* ─── Sitemap panel ──────────────────────────── */
+    #sm-btn {
+      position: fixed;
+      top: 20px; left: 20px;
+      z-index: 9999;
+      width: 34px; height: 34px;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 0;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 140ms;
+      flex-shrink: 0;
+    }
+    #sm-btn:hover { background: #1f1f1f; }
+
+    #sm-backdrop {
+      position: fixed; inset: 0;
+      z-index: 9997;
+      background: rgba(0,0,0,0.5);
+      opacity: 0; pointer-events: none;
+      transition: opacity 260ms;
+    }
+    #sm-backdrop.open { opacity: 1; pointer-events: all; }
+
+    #sm-panel {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 256px;
+      z-index: 9998;
+      background: #0f0f0f;
+      border-right: 1px solid #1e1e1e;
+      transform: translateX(-100%);
+      transition: transform 280ms cubic-bezier(0.32,0.72,0,1);
+      overflow-y: auto; overflow-x: hidden;
+      padding: 60px 0 40px;
+      display: flex; flex-direction: column;
+    }
+    #sm-panel.open { transform: translateX(0); }
+    #sm-panel::-webkit-scrollbar { display: none; }
+
+    .sm-label {
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #3a3a3a;
+      font-family: var(--font); font-weight: 500;
+      padding: 0 18px 14px;
+    }
+
+    /* tree nodes */
+    .sm-node {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 7px 16px 7px 0;
+      cursor: pointer;
+      transition: background 110ms;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .sm-node:hover  { background: rgba(255,255,255,0.04); }
+    .sm-node:active { background: rgba(255,255,255,0.07); }
+    .sm-node.sm-active { background: rgba(255,255,255,0.06); }
+
+    .sm-node-left {
+      display: flex; align-items: center; gap: 0;
+      flex: 1; min-width: 0;
+    }
+    .sm-indent {
+      flex-shrink: 0;
+      display: flex; align-items: center;
+    }
+    .sm-line-v {
+      width: 1px; background: #222;
+      align-self: stretch;
+      margin: 0 0 0 12px;
+      flex-shrink: 0;
+    }
+    .sm-hook {
+      width: 10px; height: 1px; background: #222;
+      flex-shrink: 0; margin-left: 0;
+    }
+    .sm-spacer { width: 13px; flex-shrink: 0; }
+
+    .sm-name {
+      font-family: var(--font);
+      font-size: 12.5px; letter-spacing: -0.01em;
+      color: #888; line-height: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .sm-node.sm-active .sm-name { color: #e0e0e0; }
+    .sm-node:hover .sm-name { color: #aaa; }
+
+    .sm-num {
+      font-family: var(--font);
+      font-size: 10px; color: #333;
+      letter-spacing: 0; flex-shrink: 0;
+      padding-right: 16px;
+    }
+    .sm-node.sm-active .sm-num { color: #555; }
+
+    .sm-sep { height: 1px; background: #181818; margin: 10px 18px; }
+
+    /* hide on mobile full-bleed */
+    @media (max-width: 430px) {
+      #sm-btn, #sm-panel, #sm-backdrop { display: none; }
+    }
 
     /* ─── Mobile full-bleed ───────────────────────── */
     @media (max-width: 430px) {
@@ -559,6 +740,220 @@
   </style>
 </head>
 <body>
+
+<!-- ── Sitemap toggle button ── -->
+<button id="sm-btn" onclick="smapToggle()" title="Site map">
+  <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+    <rect x="0" y="0"   width="14" height="1.5" rx="0.75" fill="#888"/>
+    <rect x="0" y="4.75" width="14" height="1.5" rx="0.75" fill="#888"/>
+    <rect x="0" y="9.5" width="14" height="1.5" rx="0.75" fill="#888"/>
+  </svg>
+</button>
+
+<!-- ── Sitemap backdrop ── -->
+<div id="sm-backdrop" onclick="smapClose()"></div>
+
+<!-- ── Sitemap panel ── -->
+<div id="sm-panel">
+  <div class="sm-label">Site Map</div>
+
+  <!-- s10: Main Dashboard (root) -->
+  <div class="sm-node sm-active" id="smn-10" onclick="smapGo(10)">
+    <div class="sm-node-left">
+      <div class="sm-spacer"></div>
+      <span class="sm-name">Main Dashboard</span>
+    </div>
+    <span class="sm-num">s10</span>
+  </div>
+
+  <!-- children of s10 -->
+  <div style="display:flex;flex-direction:column">
+
+    <!-- s11 Search — child of s10 -->
+    <div class="sm-node" id="smn-11" onclick="smapGo(11)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch;height:100%">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Search</span>
+      </div>
+      <span class="sm-num">s11</span>
+    </div>
+
+    <!-- s0 Stock Detail — child of s10 -->
+    <div class="sm-node" id="smn-0" onclick="smapGo(0)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Stock Detail</span>
+      </div>
+      <span class="sm-num">s0</span>
+    </div>
+
+    <!-- s6 Capital Decision — child of s0 -->
+    <div class="sm-node" id="smn-6" onclick="smapGo(6)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Capital Decision</span>
+      </div>
+      <span class="sm-num">s6</span>
+    </div>
+
+    <!-- s7 Select Account — child of s6 -->
+    <div class="sm-node" id="smn-7" onclick="smapGo(7)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Select Account</span>
+      </div>
+      <span class="sm-num">s7</span>
+    </div>
+
+    <!-- s8 Enter Shares — child of s7 -->
+    <div class="sm-node" id="smn-8" onclick="smapGo(8)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Enter Shares</span>
+      </div>
+      <span class="sm-num">s8</span>
+    </div>
+
+    <!-- s2 Confidence — child of s8 -->
+    <div class="sm-node" id="smn-2" onclick="smapGo(2)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Confidence</span>
+      </div>
+      <span class="sm-num">s2</span>
+    </div>
+
+    <!-- s3 Calibration Check — child of s2 -->
+    <div class="sm-node" id="smn-3" onclick="smapGo(3)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Calibration Check</span>
+      </div>
+      <span class="sm-num">s3</span>
+    </div>
+
+    <!-- s4 Review & Execute — child of s2 -->
+    <div class="sm-node" id="smn-4" onclick="smapGo(4)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Review & Execute</span>
+      </div>
+      <span class="sm-num">s4</span>
+    </div>
+
+    <!-- s9 Order Filled — child of s4 -->
+    <div class="sm-node" id="smn-9" onclick="smapGo(9)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Order Filled</span>
+      </div>
+      <span class="sm-num">s9</span>
+    </div>
+
+    <!-- s5 Calibration — child of s10 (last) -->
+    <div class="sm-node" id="smn-5" onclick="smapGo(5)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Calibration</span>
+      </div>
+      <span class="sm-num">s5</span>
+    </div>
+
+  </div><!-- /children of s10 -->
+</div>
+
 <div class="shell">
 
   <div class="island"></div>
@@ -590,57 +985,72 @@
   <!-- ══════════════════════════════════
        SCREEN 0 — STOCK PAGE
        ══════════════════════════════════ -->
-  <div class="scr on" id="s0">
+  <div class="scr" id="s0" style="padding:0;display:flex;flex-direction:column">
 
-    <!-- Top bar: back + exit -->
-    <div class="s0-topbar">
-      <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(0)">‹</button>
-      <button class="s0-exit" onclick="go(0)">Exit</button>
-    </div>
-    <hr class="div">
-
-    <!-- Open orders -->
-    <div style="margin-top:22px">
-      <span class="body-sm">Open Orders (2)</span>
-    </div>
-
-    <!-- Company + price — right aligned -->
-    <div style="text-align:right;margin-top:44px">
-      <div style="font-size:18px;font-weight:400;letter-spacing:-0.02em;color:var(--p)">Apple Inc · AAPL</div>
-      <div style="display:flex;justify-content:flex-end;align-items:baseline;gap:14px;margin-top:8px">
-        <span class="body-sm" style="color:var(--t)">Last Price</span>
-        <span class="body-sm">192.35 USD</span>
+    <!-- Top bar -->
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(10)">‹</button>
+        <button class="s0-exit" onclick="go(10)">Exit</button>
       </div>
+      <hr class="div">
     </div>
 
-    <!-- Portfolio % -->
-    <div style="margin-top:44px">
-      <span class="body-lg">12.2% of Portfolio</span>
-    </div>
+    <!-- Scrollable body -->
+    <div style="flex:1;overflow-y:auto;padding:0 16px 40px">
 
-    <!-- Description -->
-    <div style="margin-top:24px;line-height:1.55">
-      <span class="body-sm" style="color:var(--s)">Apple Inc., together with its subsidiaries, designs, manufactures and sells smartphones, personal computers, tablets, wearables and accessories...</span>
-      <span style="color:var(--p);font-size:13px;margin-left:4px">→</span>
-    </div>
+      <!-- Company + Last Price — right aligned -->
+      <div style="text-align:right;margin-top:36px">
+        <div style="font-size:18px;font-weight:400;letter-spacing:-0.02em;color:var(--p)">Apple Inc · AAPL</div>
+        <div style="display:flex;justify-content:flex-end;align-items:baseline;gap:10px;margin-top:6px">
+          <span style="font-size:13px;color:var(--t)">Last Price</span>
+          <span style="font-size:13px;color:var(--s)">192.35 USD</span>
+        </div>
+      </div>
 
-    <!-- Menu items -->
-    <div style="margin-top:32px">
-      <div class="s0-item">History</div>
-      <div class="s0-item">Market</div>
-      <div class="s0-item">Media</div>
-      <div class="s0-item">Research</div>
-      <div class="s0-item" onclick="go(5)" style="cursor:pointer">Calibration</div>
-    </div>
+      <!-- Holdings card -->
+      <div style="background:var(--surface);padding:18px 16px;margin-top:28px">
+        <!-- Market value row -->
+        <div style="margin-bottom:16px">
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">18,950.00 CAD</span>
+            <span style="font-size:15px;color:var(--p)">+42.6%</span>
+          </div>
+          <div style="font-size:12px;color:var(--t);margin-top:4px">Market Value</div>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--divider);margin:0 0 16px">
+        <!-- Portfolio weight row -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div>
+            <div style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p)">12.2%</div>
+            <div style="font-size:12px;color:var(--t);margin-top:4px">Portfolio Weight</div>
+          </div>
+          <span style="font-size:18px;color:var(--t);line-height:1">›</span>
+        </div>
+      </div>
 
-    <!-- Bottom CTA -->
-    <div style="margin-top:auto;display:flex;justify-content:flex-end;padding:24px 0 8px">
-      <button class="act-btn" onclick="go(6)">
-        <span class="act-arrow">→</span>
-        <span>Capital Decision</span>
-      </button>
-    </div>
+      <!-- Description -->
+      <div style="margin-top:32px;line-height:1.6">
+        <span style="font-size:14px;color:var(--s)">Apple Inc., together with its subsidiaries, designs, manufactures and sells smartphones, personal computers, tablets, wearables and accessories...</span>
+        <span style="color:var(--p);font-size:14px;margin-left:4px">→</span>
+      </div>
 
+      <!-- Menu items -->
+      <div style="margin-top:32px">
+        <div class="s0-item">History</div>
+        <div class="s0-item">Market</div>
+        <div class="s0-item">News</div>
+        <div class="s0-item">Research</div>
+      </div>
+
+      <!-- Bottom CTA -->
+      <div style="margin-top:auto;display:flex;justify-content:flex-end;padding-top:40px">
+        <button class="act-btn" onclick="go(6)">
+          <span>Capital Decision</span>
+        </button>
+      </div>
+
+    </div>
   </div>
 
   <!-- ══════════════════════════════════
@@ -648,12 +1058,12 @@
        ══════════════════════════════════ -->
   <div class="scr" id="s1">
     <div class="s1-top">
-      <span class="lbl">AAPL</span>
+      <span class="lbl">AAPL</span><!-- ticker stays uppercase -->
       <span class="body-sm">Current position: 420 shares · $87,234</span>
     </div>
 
     <div class="s1-mid">
-      <span class="lbl">AMOUNT</span>
+      <span class="lbl">Amount</span>
       <input class="amt-input" id="amt" type="text" inputmode="numeric"
              value="$12,000" autocomplete="off" spellcheck="false">
       <span class="body-xs" id="pct-lbl">4.2% of portfolio</span>
@@ -661,11 +1071,7 @@
 
     <div class="s1-bot">
       <hr class="div">
-      <div class="act-row">
-        <button class="act-btn" onclick="go(0)">
-          <span class="act-arrow">←</span>
-          <span>Cancel</span>
-        </button>
+      <div class="act-row" style="justify-content:flex-end">
         <button class="act-btn" onclick="go(2)">
           <span class="act-arrow">→</span>
         </button>
@@ -681,42 +1087,58 @@
 
     <!-- Stock header -->
     <div class="s2-sec" style="padding-top:18px">
-      <div class="body-sm" style="color:var(--t)">AAPL</div>
-      <div style="font-size:20px;font-weight:400;letter-spacing:-0.02em;margin-top:4px;color:var(--p)">Apple Inc.</div>
-      <div class="body-md" style="color:var(--s);margin-top:10px">AAPL will outperform the S&P 500.</div>
+      <div style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p)">Apple</div>
+      <div class="body-md" style="color:var(--s);margin-top:6px">Probability of outperforming S&P 500</div>
     </div>
 
-    <!-- Confidence slider -->
+    <!-- Confidence -->
     <div class="s2-sec">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <span class="lbl">CONFIDENCE</span>
-        <span class="lbl" id="conf-pct-lbl" style="color:var(--p)">60%</span>
+      <div style="display:flex;justify-content:center;margin-bottom:20px">
+        <div style="padding:10px 32px;text-align:center">
+          <span id="conf-pct-lbl" style="font-size:36px;font-weight:300;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">60%</span>
+          <div style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px">
+            <span style="font-size:12px;color:var(--d);font-family:var(--font);letter-spacing:-0.01em">Your current accuracy</span>
+            <span id="s2-accuracy" style="font-size:12px;font-family:var(--font);letter-spacing:-0.01em;color:var(--t)">—</span>
+          </div>
+        </div>
       </div>
       <input class="horiz-range" id="conf-range" type="range"
-             min="50" max="90" value="60" step="1"
+             min="0" max="100" value="60" step="1"
              oninput="updateConf(this.value)">
-      <div class="horiz-ends" style="margin-top:9px">
+      <div style="display:flex;justify-content:space-between;margin-top:9px">
+        <span class="body-xs">0%</span>
         <span class="body-xs">50%</span>
-        <span class="body-xs">90%</span>
+        <span class="body-xs">100%</span>
       </div>
     </div>
 
-    <!-- Judgment period -->
+    <!-- Classification -->
     <div class="s2-sec">
-      <span class="lbl">WHEN SHOULD THIS BE JUDGED?</span>
+      <span style="font-size:13px;color:var(--t)">Classification</span>
+      <div style="margin-top:8px">
+        <span class="body-md" id="conf-bucket">60–70% bucket</span>
+      </div>
+    </div>
+
+    <!-- Time Horizon -->
+    <div class="s2-sec">
+      <span style="font-size:13px;color:var(--t)">Time Horizon</span>
       <div class="period-wrap">
-        <button class="period-btn" id="period-1y"   onclick="selectPeriod('1y')">1Y</button>
-        <button class="period-btn on" id="period-2-3y" onclick="selectPeriod('2-3y')">2–3Y</button>
-        <button class="period-btn" id="period-4-5y" onclick="selectPeriod('4-5y')">4–5Y</button>
+        <button class="period-btn" id="period-1y" onclick="selectPeriod('1y')">1Y</button>
+        <button class="period-btn on" id="period-3y" onclick="selectPeriod('3y')">3Y</button>
+        <button class="period-btn" id="period-5y" onclick="selectPeriod('5y')">5Y</button>
       </div>
       <div style="margin-top:14px">
         <span class="body-sm" style="color:var(--t)">Judgment date: </span>
-        <span class="body-sm" id="judge-date">Jul 1, 2028</span>
+        <span class="body-sm" id="judge-date">Apr 1, 2029</span>
       </div>
     </div>
 
-    <div style="margin-top:auto;margin:auto -26px -36px">
-      <button onclick="goToReview()" style="width:100%;height:99px;background:#2c2c2e;border:none;color:var(--p);font-family:var(--font);font-size:16px;font-weight:400;cursor:pointer;-webkit-tap-highlight-color:transparent;letter-spacing:-0.01em;">Continue</button>
+    <!-- CTA -->
+    <div style="margin-top:auto;display:flex;justify-content:flex-end;padding:18px 0 8px">
+      <button class="act-btn" onclick="goToReview()">
+        <span class="act-arrow">→</span>
+      </button>
     </div>
   </div>
 
@@ -724,12 +1146,19 @@
        SCREEN 3 — CALIBRATION CHECK
        ══════════════════════════════════ -->
   <div class="scr" id="s3">
-    <div class="check-inner">
+    <div class="check-sheet">
+      <button class="check-close" onclick="hideCheck(null)">✕</button>
       <div class="check-h" id="ck-title">Your estimates are misaligned.</div>
-      <div class="check-b"  id="ck-body">You've historically overstated probability by 14%.</div>
+      <div class="check-b" id="ck-body">You've historically overstated probability by 14%.</div>
       <div class="check-acts" id="ck-acts">
-        <button class="btn btn-hi" onclick="go(2)">Adjust Probability</button>
-        <button class="btn btn-lo" onclick="go(4)">Proceed Anyway</button>
+        <button class="act-btn" onclick="hideCheck(null)" style="padding:10px 0;gap:8px">
+          <span style="font-size:15px;color:var(--s);line-height:1">→</span>
+          <span style="font-size:14px;color:var(--p)">Adjust Probability</span>
+        </button>
+        <button class="act-btn" onclick="hideCheck(4)" style="padding:10px 0;gap:8px">
+          <span style="font-size:15px;color:var(--s);line-height:1">→</span>
+          <span style="font-size:14px;color:var(--s)">Proceed Anyway</span>
+        </button>
       </div>
     </div>
   </div>
@@ -755,7 +1184,6 @@
         <span class="body-sm" style="color:var(--s)" id="s4-cash">500.00 CAD</span>
       </div>
     </div>
-    <hr class="div" style="flex-shrink:0">
 
     <!-- Form rows -->
     <div style="flex:1;overflow-y:auto">
@@ -763,51 +1191,44 @@
         <span class="body-md" style="color:var(--s);flex-shrink:0">Type</span>
         <span class="body-md" id="s4-type">Market Buy</span>
       </div>
-      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
         <span class="body-md" style="color:var(--s);flex-shrink:0">Estimated Portfolio Weight</span>
         <span class="body-md" id="s4-weight">12.3%</span>
       </div>
-      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
         <span class="body-md" style="color:var(--s);flex-shrink:0">Shares</span>
         <span class="body-md" id="s4-shares">25</span>
       </div>
-      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
         <span class="body-md" style="color:var(--s);flex-shrink:0">Market Price</span>
         <span class="body-md" id="s4-price">192.35 USD</span>
       </div>
-      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
         <span class="body-md" style="color:var(--s);flex-shrink:0">Estimated Exchange Rate</span>
         <span class="body-md" id="s4-rate">1.36</span>
       </div>
-      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
         <span class="body-md" style="color:var(--s);flex-shrink:0" id="s4-cost-lbl">Estimated Cost</span>
         <span class="body-md" id="s4-cost">421.57 CAD</span>
       </div>
-      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
-        <span class="body-md" style="color:var(--s);flex-shrink:0">Prediction Confidence</span>
+        <span class="body-md" style="color:var(--s);flex-shrink:0">Confidence Level</span>
         <span class="body-md" id="s4-conf">60%</span>
       </div>
-      <hr style="border:none;border-top:1px solid var(--divider);margin:0 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
-        <span class="body-md" style="color:var(--s);flex-shrink:0">To be judged by</span>
+        <span class="body-md" style="color:var(--s);flex-shrink:0">Time Horizon</span>
         <span class="body-md" id="s4-judgment">Jul 1, 2028</span>
       </div>
     </div>
 
-    <!-- Bottom action bar -->
-    <div style="flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:16px 14px 40px">
-      <button class="act-btn" onclick="go(0)" style="gap:7px">
-        <span style="font-size:15px;line-height:1">→</span><span>Cancel</span>
-      </button>
-      <button class="act-btn" onclick="execOrder()" style="gap:7px">
-        <span style="font-size:15px;line-height:1">→</span><span id="s4-exec-lbl">Execute Buy</span>
-      </button>
+    <!-- Hold-to-execute button -->
+    <div style="flex-shrink:0;position:relative;overflow:hidden;height:88px;background:#2c2c2e;user-select:none;-webkit-user-select:none;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center"
+         onmousedown="holdExecStart(event)" onmouseup="holdExecCancel()" onmouseleave="holdExecCancel()"
+         ontouchstart="holdExecStart(event)" ontouchend="holdExecCancel()" ontouchcancel="holdExecCancel()">
+      <!-- Progress fill -->
+      <div id="s4-exec-fill" style="position:absolute;top:0;left:0;height:100%;width:0%;background:rgba(255,255,255,0.08);pointer-events:none"></div>
+      <!-- Label -->
+      <span id="s4-exec-lbl" style="position:relative;z-index:1;font-size:15px;font-weight:400;color:var(--p);font-family:var(--font);letter-spacing:-0.01em;pointer-events:none">Execute Buy</span>
     </div>
   </div>
 
@@ -816,13 +1237,20 @@
        ══════════════════════════════════ -->
   <div class="scr" id="s5">
     <div class="dash-hdr" style="display:flex;justify-content:space-between;align-items:center">
-      <button class="back-btn" style="padding:0;font-size:20px" onclick="go(0)">←</button>
-      <span class="lbl" style="letter-spacing:0.16em">INTELLIGENT INVESTING</span>
+      <button class="back-btn" style="padding:0;font-size:20px" onclick="go(10)">←</button>
     </div>
     <hr class="div">
 
     <div class="hero">
-      <span class="lbl">YOUR CALIBRATION</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="lbl">Calibration</span>
+        <button class="cal-info-btn" onclick="showCalInfo()" aria-label="About this page">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="margin-top:-1px">
+            <circle cx="6.5" cy="6.5" r="6" stroke="#565B5E" stroke-width="1"/>
+            <text x="6.5" y="10" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#565B5E" font-weight="500">i</text>
+          </svg>
+        </button>
+      </div>
       <div class="hero-n" id="hero-n">54%</div>
       <div class="body-sm">You estimate 71%.</div>
     </div>
@@ -830,7 +1258,7 @@
 
     <div class="chart-area">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-        <span class="lbl">PREDICTED vs ACTUAL</span>
+        <span class="lbl">Predicted vs actual</span>
         <span class="body-xs" style="color:var(--d)">Tap a circle to inspect</span>
       </div>
       <!-- axis legend row -->
@@ -865,15 +1293,15 @@
 
     <div class="metrics">
       <div class="met">
-        <span class="lbl">AVG CONF.</span>
+        <span class="lbl">Avg conf.</span>
         <span class="nlg met-v" id="mv1">71%</span>
       </div>
       <div class="met" style="align-items:center">
-        <span class="lbl">ACTUAL ACC.</span>
+        <span class="lbl">Actual acc.</span>
         <span class="nlg met-v" id="mv2">54%</span>
       </div>
       <div class="met" style="align-items:flex-end">
-        <span class="lbl">GAP</span>
+        <span class="lbl">Gap</span>
         <span class="nlg met-v" id="mv3" style="color:var(--neg)">−17%</span>
       </div>
     </div>
@@ -885,7 +1313,7 @@
     <hr class="div">
 
     <div class="exec-area">
-      <span class="lbl">EXECUTION vs JUDGMENT</span>
+      <span class="lbl">Execution vs judgment</span>
       <div style="margin-top:8px">
         <div class="drow">
           <span class="body-md" style="color:var(--s);max-width:68%">You exited early on correct positions</span>
@@ -927,10 +1355,7 @@
     </div>
 
     <div style="margin-top:auto">
-      <div class="act-row">
-        <button class="act-btn" onclick="go(0)">
-          <span class="act-arrow">←</span><span>Cancel</span>
-        </button>
+      <div class="act-row" style="justify-content:flex-end">
         <button class="act-btn" onclick="goToAcct()">
           <span class="act-arrow">→</span>
         </button>
@@ -959,10 +1384,7 @@
     <div id="acct-list"></div>
 
     <div style="margin-top:auto">
-      <div class="act-row">
-        <button class="act-btn" onclick="go(0)">
-          <span class="act-arrow">←</span><span>Cancel</span>
-        </button>
+      <div class="act-row" style="justify-content:flex-end">
         <button class="act-btn" onclick="goToShares()">
           <span class="act-arrow">→</span>
         </button>
@@ -1020,10 +1442,7 @@
     <div style="flex:1"></div>
 
     <!-- Action bar -->
-    <div class="act-row" style="flex-shrink:0;padding:0 26px 12px">
-      <button class="act-btn" onclick="go(0)">
-        <span class="act-arrow">←</span><span>Cancel</span>
-      </button>
+    <div class="act-row" style="flex-shrink:0;padding:0 26px 12px;justify-content:flex-end">
       <button class="act-btn" id="s8-review-btn" onclick="go(2)" disabled style="opacity:0.3">
         <span>→ Review</span>
       </button>
@@ -1062,29 +1481,37 @@
 
     <!-- Form rows -->
     <div style="flex:1;overflow-y:auto;padding:0 16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--divider)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
         <span class="body-md" style="color:var(--s)">Type</span>
         <span class="body-md" id="s9-type">Market Buy</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--divider)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
         <span class="body-md" style="color:var(--s)">Portfolio Weight</span>
         <span class="body-md" id="s9-weight">12.3%</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--divider)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
         <span class="body-md" style="color:var(--s)">Shares</span>
         <span class="body-md" id="s9-shares">25</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--divider)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
         <span class="body-md" style="color:var(--s)">Market Price</span>
         <span class="body-md" id="s9-price">192.35 USD</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid var(--divider)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
         <span class="body-md" style="color:var(--s)">Exchange Rate</span>
         <span class="body-md" id="s9-rate">1.36</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
         <span class="body-md" style="color:var(--s)">Total Cost</span>
         <span class="body-md" id="s9-cost">6,716.67 CAD</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
+        <span class="body-md" style="color:var(--s)">Confidence Level</span>
+        <span class="body-md" id="s9-conf">60%</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
+        <span class="body-md" style="color:var(--s)">Time Horizon</span>
+        <span class="body-md" id="s9-horizon">3Y · Apr 1, 2029</span>
       </div>
     </div>
 
@@ -1105,7 +1532,252 @@
 
   </div>
 
+  <!-- ══════════════════════════════════
+       SCREEN 10 — UNIFIED MAIN DASHBOARD
+       ══════════════════════════════════ -->
+  <div class="scr on" id="s10" style="padding:0;display:flex;flex-direction:column">
+
+    <!-- Header — 71px total (matches Figma) -->
+    <div style="flex-shrink:0;padding:57px 13.5px 0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:14px">
+        <span style="font-size:20px;font-weight:700;letter-spacing:-0.04em;color:#fff;line-height:1">//</span>
+        <div style="display:flex;align-items:center;gap:22px">
+          <button onclick="go(11)" style="background:none;border:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center">
+            <svg width="17" height="17" viewBox="0 0 22 22" fill="none">
+              <circle cx="9" cy="9" r="6" stroke="white" stroke-width="1.5"/>
+              <line x1="13.5" y1="13.5" x2="19" y2="19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button style="background:none;border:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center">
+            <svg width="17" height="13" viewBox="0 0 17 13" fill="none">
+              <line x1="0" y1="1"   x2="17" y2="1"   stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="0" y1="6.5" x2="17" y2="6.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="0" y1="12"  x2="17" y2="12"  stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scrollable body — no scrollbar -->
+    <div style="flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;padding:0 13.5px 60px">
+
+      <!-- ── TOTAL VALUE ── -->
+      <!-- top: 141px in Figma; header=71px so gap=70px -->
+      <div style="padding-top:70px;padding-bottom:78px;text-align:right">
+        <div style="font-size:13px;color:#929292;letter-spacing:-0.22px;line-height:16.25px;margin-bottom:8px">Total Value</div>
+        <div style="font-size:28px;font-weight:400;letter-spacing:-0.56px;line-height:normal;font-variant-numeric:tabular-nums;color:#fff">
+          173,249.00 <span style="color:#565b5e">CAD</span>
+        </div>
+      </div>
+
+      <!-- divider -->
+      <div style="height:1px;background:#1c1c1c"></div>
+
+      <!-- ── CORE / MANAGED ── -->
+      <div style="padding-top:30px;padding-bottom:76px">
+
+        <!-- Section title -->
+        <div style="margin-bottom:50px">
+          <div style="font-size:18px;font-weight:400;letter-spacing:-0.36px;line-height:20.7px;color:#c7c7c7">Core</div>
+          <div style="font-size:15px;font-weight:400;letter-spacing:-0.3px;line-height:18px;color:#565b5e;margin-top:10px">Managed</div>
+        </div>
+
+        <!-- Data column: right-aligned, gap 50px between groups -->
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:50px">
+
+          <!-- Value -->
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;width:100%">
+            <div style="font-size:13px;color:#929292;letter-spacing:-0.22px;line-height:16.25px">Value</div>
+            <div style="font-size:22px;font-weight:400;letter-spacing:-0.44px;line-height:normal;color:#fff;font-variant-numeric:tabular-nums">126,471.77</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">All time</span>
+              <div style="display:flex;align-items:center;gap:4px">
+                <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">+6,365.65</span>
+                <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">(+5.3%)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Projection -->
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;width:100%">
+            <div style="font-size:13px;color:#929292;letter-spacing:-0.22px;line-height:16.25px">Projection</div>
+            <div style="font-size:15px;font-weight:400;letter-spacing:-0.3px;line-height:normal;color:#c7c7c7">1.68M</div>
+          </div>
+
+          <!-- Allocation breakdown -->
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">Equity (S&amp;P 500)</span>
+              <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">50%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">Fixed Income</span>
+              <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">25%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">Money Market</span>
+              <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">25%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- divider -->
+      <div style="height:1px;background:#1c1c1c"></div>
+
+      <!-- ── ACTIVE / SELF-DIRECTED ── -->
+      <div style="padding-top:30px;padding-bottom:60px">
+
+        <!-- Header: Active (left) + RRSP ▾ (right) -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:50px">
+          <div>
+            <div style="font-size:18px;font-weight:400;letter-spacing:-0.36px;line-height:20.7px;color:#c7c7c7">Active</div>
+            <div style="font-size:15px;font-weight:400;letter-spacing:-0.3px;line-height:18px;color:#565b5e;margin-top:10px">Self-Directed</div>
+          </div>
+          <button style="background:none;border:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:5px;margin-top:2px">
+            <span style="font-size:15px;font-weight:400;letter-spacing:-0.3px;color:#c7c7c7">RRSP</span>
+            <svg width="7" height="4" viewBox="0 0 7 4" fill="none">
+              <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#929292" stroke-width="1" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Data column: right-aligned, gap 53px between groups -->
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:53px">
+
+          <!-- Value -->
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;width:100%">
+            <div style="font-size:13px;color:#929292;letter-spacing:-0.22px;line-height:16.25px">Value</div>
+            <div style="font-size:22px;font-weight:400;letter-spacing:-0.44px;line-height:normal;color:#fff;font-variant-numeric:tabular-nums">46,777.23</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">All time</span>
+              <div style="display:flex;align-items:center;gap:4px">
+                <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">+2,353.46</span>
+                <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">(+5.3%)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cash -->
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+            <div style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">Cash (10%)</div>
+            <div style="font-size:15px;font-weight:400;letter-spacing:-0.3px;line-height:normal;color:#c7c7c7">4,677.72</div>
+          </div>
+
+          <!-- Calibration -->
+          <div onclick="go(5)" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent">
+            <div style="font-size:15px;color:#c7c7c7;letter-spacing:-0.3px;line-height:17.25px">Calibration</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">Accuracy</span>
+              <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">54%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">Predictions</span>
+              <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">17</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">Next judgment</span>
+              <span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal">Apr 1, 2027</span>
+            </div>
+          </div>
+
+          <!-- Active Positions — single right-aligned span + table -->
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;width:100%">
+            <div style="font-size:15px;color:#c7c7c7;letter-spacing:-0.3px;line-height:17.25px;white-space:pre;text-align:right">Active Positions   9</div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;width:100%">
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#929292;letter-spacing:-0.26px">ORIO.TO</span><span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px">25%</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#929292;letter-spacing:-0.26px">BWEN</span><span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px">20%</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#929292;letter-spacing:-0.26px">EOSCR</span><span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px">15%</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#929292;letter-spacing:-0.26px">NVDA</span><span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px">12%</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#929292;letter-spacing:-0.26px">AMD</span><span style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px">8%</span></div>
+            </div>
+            <div style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal;cursor:pointer">View All</div>
+          </div>
+
+          <!-- Under Review — single right-aligned span + tickers -->
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;width:100%">
+            <div style="font-size:15px;color:#c7c7c7;letter-spacing:-0.3px;line-height:17.25px;white-space:pre;text-align:right">Under Review   5</div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+              <div style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">ORIO.TO</div>
+              <div style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">BWEN</div>
+              <div style="font-size:13px;color:#929292;letter-spacing:-0.26px;line-height:normal">EOSCR</div>
+            </div>
+            <div style="font-size:13px;color:#c7c7c7;letter-spacing:-0.26px;line-height:normal;cursor:pointer">View All</div>
+          </div>
+
+          <!-- Open Orders — right-aligned flex, both items same style -->
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px">
+            <span style="font-size:15px;color:#c7c7c7;letter-spacing:-0.3px;line-height:17.25px">Open Orders</span>
+            <span style="font-size:15px;color:#c7c7c7;letter-spacing:-0.3px;line-height:17.25px">2</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 11 — SEARCH
+       ══════════════════════════════════ -->
+  <div class="scr" id="s11" style="padding:0;display:flex;flex-direction:column">
+
+    <!-- Search bar -->
+    <div style="padding:56px 16px 0;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0 8px">
+        <div style="flex:1;display:flex;align-items:center;gap:8px;background:#1c1c1e;padding:9px 12px">
+          <svg width="16" height="16" viewBox="0 0 22 22" fill="none" style="flex-shrink:0">
+            <circle cx="9" cy="9" r="6" stroke="#929292" stroke-width="1.6"/>
+            <line x1="13.5" y1="13.5" x2="19" y2="19" stroke="#929292" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <input id="s11-input" type="text" placeholder="Search stocks…"
+                 oninput="renderSearch(this.value)"
+                 autocomplete="off" autocorrect="off" spellcheck="false"
+                 style="background:none;border:none;outline:none;color:var(--p);font-family:var(--font);font-size:15px;flex:1;caret-color:var(--p);min-width:0">
+        </div>
+        <button onclick="clearSearch();go(10)" style="background:none;border:none;color:var(--s);font-family:var(--font);font-size:15px;cursor:pointer;padding:4px 0;white-space:nowrap;-webkit-tap-highlight-color:transparent">Cancel</button>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--divider);margin:0">
+    </div>
+
+    <!-- Results area -->
+    <div id="s11-results" style="flex:1;overflow-y:auto;padding:0 16px">
+      <!-- Populated by renderSearch() -->
+    </div>
+
+  </div>
+
   <!-- Dot info overlay + panel -->
+  <!-- Calibration info modal -->
+  <div id="cal-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:15px;font-weight:500;color:var(--p);font-family:var(--font);letter-spacing:-0.02em">About this page</span>
+      <button class="cal-modal-close" onclick="hideCalInfo()">×</button>
+    </div>
+
+    <div class="cal-block">
+      <span class="cal-block-label">How to read this chart</span>
+      <span class="cal-block-body">Each circle represents a prediction recorded before a trade was placed. Stated confidence is plotted on the X axis. Actual outcome — whether the stock outperformed the market — is on the Y axis.</span>
+    </div>
+
+    <div class="cal-block">
+      <span class="cal-block-label">The dashed diagonal</span>
+      <span class="cal-block-body">The diagonal represents perfect calibration. When predictions cluster on this line, stated confidence consistently matches real-world accuracy — a 70% prediction resolves correctly 70% of the time.</span>
+    </div>
+
+    <div class="cal-block">
+      <span class="cal-block-label">Overconfident vs underconfident</span>
+      <span class="cal-block-body">Circles below the line indicate overconfidence — predictions that resolved less accurately than stated. Above the line indicates underconfidence. Most investors trend below.</span>
+    </div>
+
+    <div class="cal-block">
+      <span class="cal-block-label">Why it matters</span>
+      <span class="cal-block-body">Calibration data enables more precise position sizing — allocating capital based on demonstrated edge rather than perceived conviction.</span>
+    </div>
+  </div>
+
   <div class="dot-overlay" id="dot-overlay" onclick="hideDotInfo()"></div>
   <div class="dot-info" id="dot-info">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
@@ -1114,11 +1786,11 @@
     </div>
     <div style="display:flex;gap:36px;margin-bottom:20px">
       <div class="di-stat">
-        <span class="lbl">YOUR CONFIDENCE</span>
+        <span class="lbl">Your confidence</span>
         <span class="di-num" id="di-conf">65%</span>
       </div>
       <div class="di-stat">
-        <span class="lbl">OUTCOME</span>
+        <span class="lbl">Outcome</span>
         <span class="body-lg" id="di-outcome" style="color:var(--s)">Underperformed</span>
         <span class="body-xs" id="di-vs" style="margin-top:3px">−2.1% vs S&P 500</span>
       </div>
@@ -1131,7 +1803,7 @@
 
 <script>
   /* ── State ─────────────────────────────────────── */
-  let cur      = 0;
+  let cur      = 10;
   let confIdx  = 3;        // default: index 3 → 70%
   let horizYrs = 1;        // default: 1 year
   const STOPS  = [55, 60, 65, 70, 75, 80];
@@ -1259,10 +1931,39 @@
     requestAnimationFrame(() => next.classList.add('on'));
     cur = n;
     updateNav(n);
-    if (n === 5) animDash();
+    if (n === 2)  updateS2Accuracy();
+    if (n === 5)  animDash();
+    if (n === 11) {
+      renderSearch('');
+      setTimeout(() => {
+        const inp = document.getElementById('s11-input');
+        if (inp) { inp.value = ''; inp.focus(); }
+      }, 240);
+    }
   }
 
-  function updateNav(n) { /* nav dots removed */ }
+  function updateNav(n) { /* nav dots removed */ smapUpdateActive(n); }
+
+  /* ── Sitemap panel ──────────────────────────────── */
+  function smapToggle() {
+    const p = document.getElementById('sm-panel');
+    const b = document.getElementById('sm-backdrop');
+    const open = p.classList.toggle('open');
+    b.classList.toggle('open', open);
+  }
+  function smapClose() {
+    document.getElementById('sm-panel').classList.remove('open');
+    document.getElementById('sm-backdrop').classList.remove('open');
+  }
+  function smapGo(n) {
+    smapClose();
+    go(n);
+  }
+  function smapUpdateActive(n) {
+    document.querySelectorAll('.sm-node').forEach(el => el.classList.remove('sm-active'));
+    const node = document.getElementById('smn-' + n);
+    if (node) node.classList.add('sm-active');
+  }
 
   /* ── Confirm animation ──────────────────────────── */
   function animConfirm() {
@@ -1276,11 +1977,31 @@
 
   /* ── Dashboard animation ────────────────────────── */
   function animDash() {
+    // Absorb any pending new dot into history
+    if (_pendingNewDot) {
+      DOT_DATA.push(_pendingNewDot);
+      _pendingNewDot = null;
+    }
+
+    // Compute metrics dynamically from current DOT_DATA
+    const avgConf   = Math.round(DOT_DATA.reduce((s,d) => s + d.pred, 0) / DOT_DATA.length);
+    const actualAcc = Math.round(DOT_DATA.reduce((s,d) => s + d.act,  0) / DOT_DATA.length);
+    const gap       = actualAcc - avgConf;
+
+    // Update hero
     const hn = document.getElementById('hero-n');
+    hn.textContent = actualAcc + '%';
     hn.classList.remove('in');
     void hn.offsetWidth;
     setTimeout(() => hn.classList.add('in'), 80);
+    document.querySelector('#s5 .hero .body-sm').textContent = 'You estimate ' + avgConf + '%.';
 
+    // Update metric tiles
+    document.getElementById('mv1').textContent = avgConf + '%';
+    document.getElementById('mv2').textContent = actualAcc + '%';
+    const gapEl = document.getElementById('mv3');
+    gapEl.textContent = (gap >= 0 ? '+' : '−') + Math.abs(gap) + '%';
+    gapEl.style.color = gap >= 0 ? 'var(--p)' : 'var(--neg)';
     ['mv1','mv2','mv3'].forEach((id, i) => {
       const el = document.getElementById(id);
       el.classList.remove('in');
@@ -1293,26 +2014,23 @@
 
   /* ── Chart dots ─────────────────────────────────── */
   let _selDot = null;
+  let _pendingNewDot = null;
 
-  /* Scattered: ~4 above diagonal, ~2 near, ~11 below — net overconfident */
-  const DOT_DATA = [
-    { pred:55, act:63, ticker:'AMZN', date:'Oct 2023', outcome:'Outperformed',   vs:'+4.8% vs S&P' },  // above
-    { pred:58, act:50, ticker:'TSLA', date:'Nov 2023', outcome:'Underperformed', vs:'−4.7% vs S&P' },  // below
-    { pred:60, act:68, ticker:'NVDA', date:'Dec 2023', outcome:'Outperformed',   vs:'+11.2% vs S&P' }, // well above
-    { pred:62, act:53, ticker:'META', date:'Jan 2024', outcome:'Underperformed', vs:'−2.9% vs S&P' },  // below
-    { pred:65, act:51, ticker:'NFLX', date:'Feb 2024', outcome:'Underperformed', vs:'−6.1% vs S&P' },  // well below
-    { pred:65, act:66, ticker:'MSFT', date:'Mar 2024', outcome:'Outperformed',   vs:'+1.3% vs S&P' },  // just above
-    { pred:68, act:55, ticker:'JPM',  date:'Apr 2024', outcome:'Underperformed', vs:'−4.2% vs S&P' },  // below
-    { pred:70, act:50, ticker:'AAPL', date:'May 2024', outcome:'Underperformed', vs:'−9.3% vs S&P' },  // well below
-    { pred:70, act:74, ticker:'AMD',  date:'Jun 2024', outcome:'Outperformed',   vs:'+5.8% vs S&P' },  // above
-    { pred:72, act:57, ticker:'DIS',  date:'Jul 2024', outcome:'Underperformed', vs:'−5.4% vs S&P' },  // below
-    { pred:73, act:54, ticker:'CRM',  date:'Aug 2024', outcome:'Underperformed', vs:'−7.1% vs S&P' },  // below
-    { pred:75, act:60, ticker:'UBER', date:'Sep 2024', outcome:'Underperformed', vs:'−6.8% vs S&P' },  // below
-    { pred:75, act:79, ticker:'PLTR', date:'Oct 2024', outcome:'Outperformed',   vs:'+9.4% vs S&P' },  // well above
-    { pred:77, act:58, ticker:'COIN', date:'Nov 2024', outcome:'Underperformed', vs:'−5.2% vs S&P' },  // below
-    { pred:79, act:61, ticker:'INTC', date:'Dec 2024', outcome:'Underperformed', vs:'−8.1% vs S&P' },  // below
-    { pred:80, act:63, ticker:'BABA', date:'Jan 2025', outcome:'Underperformed', vs:'−4.9% vs S&P' },  // below
-    { pred:80, act:70, ticker:'GOOGL',date:'Feb 2025', outcome:'Underperformed', vs:'−1.8% vs S&P' },  // below, closer
+  /* Start with just 2 historical predictions */
+  let DOT_DATA = [
+    { pred:68, act:74, ticker:'MSFT', date:'Jan 2025', outcome:'Outperformed',   vs:'+3.2% vs S&P', isNew:false },
+    { pred:75, act:52, ticker:'TSLA', date:'Mar 2025', outcome:'Underperformed', vs:'−8.4% vs S&P', isNew:false },
+  ];
+
+  /* Ghost dots — preview positions, always rendered first */
+  const GHOST_DOTS = [
+    { pred:53, act:56 },
+    { pred:58, act:51 },
+    { pred:62, act:71 },
+    { pred:66, act:57 },
+    { pred:70, act:63 },
+    { pred:74, act:73 },
+    { pred:78, act:59 },
   ];
 
   function buildDots() {
@@ -1323,52 +2041,118 @@
     const xp = p => 28 + ((p - 50) / 30) * 290;
     const yp = p => 180 - ((p - 50) / 30) * 176;
 
+    /* Render ghost dots first (hidden until info modal opens) */
+    GHOST_DOTS.forEach(d => {
+      const ghost = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      ghost.setAttribute('cx', xp(d.pred).toFixed(1));
+      ghost.setAttribute('cy', yp(d.act).toFixed(1));
+      ghost.setAttribute('r', '5');
+      ghost.setAttribute('fill', 'none');
+      ghost.setAttribute('stroke', '#FFFFFF');
+      ghost.setAttribute('stroke-width', '1.5');
+      ghost.setAttribute('stroke-dasharray', '2.5 2.5');
+      ghost.setAttribute('class', 'ghost-dot');
+      ghost.style.opacity = '0';
+      ghost.style.transition = 'opacity 250ms var(--ease)';
+      ghost.style.pointerEvents = 'none';
+      g.appendChild(ghost);
+    });
+
     DOT_DATA.forEach((d, i) => {
       const cx = xp(d.pred).toFixed(1);
       const cy = yp(d.act).toFixed(1);
+      const delay = i * 55 + 360;
 
-      /* Visible circle */
-      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      c.setAttribute('cx', cx);
-      c.setAttribute('cy', cy);
-      c.setAttribute('r', '5');
-      c.setAttribute('fill', 'none');
-      c.setAttribute('stroke', '#FFFFFF');
-      c.setAttribute('stroke-width', '1.5');
-      c.style.opacity    = '0';
-      c.style.transition = `opacity 180ms var(--ease) ${i * 38 + 360}ms, fill 150ms, r 150ms`;
-      c.style.cursor     = 'pointer';
-      g.appendChild(c);
+      if (d.isNew) {
+        /* ── Pulse ring behind the new dot ── */
+        const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        pulse.setAttribute('cx', cx);
+        pulse.setAttribute('cy', cy);
+        pulse.setAttribute('r', '6');
+        pulse.setAttribute('fill', 'none');
+        pulse.setAttribute('stroke', '#FFFFFF');
+        pulse.setAttribute('stroke-width', '1');
+        pulse.className.baseVal = 'dot-new-pulse';
+        pulse.style.opacity = '0';
+        pulse.style.transition = `opacity 200ms ease ${delay + 80}ms`;
+        g.appendChild(pulse);
 
-      /* Large invisible hit area for easy tapping */
-      const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      hit.setAttribute('cx', cx);
-      hit.setAttribute('cy', cy);
-      hit.setAttribute('r', '14');
-      hit.setAttribute('fill', 'transparent');
-      hit.style.cursor = 'pointer';
-      g.appendChild(hit);
+        /* ── White outline core dot (same style as regular, but blinks) ── */
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', cx);
+        c.setAttribute('cy', cy);
+        c.setAttribute('r', '5');
+        c.setAttribute('fill', 'none');
+        c.setAttribute('stroke', '#FFFFFF');
+        c.setAttribute('stroke-width', '1.5');
+        c.className.baseVal = 'dot-new-core';
+        c.style.opacity = '0';
+        c.style.transition = `opacity 200ms ease ${delay}ms`;
+        c.style.cursor = 'pointer';
+        g.appendChild(c);
 
-      const tap = () => {
-        if (_selDot) {
-          _selDot.setAttribute('fill', 'none');
-          _selDot.setAttribute('r', '5');
-        }
-        c.setAttribute('fill', 'rgba(255,255,255,0.18)');
-        c.setAttribute('r', '6');
-        _selDot = c;
-        showDotInfo(d);
-      };
-      hit.addEventListener('click', tap);
-      hit.addEventListener('touchend', e => { e.preventDefault(); tap(); });
-      c.addEventListener('click', tap);
+        /* Hit area */
+        const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        hit.setAttribute('cx', cx); hit.setAttribute('cy', cy);
+        hit.setAttribute('r', '14'); hit.setAttribute('fill', 'transparent');
+        hit.style.cursor = 'pointer';
+        g.appendChild(hit);
 
-      requestAnimationFrame(() => requestAnimationFrame(() => { c.style.opacity = '1'; }));
+        const tap = () => showDotInfo(d);
+        hit.addEventListener('click', tap);
+        hit.addEventListener('touchend', e => { e.preventDefault(); tap(); });
+        c.addEventListener('click', tap);
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          c.style.opacity = '1';
+          pulse.style.opacity = '1';
+          // After 3 blinks, stop animation — dot is now a regular white circle
+          setTimeout(() => {
+            d.isNew = false;
+            c.className.baseVal = '';
+            pulse.style.transition = 'opacity 400ms ease';
+            pulse.style.opacity = '0';
+            setTimeout(() => g.contains(pulse) && g.removeChild(pulse), 450);
+          }, delay + 1000 * 3 + 200);
+        }));
+
+      } else {
+        /* ── Standard historical dot ── */
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', cx); c.setAttribute('cy', cy);
+        c.setAttribute('r', '5');
+        c.setAttribute('fill', 'none');
+        c.setAttribute('stroke', '#FFFFFF');
+        c.setAttribute('stroke-width', '1.5');
+        c.style.opacity    = '0';
+        c.style.transition = `opacity 180ms var(--ease) ${delay}ms, fill 150ms`;
+        c.style.cursor     = 'pointer';
+        g.appendChild(c);
+
+        const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        hit.setAttribute('cx', cx); hit.setAttribute('cy', cy);
+        hit.setAttribute('r', '14'); hit.setAttribute('fill', 'transparent');
+        hit.style.cursor = 'pointer';
+        g.appendChild(hit);
+
+        const tap = () => {
+          if (_selDot) { _selDot.setAttribute('fill', 'none'); _selDot.setAttribute('r', '5'); }
+          c.setAttribute('fill', 'rgba(255,255,255,0.18)');
+          c.setAttribute('r', '6');
+          _selDot = c;
+          showDotInfo(d);
+        };
+        hit.addEventListener('click', tap);
+        hit.addEventListener('touchend', e => { e.preventDefault(); tap(); });
+        c.addEventListener('click', tap);
+
+        requestAnimationFrame(() => requestAnimationFrame(() => { c.style.opacity = '1'; }));
+      }
     });
   }
 
   function showDotInfo(d) {
-    document.getElementById('di-ticker').textContent  = d.ticker + ' · ' + d.date.toUpperCase();
+    document.getElementById('di-ticker').textContent  = d.ticker + ' · ' + d.date;
     document.getElementById('di-conf').textContent    = d.pred + '%';
     document.getElementById('di-outcome').textContent = d.outcome;
     document.getElementById('di-vs').textContent      = d.vs;
@@ -1376,6 +2160,18 @@
       `At ${d.pred}% confidence, your historical accuracy is ${d.act}%.`;
     document.getElementById('dot-overlay').classList.add('show');
     document.getElementById('dot-info').classList.add('show');
+  }
+
+  /* ── Calibration info modal ─────────────────────── */
+  function showCalInfo() {
+    document.getElementById('cal-modal').classList.add('show');
+    document.querySelectorAll('.ghost-dot').forEach(el => el.style.opacity = '0.5');
+    // Scroll s5 so the chart sits fully in the upper half above the modal
+    document.getElementById('s5').scrollTo({ top: 80, behavior: 'smooth' });
+  }
+  function hideCalInfo() {
+    document.getElementById('cal-modal').classList.remove('show');
+    document.querySelectorAll('.ghost-dot').forEach(el => el.style.opacity = '0');
   }
 
   function hideDotInfo() {
@@ -1390,25 +2186,49 @@
 
   /* ── Confidence & Judgment (s2) ─────────────────── */
   let confPct    = 60;
-  let judgePeriod = '2-3y';
+  let judgePeriod = '3y';
   const JUDGE_DATES = {
-    '1y':   'Apr 1, 2027',
-    '2-3y': 'Jul 1, 2028',
-    '4-5y': 'Oct 1, 2030'
+    '1y': 'Apr 1, 2027',
+    '3y': 'Apr 1, 2029',
+    '5y': 'Apr 1, 2031'
   };
+
+  function getConfBucket(pct) {
+    if (pct === 100) return '100%';
+    const lo = Math.floor(pct / 10) * 10;
+    return lo + '–' + (lo + 10) + '% bucket';
+  }
+
+  function getUserAccuracy() {
+    if (!DOT_DATA || DOT_DATA.length === 0) return null;
+    return Math.round(DOT_DATA.reduce((s, d) => s + d.act, 0) / DOT_DATA.length);
+  }
+
+  function updateS2Accuracy() {
+    const acc = getUserAccuracy();
+    const el  = document.getElementById('s2-accuracy');
+    if (!el) return;
+    if (acc === null) { el.textContent = '—'; el.style.color = 'var(--t)'; return; }
+    const gap = Math.abs(confPct - acc);
+    el.textContent = acc + '%';
+    el.style.color = gap > 15 ? 'var(--neg)' : 'var(--t)';
+  }
 
   function updateConf(val) {
     confPct = parseInt(val, 10);
     document.getElementById('conf-pct-lbl').textContent = confPct + '%';
-    const pct = ((confPct - 50) / 40 * 100).toFixed(2);
+    const pct = confPct.toFixed(2);
     const el = document.getElementById('conf-range');
     el.style.background =
       `linear-gradient(to right, var(--p) ${pct}%, var(--divider) ${pct}%)`;
+    const bucket = document.getElementById('conf-bucket');
+    if (bucket) bucket.textContent = getConfBucket(confPct);
+    updateS2Accuracy();
   }
 
   function selectPeriod(p) {
     judgePeriod = p;
-    ['1y','2-3y','4-5y'].forEach(id => {
+    ['1y','3y','5y'].forEach(id => {
       document.getElementById('period-' + id).classList.toggle('on', id === p);
     });
     document.getElementById('judge-date').textContent = JUDGE_DATES[p];
@@ -1436,8 +2256,29 @@
       : '—';
     document.getElementById('s4-exec-lbl').textContent  = 'Execute ' + action;
     document.getElementById('s4-conf').textContent      = confPct + '%';
-    document.getElementById('s4-judgment').textContent  = JUDGE_DATES[judgePeriod];
-    go(4);
+    document.getElementById('s4-judgment').textContent  = judgePeriod.toUpperCase() + ' · ' + JUDGE_DATES[judgePeriod];
+
+    // Only trigger calibration warning if confidence is misaligned by > 15%
+    const acc = getUserAccuracy();
+    if (acc !== null && Math.abs(confPct - acc) > 15) {
+      showCheck();
+    } else {
+      go(4);
+    }
+  }
+
+  function showCheck() {
+    // Overlay s3 on top of the current screen without hiding it
+    const el = document.getElementById('s3');
+    el.scrollTop = 0;
+    requestAnimationFrame(() => el.classList.add('on'));
+  }
+
+  function hideCheck(target) {
+    // Remove the overlay
+    document.getElementById('s3').classList.remove('on');
+    // Navigate after the fade-out
+    if (target !== null) setTimeout(() => go(target), 60);
   }
 
   /* ── Capital Decision / Account / Shares ────────── */
@@ -1526,6 +2367,28 @@
     }
   }
 
+  /* ── Hold-to-execute ───────────────────────────── */
+  const HOLD_MS = 2500;
+  let _holdTimer = null;
+
+  function holdExecStart(e) {
+    e.preventDefault();
+    const fill = document.getElementById('s4-exec-fill');
+    fill.style.transition = `width ${HOLD_MS}ms linear`;
+    fill.style.width = '100%';
+    _holdTimer = setTimeout(() => {
+      holdExecCancel();
+      execOrder();
+    }, HOLD_MS);
+  }
+
+  function holdExecCancel() {
+    if (_holdTimer) { clearTimeout(_holdTimer); _holdTimer = null; }
+    const fill = document.getElementById('s4-exec-fill');
+    fill.style.transition = 'width 280ms ease-out';
+    fill.style.width = '0%';
+  }
+
   /* ── Execute order → Order Filled (s9) ─────────── */
   const EXCHRATE = 1.36;
 
@@ -1545,6 +2408,20 @@
     document.getElementById('s9-cost').textContent   = n
       ? totalCAD.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' CAD'
       : '—';
+    document.getElementById('s9-conf').textContent    = confPct + '%';
+    document.getElementById('s9-horizon').textContent = judgePeriod.toUpperCase() + ' · ' + JUDGE_DATES[judgePeriod];
+
+    // Queue new dot for calibration chart — simulated act ≈ 87% of stated confidence
+    _pendingNewDot = {
+      pred: confPct,
+      act:  Math.round(confPct * 0.87),
+      ticker: 'AAPL',
+      date:   'Apr 2026',
+      outcome: 'Pending judgment',
+      vs: judgePeriod.toUpperCase() + ' · ' + JUDGE_DATES[judgePeriod],
+      isNew: true
+    };
+
     go(9);
   }
 
@@ -1561,11 +2438,77 @@
   window.addEventListener('resize', fitShell);
   fitShell();
 
+  /* ── Search ─────────────────────────────────────── */
+  const STOCKS_DB = [
+    { ticker:'AAPL',  name:'Apple Inc.',          country:'US', type:'Equity', exchange:'NASDAQ' },
+    { ticker:'MSFT',  name:'Microsoft Corp.',      country:'US', type:'Equity', exchange:'NASDAQ' },
+    { ticker:'NVDA',  name:'Nvidia Corp.',          country:'US', type:'Equity', exchange:'NASDAQ' },
+    { ticker:'GOOGL', name:'Alphabet Inc.',         country:'US', type:'Equity', exchange:'NASDAQ' },
+    { ticker:'AMZN',  name:'Amazon.com Inc.',       country:'US', type:'Equity', exchange:'NASDAQ' },
+    { ticker:'TSLA',  name:'Tesla Inc.',            country:'US', type:'Equity', exchange:'NASDAQ' },
+    { ticker:'META',  name:'Meta Platforms',        country:'US', type:'Equity', exchange:'NASDAQ' },
+    { ticker:'BRK.B', name:'Berkshire Hathaway',    country:'US', type:'Equity', exchange:'NYSE'   },
+    { ticker:'JPM',   name:'JPMorgan Chase',        country:'US', type:'Equity', exchange:'NYSE'   },
+    { ticker:'V',     name:'Visa Inc.',             country:'US', type:'Equity', exchange:'NYSE'   },
+    { ticker:'SHOP',  name:'Shopify Inc.',          country:'CA', type:'Equity', exchange:'NYSE'   },
+    { ticker:'RY',    name:'Royal Bank of Canada',  country:'CA', type:'Equity', exchange:'TSX'    },
+    { ticker:'TD',    name:'TD Bank Group',         country:'CA', type:'Equity', exchange:'TSX'    },
+    { ticker:'CNR',   name:'Canadian National Rail',country:'CA', type:'Equity', exchange:'TSX'    },
+    { ticker:'COST',  name:'Costco Wholesale',      country:'US', type:'Equity', exchange:'NASDAQ' },
+  ];
+
+  const RECENT_TICKERS = ['AAPL', 'NVDA', 'MSFT'];
+
+  function searchResultHTML(s) {
+    return `<div onclick="selectStock('${s.ticker}')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--divider);cursor:pointer;-webkit-tap-highlight-color:transparent">
+      <div>
+        <div style="font-size:15px;color:var(--p)">${s.name}</div>
+        <div style="font-size:13px;color:var(--t);margin-top:3px">${s.ticker}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-left:16px">
+        <div style="font-size:12px;color:var(--t)">${s.country} · ${s.type}</div>
+        <div style="font-size:12px;color:var(--t);margin-top:3px">${s.exchange}</div>
+      </div>
+    </div>`;
+  }
+
+  function renderSearch(query) {
+    const wrap = document.getElementById('s11-results');
+    if (!query || !query.trim()) {
+      const recents = RECENT_TICKERS.map(t => STOCKS_DB.find(x => x.ticker === t)).filter(Boolean);
+      wrap.innerHTML = `<div style="padding:20px 0 8px">
+        <div style="font-size:11px;letter-spacing:0.06em;color:var(--t);margin-bottom:4px">Recent</div>
+        ${recents.map(searchResultHTML).join('')}
+      </div>`;
+    } else {
+      const q = query.toLowerCase();
+      const results = STOCKS_DB.filter(s =>
+        s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+      );
+      if (!results.length) {
+        wrap.innerHTML = `<div style="padding:48px 0;text-align:center;color:var(--t);font-size:14px">No results for "${query}"</div>`;
+      } else {
+        wrap.innerHTML = `<div style="padding:8px 0">${results.map(searchResultHTML).join('')}</div>`;
+      }
+    }
+  }
+
+  function selectStock(ticker) {
+    clearSearch();
+    go(0);
+  }
+
+  function clearSearch() {
+    const inp = document.getElementById('s11-input');
+    if (inp) { inp.value = ''; inp.blur(); }
+    renderSearch('');
+  }
+
   /* ── Init ───────────────────────────────────────── */
   buildSlider();
   updateHorizon(1);
   updateConf(60);
-  updateNav(0);
+  updateNav(10);
 </script>
 </body>
 </html>
