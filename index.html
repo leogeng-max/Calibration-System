@@ -197,12 +197,380 @@
     .s0-item {
       font-size: 15px; color: var(--p);
       padding: 15px 0;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .s0-item.accent { color: var(--p); }
+
+    /* ─── Capital decision flow — shared classes ─── */
+    .flow-h {
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      color: var(--p);
+      line-height: 1.25;
+    }
+    .flow-sub {
+      font-size: 13px;
+      color: var(--t);
+      line-height: 1.55;
+      margin-top: 10px;
+    }
+    .calib-section {
+      padding: 4px 0;
+      margin-top: 24px;
+    }
+    .calib-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--t);
+      font-weight: 400;
+      margin-bottom: 14px;
+    }
+    .calib-row { padding: 18px 0; }
+    .calib-row:first-of-type { padding-top: 4px; }
+    .calib-row:last-of-type { padding-bottom: 4px; }
+    .calib-row-label {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--t);
+      margin-bottom: 12px;
+    }
+    .prob-num {
+      font-size: 36px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--p);
+      font-variant-numeric: tabular-nums;
+    }
+    /* Center wrapper divs that contain the prob number or delta chip */
+    .calib-row > div:has(> .prob-num),
+    .calib-row > div:has(> .delta-chip) { text-align: center; }
+    .prob-num-pct {
+      font-size: 18px;
+      color: var(--t);
+      margin-left: 2px;
+    }
+    .prob-microcopy {
+      font-size: 11px;
+      color: var(--t);
+      text-align: center;
+      margin-top: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Reason picker (radio-style list) */
+    .reason-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
       border-bottom: 1px solid var(--divider);
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
-    .s0-item:last-child { border-bottom: none; }
-    .s0-item.accent { color: var(--p); }
+    .reason-row:last-child { border-bottom: none; }
+    .reason-row-text {
+      font-size: 14px;
+      color: var(--s);
+      letter-spacing: -0.01em;
+      transition: color 140ms var(--ease);
+    }
+    .reason-row.sel .reason-row-text { color: var(--p); }
+    .reason-tick {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--d);
+      flex-shrink: 0;
+      transition: background 140ms var(--ease), border-color 140ms var(--ease);
+    }
+    .reason-row.sel .reason-tick {
+      background: var(--p);
+      border-color: var(--p);
+    }
+
+    /* Delta display chip */
+    .delta-chip {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      padding: 4px 0;
+      font-size: 13px;
+      color: var(--t);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+
+    /* Research surface (Page 4) */
+    .res-tab {
+      background: none; border: none;
+      font-family: var(--font);
+      font-size: 13px; font-weight: 400;
+      color: var(--t);
+      padding: 8px 0 12px;
+      border-bottom: 1px solid transparent;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: -0.01em;
+      transition: color 140ms var(--ease), border-color 140ms var(--ease);
+      margin-bottom: -1px;
+    }
+    .res-tab.on { color: var(--p); border-bottom-color: var(--p); }
+    .res-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 0;
+      font-size: 13px;
+      color: var(--s);
+      border-bottom: 1px solid var(--divider);
+    }
+    .res-row:last-child { border-bottom: none; }
+    .res-row > span:last-child {
+      color: var(--p);
+      font-variant-numeric: tabular-nums;
+    }
+    .res-row .ccy { font-size: 11px; color: var(--t); margin-left: 4px; }
+
+    /* View history rows on stock page */
+    .vh-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--divider);
+    }
+    .vh-item:first-child .vh-tag-current { display: inline; }
+    .vh-tag-current {
+      display: none;
+      font-size: 10px;
+      letter-spacing: 0.02em;
+      color: var(--p);
+      border: 1px solid var(--d);
+      padding: 2px 6px;
+      margin-left: 8px;
+      vertical-align: 1px;
+    }
+    .vh-meta { display: flex; flex-direction: column; gap: 4px; }
+    .vh-prob {
+      font-size: 15px;
+      color: var(--p);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+    .vh-action {
+      font-size: 11px;
+      color: var(--t);
+      letter-spacing: 0.02em;
+    }
+    .vh-side { text-align: right; display: flex; flex-direction: column; gap: 4px; }
+    .vh-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--divider);
+    }
+    .vh-detail-row:last-child { border-bottom: none; }
+    .vh-detail-label {
+      font-size: 13px;
+      color: var(--s);
+      letter-spacing: -0.01em;
+    }
+    .vh-detail-value {
+      font-size: 13px;
+      color: var(--p);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+    .vh-horizon {
+      font-size: 13px;
+      color: var(--s);
+    }
+    .vh-date {
+      font-size: 11px;
+      color: var(--t);
+    }
+
+    /* ─── Fiscal research (s14) — Palantir-style ──── */
+    .fr-mono { font-family: ui-monospace, 'SF Mono', Menlo, 'Roboto Mono', monospace; }
+    .fr-status-bar {
+      display: flex; justify-content: space-between;
+      align-items: center;
+      padding: 14px 0 12px;
+      border-bottom: 1px solid var(--divider);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--d);
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+    .fr-status-dot {
+      display: inline-block;
+      width: 5px; height: 5px;
+      background: var(--p);
+      margin-right: 7px;
+      vertical-align: 1px;
+      animation: fr-pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes fr-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    .fr-section { margin-top: 28px; }
+    .fr-section-head {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 4px;
+      padding-bottom: 8px;
+    }
+    .fr-section-num {
+      font-size: 10px; color: var(--d);
+      letter-spacing: 0.08em;
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+    .fr-section-title {
+      font-size: 11px; color: var(--t);
+      letter-spacing: 0.08em;
+    }
+    .fr-section-rule {
+      flex: 1; height: 1px;
+      background: var(--divider);
+    }
+
+    .fr-row { padding: 16px 0; border-bottom: 1px solid var(--divider); }
+    .fr-row:last-child { border-bottom: none; }
+    .fr-row-line1 {
+      display: flex; justify-content: space-between;
+      align-items: baseline; gap: 12px;
+    }
+    .fr-row-line2 {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-top: 10px;
+    }
+    .fr-name {
+      font-size: 13px; color: var(--s);
+      letter-spacing: -0.01em;
+    }
+    .fr-value {
+      font-size: 18px; font-weight: 400; color: var(--p);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .fr-value .ccy {
+      font-size: 11px; color: var(--t); margin-left: 4px;
+      font-weight: 400; letter-spacing: 0;
+    }
+
+    /* Unicode block sparkbar */
+    .fr-spark-blocks {
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 14px;
+      color: var(--p);
+      letter-spacing: 1px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* Stat metadata — monospace cluster */
+    .fr-meta {
+      display: flex; gap: 14px;
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 11px;
+      color: var(--t);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+    .fr-meta-key {
+      color: var(--d);
+      margin-right: 5px;
+    }
+
+    .fr-delta {
+      font-size: 11px; color: var(--t);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+
+    /* Range indicator — subtle horizontal track with marker */
+    .fr-range {
+      position: relative;
+      height: 4px;
+      margin-top: 10px;
+      background: var(--divider);
+    }
+    .fr-range-marker {
+      position: absolute;
+      top: -2px;
+      width: 1px; height: 8px;
+      background: var(--p);
+      transform: translateX(-0.5px);
+    }
+    .fr-range-labels {
+      display: flex; justify-content: space-between;
+      margin-top: 6px;
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 10px;
+      color: var(--d);
+      letter-spacing: 0.04em;
+    }
+
+    /* Thesis section */
+    .fr-thesis-row {
+      display: flex; gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--divider);
+    }
+    .fr-thesis-row:last-child { border-bottom: none; }
+    .fr-thesis-num {
+      font-size: 11px; color: var(--d);
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      letter-spacing: 0.04em;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .fr-thesis-body { flex: 1; }
+    .fr-thesis-text {
+      font-size: 13px; color: var(--s);
+      line-height: 1.55;
+      letter-spacing: -0.01em;
+    }
+    .fr-thesis-text b {
+      color: var(--p); font-weight: 400;
+    }
+    .fr-thesis-tags {
+      display: flex; gap: 14px;
+      margin-top: 8px;
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--d);
+    }
+    .fr-tag-impact b {
+      color: var(--s); font-weight: 400; margin-left: 4px;
+    }
+
+    /* Amount input (Page 7) */
+    .amt-input-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 0;
+    }
+    .amt-input-field {
+      font-size: 40px; font-weight: 300;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      color: var(--p); font-family: var(--font);
+      background: none; border: none; outline: none;
+      text-align: right;
+      caret-color: var(--p);
+      width: 200px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .amt-input-ccy {
+      font-size: 15px;
+      color: var(--t);
+    }
 
     /* ─── Screen 1: Allocate ──────────────────────── */
     #s1 { justify-content: space-between; }
@@ -391,7 +759,8 @@
       transform: translateY(100%);
       transition: transform 320ms cubic-bezier(0.32,0.72,0,1);
     }
-    #s3.on .check-sheet {
+    #s3.on .check-sheet,
+    #s13.on .check-sheet {
       transform: translateY(0);
     }
     .check-close {
@@ -732,8 +1101,8 @@
     #sm-panel::-webkit-scrollbar { display: none; }
 
     .sm-label {
-      font-size: 10px; letter-spacing: 0.14em;
-      text-transform: uppercase; color: #3a3a3a;
+      font-size: 10px; letter-spacing: 0.04em;
+      color: #3a3a3a;
       font-family: var(--font); font-weight: 500;
       padding: 0 18px 14px;
     }
@@ -1011,7 +1380,7 @@
       <span class="sm-num">s9</span>
     </div>
 
-    <!-- s5 Calibration — child of s10 (last) -->
+    <!-- s5 Calibration — child of s10 -->
     <div class="sm-node" id="smn-5" onclick="smapGo(5)">
       <div class="sm-node-left">
         <div class="sm-indent" style="display:flex;align-items:stretch">
@@ -1022,6 +1391,213 @@
         <span class="sm-name" style="margin-left:6px">Calibration</span>
       </div>
       <span class="sm-num">s5</span>
+    </div>
+
+    <!-- s23 Calibration · Empty state — child of s10 -->
+    <div class="sm-node" id="smn-23" onclick="smapGo(23)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Calibration · Empty</span>
+      </div>
+      <span class="sm-num">s23</span>
+    </div>
+
+    <!-- s24 View History — child of s0 -->
+    <div class="sm-node" id="smn-24" onclick="smapGo(24)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">View History</span>
+      </div>
+      <span class="sm-num">s24</span>
+    </div>
+
+    <!-- s25 View Detail — child of s24 -->
+    <div class="sm-node" id="smn-25" onclick="smapGo(25)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">View Detail</span>
+      </div>
+      <span class="sm-num">s25</span>
+    </div>
+
+    <!-- s14 Fiscal Research — child of s0 (Research menu) -->
+    <div class="sm-node" id="smn-14" onclick="smapGo(14)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Fiscal Research</span>
+      </div>
+      <span class="sm-num">s14</span>
+    </div>
+
+    <!-- s15 Refine View — child of s7 (Increase exposure path) -->
+    <div class="sm-node" id="smn-15" onclick="smapGo(15)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Refine View</span>
+      </div>
+      <span class="sm-num">s15</span>
+    </div>
+
+    <!-- s16 Saved Confirmation — child of s15 -->
+    <div class="sm-node" id="smn-16" onclick="smapGo(16)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Saved Confirmation</span>
+      </div>
+      <span class="sm-num">s16</span>
+    </div>
+
+    <!-- Section divider -->
+    <div class="sm-label" style="margin-top:24px">Alternate flows</div>
+
+    <!-- s12 Define View -->
+    <div class="sm-node" id="smn-12" onclick="smapGo(12)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Define View</span>
+      </div>
+      <span class="sm-num">s12</span>
+    </div>
+
+    <!-- s13 Low-prob Guardrail (overlay) -->
+    <div class="sm-node" id="smn-13" onclick="smapGo(13)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Guardrail</span>
+      </div>
+      <span class="sm-num">s13</span>
+    </div>
+
+    <!-- s17 Buy Setup (short path) -->
+    <div class="sm-node" id="smn-17" onclick="smapGo(17)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Buy Setup</span>
+      </div>
+      <span class="sm-num">s17</span>
+    </div>
+
+    <!-- s18 Action Picker -->
+    <div class="sm-node" id="smn-18" onclick="smapGo(18)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Action Picker</span>
+      </div>
+      <span class="sm-num">s18</span>
+    </div>
+
+    <!-- s19 Increase · Reason -->
+    <div class="sm-node" id="smn-19" onclick="smapGo(19)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Increase · Reason</span>
+      </div>
+      <span class="sm-num">s19</span>
+    </div>
+
+    <!-- s20 Increase · Probability -->
+    <div class="sm-node" id="smn-20" onclick="smapGo(20)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Increase · Probability</span>
+      </div>
+      <span class="sm-num">s20</span>
+    </div>
+
+    <!-- s21 Reduce · Reason -->
+    <div class="sm-node" id="smn-21" onclick="smapGo(21)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Reduce · Reason</span>
+      </div>
+      <span class="sm-num">s21</span>
+    </div>
+
+    <!-- s22 Reduce · Probability -->
+    <div class="sm-node" id="smn-22" onclick="smapGo(22)">
+      <div class="sm-node-left">
+        <div class="sm-indent" style="display:flex;align-items:stretch">
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div style="width:12px;flex-shrink:0"></div>
+          <div class="sm-line-v"></div>
+          <div class="sm-hook"></div>
+        </div>
+        <span class="sm-name" style="margin-left:6px">Reduce · Probability</span>
+      </div>
+      <span class="sm-num">s22</span>
     </div>
 
   </div><!-- /children of s10 -->
@@ -1081,18 +1657,16 @@
         </div>
       </div>
 
-      <!-- Holdings card -->
-      <div style="background:var(--surface);padding:18px 16px;margin-top:28px">
-        <!-- Market value row -->
+      <!-- Holdings card (conditional on OWNED) -->
+      <div id="s0-holdings" style="background:var(--surface);padding:18px 16px;margin-top:28px;display:none">
         <div style="margin-bottom:16px">
           <div style="display:flex;align-items:baseline;gap:10px">
-            <span style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">18,950.00 CAD</span>
+            <span style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">18,950.00 <span style="font-size:13px;color:var(--t)">CAD</span></span>
             <span style="font-size:15px;color:var(--p)">+42.6%</span>
           </div>
           <div style="font-size:12px;color:var(--t);margin-top:4px">Market Value</div>
         </div>
         <hr style="border:none;border-top:1px solid var(--divider);margin:0 0 16px">
-        <!-- Portfolio weight row -->
         <div style="display:flex;justify-content:space-between;align-items:flex-end">
           <div>
             <div style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p)">12.2%</div>
@@ -1108,21 +1682,34 @@
         <span style="color:var(--p);font-size:14px;margin-left:4px">→</span>
       </div>
 
+      <!-- View history — calibration record (tappable) -->
+      <div style="margin-top:36px;cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="showViewHistory()">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="lbl">View history</div>
+          <span style="font-size:18px;color:var(--t);line-height:1">›</span>
+        </div>
+        <div id="s0-vh-empty" style="font-size:13px;color:var(--t);padding:8px 0">
+          No saved views yet. Open a Capital Decision to record one.
+        </div>
+        <div id="s0-vh-list"></div>
+      </div>
+
       <!-- Menu items -->
-      <div style="margin-top:32px">
+      <div style="margin-top:36px">
         <div class="s0-item">History</div>
         <div class="s0-item">Market</div>
         <div class="s0-item">News</div>
-        <div class="s0-item">Research</div>
+        <div class="s0-item" onclick="go(14)">Research</div>
       </div>
 
-      <!-- Bottom CTA -->
-      <div style="margin-top:auto;display:flex;justify-content:flex-end;padding-top:40px">
-        <button class="act-btn" onclick="go(6)">
-          <span>Capital Decision</span>
-        </button>
-      </div>
+    </div>
 
+    <!-- Pinned bottom CTA -->
+    <div style="flex-shrink:0;padding:14px 16px 18px;display:flex;justify-content:flex-end">
+      <button class="act-btn" onclick="capitalDecision()" style="padding:14px 4px;font-size:15px">
+        <span class="act-arrow">→</span>
+        <span>Capital decision</span>
+      </button>
     </div>
   </div>
 
@@ -1243,7 +1830,7 @@
 
     <!-- Back button -->
     <div style="padding-top:72px;flex-shrink:0">
-      <button class="back-btn" style="padding:0 0 14px 14px;font-size:20px" onclick="go(2)">←</button>
+      <button class="back-btn" style="padding:0 0 14px 14px;font-size:20px" onclick="go(8)">←</button>
       <hr class="div">
     </div>
 
@@ -1284,24 +1871,36 @@
         <span class="body-md" style="color:var(--s);flex-shrink:0" id="s4-cost-lbl">Estimated Cost</span>
         <span class="body-md" id="s4-cost">421.57 CAD</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
-        <span class="body-md" style="color:var(--s);flex-shrink:0">Confidence Level</span>
-        <span class="body-md" id="s4-conf">60%</span>
+
+      <!-- Calibration section (grouped per design rule) -->
+      <div style="margin:18px 14px 0;padding:18px 16px;background:var(--surface)">
+        <div class="lbl" style="margin-bottom:14px">Calibration</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--divider)">
+          <span class="body-md" style="color:var(--s)">Probability</span>
+          <span class="body-md" id="s4-conf">60%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0">
+          <span class="body-md" style="color:var(--s)">Time horizon</span>
+          <span class="body-md" id="s4-judgment">Jul 1, 2028</span>
+        </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 14px">
-        <span class="body-md" style="color:var(--s);flex-shrink:0">Time Horizon</span>
-        <span class="body-md" id="s4-judgment">Jul 1, 2028</span>
+
+      <!-- Accountability copy -->
+      <div style="padding:24px 16px 8px">
+        <div style="font-size:13px;color:var(--t);line-height:1.55;letter-spacing:-0.01em">
+          This decision will be tracked. Your stated probability and horizon become part of your calibration record.
+        </div>
       </div>
     </div>
 
-    <!-- Hold-to-execute button -->
+    <!-- Hold-to-confirm button -->
     <div style="flex-shrink:0;position:relative;overflow:hidden;height:88px;background:#2c2c2e;user-select:none;-webkit-user-select:none;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center"
          onmousedown="holdExecStart(event)" onmouseup="holdExecCancel()" onmouseleave="holdExecCancel()"
          ontouchstart="holdExecStart(event)" ontouchend="holdExecCancel()" ontouchcancel="holdExecCancel()">
       <!-- Progress fill -->
       <div id="s4-exec-fill" style="position:absolute;top:0;left:0;height:100%;width:0%;background:rgba(255,255,255,0.08);pointer-events:none"></div>
       <!-- Label -->
-      <span id="s4-exec-lbl" style="position:relative;z-index:1;font-size:15px;font-weight:400;color:var(--p);font-family:var(--font);letter-spacing:-0.01em;pointer-events:none">Execute Buy</span>
+      <span id="s4-exec-lbl" style="position:relative;z-index:1;font-size:15px;font-weight:400;color:var(--p);font-family:var(--font);letter-spacing:-0.01em;pointer-events:none">Hold to confirm</span>
     </div>
   </div>
 
@@ -1631,7 +2230,7 @@
 
     <!-- Action bar -->
     <div class="act-row" style="flex-shrink:0;padding:0 26px 12px;justify-content:flex-end">
-      <button class="act-btn" id="s8-review-btn" onclick="go(2)" disabled style="opacity:0.3">
+      <button class="act-btn" id="s8-review-btn" onclick="goToReview()" disabled style="opacity:0.3">
         <span>→ Review</span>
       </button>
     </div>
@@ -1693,18 +2292,23 @@
         <span class="body-md" style="color:var(--s)">Total Cost</span>
         <span class="body-md" id="s9-cost">6,716.67 CAD</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
-        <span class="body-md" style="color:var(--s)">Confidence Level</span>
-        <span class="body-md" id="s9-conf">60%</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
-        <span class="body-md" style="color:var(--s)">Time Horizon</span>
-        <span class="body-md" id="s9-horizon">3Y · Apr 1, 2029</span>
+
+      <!-- Calibration section (grouped per design rule) -->
+      <div style="margin-top:18px;padding:18px 16px;background:var(--surface)">
+        <div class="lbl" style="margin-bottom:14px">Calibration</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--divider)">
+          <span class="body-md" style="color:var(--s)">Probability</span>
+          <span class="body-md" id="s9-conf">60%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0">
+          <span class="body-md" style="color:var(--s)">Time horizon</span>
+          <span class="body-md" id="s9-horizon">3Y · Apr 1, 2029</span>
+        </div>
       </div>
     </div>
 
     <!-- Secondary CTAs — no borders, spacing only -->
-    <div style="flex-shrink:0;padding:0 16px 28px">
+    <div style="flex-shrink:0;padding:36px 16px 28px">
       <button class="act-btn" onclick="go(0)" style="padding:10px 0;gap:8px">
         <span style="font-size:16px;color:var(--s);line-height:1">→</span><span>View Order</span>
       </button>
@@ -1987,6 +2591,912 @@
     <span class="body-sm" id="di-note" style="color:var(--t)">At this confidence level, your accuracy is 55%.</span>
   </div>
 
+  <!-- ══════════════════════════════════
+       SCREEN 12 — DEFINE YOUR INITIAL VIEW (Page 1)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s12" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(0)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">AAPL · Apple Inc</span>
+        <button class="s0-exit" onclick="go(0)">Exit</button>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+
+      <!-- Calibration section -->
+      <div class="calib-section" style="margin-top:36px">
+        <div class="calib-eyebrow">Calibration</div>
+
+        <!-- Your view title — sits inside the calibration block, above probability -->
+        <div style="padding:18px 0 6px">
+          <div class="lbl" style="margin-bottom:12px">Your view</div>
+          <div class="flow-h">Will Apple outperform the S&amp;P 500?</div>
+        </div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Probability</div>
+          <div>
+            <span id="s12-prob-num" class="prob-num">50</span><span class="prob-num-pct">%</span>
+          </div>
+          <input class="horiz-range" id="s12-prob-range" type="range" min="0" max="100" value="50" step="1"
+                 oninput="setProb('s12', this.value)" style="margin-top:18px">
+          <div class="horiz-ends">
+            <span class="body-xs">0%</span><span class="body-xs">50%</span><span class="body-xs">100%</span>
+          </div>
+          <div class="prob-microcopy">Most investors cannot estimate this accurately.</div>
+        </div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Time horizon</div>
+          <div class="period-wrap">
+            <button class="period-btn" id="s12-h-1y"  onclick="setHorizon('s12','1y')">1Y</button>
+            <button class="period-btn on" id="s12-h-23y" onclick="setHorizon('s12','23y')">2–3Y</button>
+            <button class="period-btn" id="s12-h-5y"  onclick="setHorizon('s12','5y')">5+Y</button>
+          </div>
+        </div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Reason · optional</div>
+          <input class="thesis" id="s12-reason" placeholder="Why?" style="width:100%">
+        </div>
+      </div>
+    </div>
+
+    <!-- Pinned bottom action row: Go deeper (left) + Continue (right) -->
+    <div style="flex-shrink:0;padding:14px 16px 18px;display:flex;justify-content:space-between;align-items:center">
+      <button id="s12-go-deeper" class="act-btn" onclick="enterResearch()" style="padding:14px 4px">
+        <span class="act-arrow">→</span>
+        <span style="color:var(--s)">Go deeper</span>
+      </button>
+      <button class="act-btn" onclick="continueFromDefine()" style="padding:14px 4px">
+        <span class="act-arrow">→</span>
+        <span>Continue</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 13 — LOW-PROBABILITY GUARDRAIL (Page 2)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s13" style="padding:0;justify-content:flex-end;background:rgba(0,0,0,0.7);z-index:120">
+    <div class="check-sheet">
+      <button class="check-close" onclick="dismissGuardrail()">✕</button>
+      <div class="check-h" id="s13-title">This does not represent a strong edge.</div>
+      <div class="check-b" id="s13-body" style="display:none"></div>
+      <div class="check-acts">
+        <button class="act-btn" onclick="dismissGuardrail()" style="padding:10px 0;gap:8px">
+          <span style="font-size:15px;color:var(--p);line-height:1">→</span>
+          <span style="font-size:14px;color:var(--p)">Reconsider</span>
+        </button>
+        <button class="act-btn" onclick="proceedFromGuardrail()" style="padding:10px 0;gap:8px">
+          <span style="font-size:15px;color:var(--s);line-height:1">→</span>
+          <span style="font-size:14px;color:var(--s)">Proceed</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 14 — FISCAL RESEARCH (Page 4)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s14" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(0)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">Fiscal research</span>
+        <span style="width:22px"></span>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <!-- Identity, right-aligned -->
+      <div style="text-align:right;padding:28px 0 0">
+        <div class="lbl">AAPL</div>
+        <div style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p);margin-top:8px">Apple Inc</div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end;align-items:baseline;gap:8px">
+          <span style="font-size:18px;font-weight:300;color:var(--p);font-variant-numeric:tabular-nums">192.35</span>
+          <span style="font-size:11px;color:var(--t)">USD</span>
+          <span style="font-size:11px;color:var(--s);margin-left:8px;font-variant-numeric:tabular-nums">−0.72%</span>
+        </div>
+      </div>
+
+      <!-- Status bar -->
+      <div class="fr-status-bar" style="margin-top:24px">
+        <span><span class="fr-status-dot"></span>LIVE · APR 27 2026 · 09:41</span>
+        <span>FISCAL.AI · 47 SOURCES</span>
+      </div>
+
+      <!-- 01 · Scale & quality -->
+      <div class="fr-section">
+        <div class="fr-section-head">
+          <span class="fr-section-num">01</span>
+          <span class="fr-section-title">Scale &amp; quality</span>
+          <span class="fr-section-rule"></span>
+        </div>
+        <div class="fr-row" data-spark="rev">
+          <div class="fr-row-line1"><span class="fr-name">Revenue · TTM</span><span class="fr-value">391.0B<span class="ccy">USD</span></span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">YoY</span><span data-yoy="rev"></span></span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">5Y</span>+8.4%</span></span>
+          </div>
+        </div>
+        <div class="fr-row" data-spark="fcf">
+          <div class="fr-row-line1"><span class="fr-name">Free cash flow · TTM</span><span class="fr-value">97.7B<span class="ccy">USD</span></span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">YoY</span><span data-yoy="fcf"></span></span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">CONV</span>96%</span></span>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">Gross margin</span><span class="fr-value">46.6%</span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">5Y</span>+280bps</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">DEC</span>TOP</span></span>
+          </div>
+        </div>
+        <div class="fr-row" data-spark="opmargin">
+          <div class="fr-row-line1"><span class="fr-name">Operating margin</span><span class="fr-value">30.3%</span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">YoY</span><span data-yoy="opmargin"></span></span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">PEER</span>P95</span></span>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">ROIC</span><span class="fr-value">34.5%</span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">WACC</span>8.4%</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">SPREAD</span>+26.1pp</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 · Valuation context -->
+      <div class="fr-section">
+        <div class="fr-section-head">
+          <span class="fr-section-num">02</span>
+          <span class="fr-section-title">Valuation context</span>
+          <span class="fr-section-rule"></span>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">P/E · TTM</span><span class="fr-value">28.6x</span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">5Y AVG</span>25.1x</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">PREM</span>+14%</span></span>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">P/FCF</span><span class="fr-value">29.1x</span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">5Y AVG</span>22.4x</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">PREM</span>+30%</span></span>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">FCF yield</span><span class="fr-value">3.4%</span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">10Y RF</span>4.6%</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">SPREAD</span>−1.2pp</span></span>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">EV / Revenue</span><span class="fr-value">7.5x</span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">5Y AVG</span>6.2x</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">PREM</span>+21%</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 · Capital return -->
+      <div class="fr-section">
+        <div class="fr-section-head">
+          <span class="fr-section-num">03</span>
+          <span class="fr-section-title">Capital return · TTM</span>
+          <span class="fr-section-rule"></span>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">Buybacks</span><span class="fr-value">94.4B<span class="ccy">USD</span></span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">SHARES</span>−2.5%</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">STREAK</span>11Y</span></span>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">Dividends</span><span class="fr-value">15.2B<span class="ccy">USD</span></span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">YIELD</span>0.5%</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">GROWTH</span>11Y</span></span>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-row-line1"><span class="fr-name">Net issuance</span><span class="fr-value">−79.2B<span class="ccy">USD</span></span></div>
+          <div class="fr-row-line2">
+            <span class="fr-meta"><span><span class="fr-meta-key">DILUTION</span>NONE</span></span>
+            <span class="fr-meta"><span><span class="fr-meta-key">RET/EQ</span>62%</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 · What would break the thesis -->
+      <div class="fr-section">
+        <div class="fr-section-head">
+          <span class="fr-section-num">04</span>
+          <span class="fr-section-title">What would break the thesis</span>
+          <span class="fr-section-rule"></span>
+        </div>
+        <div class="fr-thesis-row">
+          <span class="fr-thesis-num">R-01</span>
+          <div class="fr-thesis-body">
+            <div class="fr-thesis-text"><b>iPhone unit volumes</b> contracting in Greater China for the third consecutive year. China is 19% of revenue.</div>
+            <div class="fr-thesis-tags"><span class="fr-tag-impact">IMPACT<b>HIGH</b></span><span class="fr-tag-impact">PROB<b>HIGH</b></span><span class="fr-tag-impact">HORIZON<b>NEAR</b></span></div>
+          </div>
+        </div>
+        <div class="fr-thesis-row">
+          <span class="fr-thesis-num">R-02</span>
+          <div class="fr-thesis-body">
+            <div class="fr-thesis-text"><b>Services growth decelerated</b> from 17% to 12% YoY across the last four quarters; Services carry 70%+ gross margin.</div>
+            <div class="fr-thesis-tags"><span class="fr-tag-impact">IMPACT<b>HIGH</b></span><span class="fr-tag-impact">PROB<b>MED</b></span><span class="fr-tag-impact">HORIZON<b>NEAR</b></span></div>
+          </div>
+        </div>
+        <div class="fr-thesis-row">
+          <span class="fr-thesis-num">R-03</span>
+          <div class="fr-thesis-body">
+            <div class="fr-thesis-text"><b>App Store economics</b> face EU DMA enforcement and active US antitrust litigation; outcomes could compress take-rate.</div>
+            <div class="fr-thesis-tags"><span class="fr-tag-impact">IMPACT<b>MED</b></span><span class="fr-tag-impact">PROB<b>MED</b></span><span class="fr-tag-impact">HORIZON<b>MID</b></span></div>
+          </div>
+        </div>
+        <div class="fr-thesis-row">
+          <span class="fr-thesis-num">R-04</span>
+          <div class="fr-thesis-body">
+            <div class="fr-thesis-text"><b>AI capex re-rating</b> — peers spending 50B+ on AI infra annually; Apple's framework still partner-led, capex disciplined but optionality unclear.</div>
+            <div class="fr-thesis-tags"><span class="fr-tag-impact">IMPACT<b>MED</b></span><span class="fr-tag-impact">PROB<b>LOW</b></span><span class="fr-tag-impact">HORIZON<b>FAR</b></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pinned CTA -->
+    <div style="flex-shrink:0;padding:14px 16px 18px;display:flex;justify-content:flex-end">
+      <button class="act-btn" onclick="go(15)" style="padding:14px 4px">
+        <span class="act-arrow">→</span>
+        <span>Refine your view</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 15 — REFINE YOUR VIEW (Page 5)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s15" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(14)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">AAPL · Apple Inc</span>
+        <button class="s0-exit" onclick="go(0)">Exit</button>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="margin-top:36px">
+        <div class="lbl" style="margin-bottom:14px">Refine your view</div>
+        <div class="flow-h">Has your view changed?</div>
+      </div>
+
+      <!-- Initial view recap -->
+      <div style="margin-top:24px;padding:16px 0;border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)">
+        <div style="font-size:11px;letter-spacing:0.06em;color:var(--t);margin-bottom:10px">Initial view</div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:13px;color:var(--s)">Probability</span>
+          <span style="font-size:13px;color:var(--p);font-variant-numeric:tabular-nums" id="s15-init-prob">65%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:13px;color:var(--s)">Horizon</span>
+          <span style="font-size:13px;color:var(--p)" id="s15-init-horizon">2–3 years</span>
+        </div>
+      </div>
+
+      <!-- Calibration section -->
+      <div class="calib-section">
+        <div class="calib-eyebrow">Calibration · updated</div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Updated probability</div>
+          <div>
+            <span id="s15-prob-num" class="prob-num">65</span><span class="prob-num-pct">%</span>
+          </div>
+          <div style="text-align:center;margin-top:6px">
+            <span class="delta-chip" id="s15-delta">0%</span>
+          </div>
+          <input class="horiz-range" id="s15-prob-range" type="range" min="0" max="100" value="65" step="1"
+                 oninput="setProb('s15', this.value)" style="margin-top:18px">
+          <div class="horiz-ends">
+            <span class="body-xs">0%</span><span class="body-xs">50%</span><span class="body-xs">100%</span>
+          </div>
+        </div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Updated horizon</div>
+          <div class="period-wrap">
+            <button class="period-btn" id="s15-h-1y"  onclick="setHorizon('s15','1y')">1Y</button>
+            <button class="period-btn on" id="s15-h-23y" onclick="setHorizon('s15','23y')">2–3Y</button>
+            <button class="period-btn" id="s15-h-5y"  onclick="setHorizon('s15','5y')">5+Y</button>
+          </div>
+        </div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">What changed · optional</div>
+          <input class="thesis" id="s15-reason" placeholder="What changed?" style="width:100%">
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;padding-top:32px">
+        <button class="act-btn" onclick="saveRefinedView()">
+          <span class="act-arrow">→</span>
+          <span>Save view</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 16 — SAVED VIEW CONFIRMATION (Page 6)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s16" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0;padding-bottom:18px">
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px;display:flex;flex-direction:column;justify-content:center">
+      <div style="margin-bottom:48px">
+        <div class="lbl" style="margin-bottom:14px">View saved</div>
+        <div class="flow-h">This decision will be tracked.</div>
+      </div>
+
+      <div style="background:var(--surface);padding:22px 18px">
+        <div class="lbl" style="margin-bottom:16px">AAPL · Apple Inc</div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--divider)">
+          <span style="font-size:13px;color:var(--s)">Probability</span>
+          <span style="font-size:14px;color:var(--p);font-variant-numeric:tabular-nums" id="s16-prob">65% → 72%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--divider)">
+          <span style="font-size:13px;color:var(--s)">Horizon</span>
+          <span style="font-size:14px;color:var(--p)" id="s16-horizon">2–3 years</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0">
+          <span style="font-size:13px;color:var(--s)">Recorded</span>
+          <span style="font-size:14px;color:var(--p)" id="s16-date">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex-shrink:0;padding:0 16px 24px;display:flex;justify-content:flex-end">
+      <button class="act-btn" onclick="continueAfterSavedView()" style="padding:14px 4px">
+        <span class="act-arrow">→</span>
+        <span>Done</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 17 — BUY FLOW / POSITION SETUP (Page 7, short path)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s17" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(12)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">Buy AAPL</span>
+        <button class="s0-exit" onclick="go(0)">Exit</button>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <!-- Amount -->
+      <div style="margin-top:32px">
+        <div class="lbl" style="margin-bottom:14px">Amount</div>
+        <div style="display:flex;align-items:baseline;justify-content:flex-end;gap:8px;padding:8px 0">
+          <span id="s17-amt-disp" style="font-size:40px;font-weight:300;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">0<span class="cursor-blink" style="opacity:0.4;margin-left:1px">|</span></span>
+          <span style="font-size:13px;color:var(--t)">CAD</span>
+        </div>
+        <hr class="div">
+        <div style="display:flex;justify-content:space-between;padding:10px 0">
+          <span style="font-size:11px;color:var(--t)">Buying power</span>
+          <span style="font-size:11px;color:var(--s);font-variant-numeric:tabular-nums">25,430 CAD</span>
+        </div>
+      </div>
+
+      <!-- Calibration section (re-confirm) -->
+      <div class="calib-section">
+        <div class="calib-eyebrow">Calibration</div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Probability of outperforming S&amp;P 500</div>
+          <div>
+            <span id="s17-prob-num" class="prob-num">65</span><span class="prob-num-pct">%</span>
+          </div>
+          <input class="horiz-range" id="s17-prob-range" type="range" min="0" max="100" value="65" step="1"
+                 oninput="setProb('s17', this.value)" style="margin-top:18px">
+          <div class="horiz-ends">
+            <span class="body-xs">0%</span><span class="body-xs">50%</span><span class="body-xs">100%</span>
+          </div>
+          <div class="prob-microcopy">Most investors cannot estimate this accurately.</div>
+        </div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Time horizon</div>
+          <div class="period-wrap">
+            <button class="period-btn" id="s17-h-1y"  onclick="setHorizon('s17','1y')">1Y</button>
+            <button class="period-btn on" id="s17-h-23y" onclick="setHorizon('s17','23y')">2–3Y</button>
+            <button class="period-btn" id="s17-h-5y"  onclick="setHorizon('s17','5y')">5+Y</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pinned action row (above numpad) -->
+    <div style="flex-shrink:0;padding:12px 16px 8px;display:flex;justify-content:flex-end">
+      <button class="act-btn" id="s17-cont-btn" onclick="continueFromBuySetup()" style="padding:14px 4px;opacity:0.3;pointer-events:none">
+        <span class="act-arrow">→</span>
+        <span>Continue</span>
+      </button>
+    </div>
+
+    <!-- Numpad pinned at bottom -->
+    <div class="numpad" style="flex-shrink:0">
+      <div class="np-key" onclick="amtNumpadTap('1')"><span class="np-main">1</span></div>
+      <div class="np-key" onclick="amtNumpadTap('2')"><span class="np-main">2</span></div>
+      <div class="np-key" onclick="amtNumpadTap('3')"><span class="np-main">3</span></div>
+      <div class="np-key" onclick="amtNumpadTap('4')"><span class="np-main">4</span></div>
+      <div class="np-key" onclick="amtNumpadTap('5')"><span class="np-main">5</span></div>
+      <div class="np-key" onclick="amtNumpadTap('6')"><span class="np-main">6</span></div>
+      <div class="np-key" onclick="amtNumpadTap('7')"><span class="np-main">7</span></div>
+      <div class="np-key" onclick="amtNumpadTap('8')"><span class="np-main">8</span></div>
+      <div class="np-key" onclick="amtNumpadTap('9')"><span class="np-main">9</span></div>
+      <div class="np-key np-empty"></div>
+      <div class="np-key" onclick="amtNumpadTap('0')"><span class="np-main">0</span></div>
+      <div class="np-key" onclick="amtNumpadTap('del')"><span class="np-main" style="font-size:22px">⌫</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 18 — ACTION PICKER (owned positions)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s18" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(0)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">AAPL · Apple Inc</span>
+        <button class="s0-exit" onclick="go(0)">Exit</button>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="margin-top:36px">
+        <div class="lbl" style="margin-bottom:14px">Capital decision</div>
+        <div class="flow-h">What are you adjusting?</div>
+        <div class="flow-sub">You hold a position. Each adjustment is recorded against the saved view.</div>
+      </div>
+
+      <!-- Current view summary -->
+      <div style="background:var(--surface);padding:18px 16px;margin-top:24px">
+        <div class="lbl" style="margin-bottom:14px">Current view</div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:13px;color:var(--s)">Probability</span>
+          <span style="font-size:13px;color:var(--p);font-variant-numeric:tabular-nums" id="s18-cur-prob">72%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:13px;color:var(--s)">Horizon</span>
+          <span style="font-size:13px;color:var(--p)" id="s18-cur-horizon">2–3 years</span>
+        </div>
+      </div>
+
+      <!-- Action options -->
+      <div style="margin-top:32px">
+        <div class="reason-row" onclick="pickAction('increase')">
+          <span class="reason-row-text">Increase position</span>
+          <span style="font-size:18px;color:var(--t);line-height:1">›</span>
+        </div>
+        <div class="reason-row" onclick="pickAction('reduce')">
+          <span class="reason-row-text">Reduce position</span>
+          <span style="font-size:18px;color:var(--t);line-height:1">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 19 — INCREASE POSITION · REASON (Page 9 part 1)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s19" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(18)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">Increase position</span>
+        <span style="width:22px"></span>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="margin-top:36px">
+        <div class="lbl" style="margin-bottom:14px">Increase position</div>
+        <div class="flow-h">Why are you increasing?</div>
+      </div>
+
+      <!-- Context -->
+      <div style="margin-top:24px;padding:16px 0;border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:13px;color:var(--s)">Current probability</span>
+          <span style="font-size:13px;color:var(--p);font-variant-numeric:tabular-nums" id="s19-cur-prob">72%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:13px;color:var(--s)">Current horizon</span>
+          <span style="font-size:13px;color:var(--p)" id="s19-cur-horizon">2–3 years</span>
+        </div>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="reason-row" onclick="pickReason(this,'inc','conviction')"><span class="reason-row-text">Increased conviction</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'inc','decline')"><span class="reason-row-text">Price decline</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'inc','momentum')"><span class="reason-row-text">Price momentum</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'inc','return')"><span class="reason-row-text">Expected return improved</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'inc','none')"><span class="reason-row-text">No clear reason</span><span class="reason-tick"></span></div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;padding-top:32px">
+        <button class="act-btn" id="s19-cont" onclick="go(20)" style="opacity:0.3;pointer-events:none">
+          <span class="act-arrow">→</span>
+          <span>Continue</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 20 — INCREASE · UPDATED PROBABILITY (Page 9 part 2)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s20" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(19)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">Increase position</span>
+        <span style="width:22px"></span>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="margin-top:36px">
+        <div class="lbl" style="margin-bottom:14px">Updated view</div>
+        <div class="flow-h">State your new probability.</div>
+      </div>
+
+      <!-- Calibration section -->
+      <div class="calib-section">
+        <div class="calib-eyebrow">Calibration · updated</div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Updated probability</div>
+          <div>
+            <span id="s20-prob-num" class="prob-num">72</span><span class="prob-num-pct">%</span>
+          </div>
+          <div style="text-align:center;margin-top:6px">
+            <span class="delta-chip" id="s20-delta">0%</span>
+          </div>
+          <input class="horiz-range" id="s20-prob-range" type="range" min="0" max="100" value="72" step="1"
+                 oninput="setProb('s20', this.value)" style="margin-top:18px">
+          <div class="horiz-ends">
+            <span class="body-xs">0%</span><span class="body-xs">50%</span><span class="body-xs">100%</span>
+          </div>
+        </div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Time horizon</div>
+          <div class="period-wrap">
+            <button class="period-btn" id="s20-h-1y"  onclick="setHorizon('s20','1y')">1Y</button>
+            <button class="period-btn on" id="s20-h-23y" onclick="setHorizon('s20','23y')">2–3Y</button>
+            <button class="period-btn" id="s20-h-5y"  onclick="setHorizon('s20','5y')">5+Y</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;padding-top:32px">
+        <button class="act-btn" onclick="confirmIncrease()">
+          <span class="act-arrow">→</span>
+          <span>Continue</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 21 — REDUCE · REASON (Page 10 part 1)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s21" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(18)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">Reduce position</span>
+        <span style="width:22px"></span>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="margin-top:36px">
+        <div class="lbl" style="margin-bottom:14px">Reduce position</div>
+        <div class="flow-h">What changed?</div>
+      </div>
+
+      <div style="margin-top:24px;padding:16px 0;border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)">
+        <div style="font-size:11px;letter-spacing:0.06em;color:var(--t);margin-bottom:10px">You committed to</div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:13px;color:var(--s)">Probability</span>
+          <span style="font-size:13px;color:var(--p);font-variant-numeric:tabular-nums" id="s21-cur-prob">72%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span style="font-size:13px;color:var(--s)">Horizon</span>
+          <span style="font-size:13px;color:var(--p)" id="s21-cur-horizon">2–3 years</span>
+        </div>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="reason-row" onclick="pickReason(this,'red','thesis')"><span class="reason-row-text">Thesis weakened</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'red','return')"><span class="reason-row-text">Expected return changed</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'red','risk')"><span class="reason-row-text">Risk management</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'red','profits')"><span class="reason-row-text">Taking profits</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'red','vol')"><span class="reason-row-text">Volatility</span><span class="reason-tick"></span></div>
+        <div class="reason-row" onclick="pickReason(this,'red','none')"><span class="reason-row-text">No clear reason</span><span class="reason-tick"></span></div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;padding-top:32px">
+        <button class="act-btn" id="s21-cont" onclick="go(22)" style="opacity:0.3;pointer-events:none">
+          <span class="act-arrow">→</span>
+          <span>Continue</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 22 — REDUCE · UPDATED PROBABILITY (Page 10 part 2)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s22" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(21)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">Reduce position</span>
+        <span style="width:22px"></span>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="margin-top:36px">
+        <div class="lbl" style="margin-bottom:14px">Updated view</div>
+        <div class="flow-h">State your new probability.</div>
+      </div>
+
+      <div class="calib-section">
+        <div class="calib-eyebrow">Calibration · updated</div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Updated probability</div>
+          <div>
+            <span id="s22-prob-num" class="prob-num">72</span><span class="prob-num-pct">%</span>
+          </div>
+          <div style="text-align:center;margin-top:6px">
+            <span class="delta-chip" id="s22-delta">0%</span>
+          </div>
+          <input class="horiz-range" id="s22-prob-range" type="range" min="0" max="100" value="72" step="1"
+                 oninput="setProb('s22', this.value)" style="margin-top:18px">
+          <div class="horiz-ends">
+            <span class="body-xs">0%</span><span class="body-xs">50%</span><span class="body-xs">100%</span>
+          </div>
+        </div>
+
+        <div class="calib-row">
+          <div class="calib-row-label">Time horizon</div>
+          <div class="period-wrap">
+            <button class="period-btn" id="s22-h-1y"  onclick="setHorizon('s22','1y')">1Y</button>
+            <button class="period-btn on" id="s22-h-23y" onclick="setHorizon('s22','23y')">2–3Y</button>
+            <button class="period-btn" id="s22-h-5y"  onclick="setHorizon('s22','5y')">5+Y</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;padding-top:32px">
+        <button class="act-btn" onclick="confirmReduce()">
+          <span class="act-arrow">→</span>
+          <span>Continue</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 23 — DASHBOARD · EMPTY STATE
+       ══════════════════════════════════ -->
+  <div class="scr" id="s23">
+    <div class="dash-hdr" style="display:flex;justify-content:space-between;align-items:center">
+      <button class="back-btn" style="padding:0;font-size:20px" onclick="go(10)">←</button>
+
+      <!-- Mode switcher (links to s5 hypothetical) -->
+      <div style="position:relative">
+        <button class="cal-mode-btn" onclick="toggleS23Mode()">
+          <span>Actual</span>
+          <svg width="9" height="6" viewBox="0 0 9 6" fill="none" style="margin-top:1px;flex-shrink:0">
+            <path d="M1 1L4.5 5L8 1" stroke="#929292" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="cal-mode-menu" id="s23-mode-menu">
+          <div class="cal-mode-opt active" onclick="closeS23Mode()">
+            Actual <span class="cal-mode-tick">✓</span>
+          </div>
+          <div class="cal-mode-opt" onclick="emptyToHypothetical()">
+            Hypothetical <span class="cal-mode-tick"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- Hero: empty -->
+    <div class="hero">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="lbl">Calibration</span>
+      </div>
+      <div class="hero-n in" style="color:var(--d)">—</div>
+      <div class="body-sm" style="margin-top:6px;color:var(--t)">No predictions recorded yet</div>
+    </div>
+    <hr class="div">
+
+    <!-- Guidance -->
+    <div style="padding:28px 0">
+      <div class="lbl" style="margin-bottom:14px">Get started</div>
+      <div style="font-size:14px;color:var(--s);line-height:1.55;letter-spacing:-0.01em">
+        Save a view from a stock detail page to begin recording predictions. Calibration appears here once you have outcomes to compare.
+      </div>
+      <div style="font-size:13px;color:var(--t);line-height:1.55;margin-top:16px;letter-spacing:-0.01em">
+        Want to see how this looks first? Tap <span style="color:var(--p)">Actual ▾</span> at the top and switch to <span style="color:var(--p)">Hypothetical</span> sample data.
+      </div>
+    </div>
+    <hr class="div">
+
+    <!-- Empty chart placeholder -->
+    <div class="chart-area">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <span class="lbl">Predicted vs actual</span>
+        <span class="body-xs" style="color:var(--d)">No data points yet</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <span class="body-xs" style="color:var(--d)">Y · Actual accuracy</span>
+        <span class="body-xs" style="color:var(--d)">X · Your confidence</span>
+      </div>
+      <svg width="100%" viewBox="0 0 320 210" style="display:block;overflow:visible;opacity:0.5">
+        <line x1="28" y1="4"   x2="28"  y2="180" stroke="#2a2a2a" stroke-width="1"/>
+        <line x1="28" y1="180" x2="318" y2="180" stroke="#2a2a2a" stroke-width="1"/>
+        <line x1="28" y1="180" x2="318" y2="4" stroke="#3F3F46" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="22" y="183" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">0%</text>
+        <text x="22" y="95"  font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">50%</text>
+        <text x="22" y="7"   font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="end">100%</text>
+        <text x="28"  y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">0%</text>
+        <text x="173" y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">50%</text>
+        <text x="318" y="196" font-family="Inter,sans-serif" font-size="10" fill="#565B5E" text-anchor="middle">100%</text>
+      </svg>
+    </div>
+    <hr class="div">
+
+    <!-- Empty metrics -->
+    <div class="metrics">
+      <div class="met"><span class="lbl">Avg conf.</span><span class="nlg met-v in" style="color:var(--d)">—</span></div>
+      <div class="met" style="align-items:center"><span class="lbl">Actual acc.</span><span class="nlg met-v in" style="color:var(--d)">—</span></div>
+      <div class="met" style="align-items:flex-end"><span class="lbl">Gap</span><span class="nlg met-v in" style="color:var(--d)">—</span></div>
+    </div>
+    <hr class="div">
+
+    <div class="s5-row">
+      <span class="body-md" style="color:var(--s)">Awaiting judgment</span>
+      <span class="body-md" style="color:var(--d)">0</span>
+    </div>
+    <hr class="div">
+
+    <div class="verdict">
+      <span class="body-lg" style="color:var(--t)">Save a view to begin tracking your calibration.</span>
+    </div>
+    <hr class="div">
+
+    <!-- Disabled "over time" preview -->
+    <div class="exec-area" style="opacity:0.5;pointer-events:none">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span class="lbl">Calibration over time</span>
+      </div>
+      <span class="body-xs" style="color:var(--d);display:block;margin-top:3px;margin-bottom:14px">Builds after your first outcome</span>
+      <svg width="100%" viewBox="0 0 320 96" style="overflow:visible;display:block">
+        <line x1="4"   y1="80" x2="284" y2="80" stroke="#1e1e1e" stroke-width="1"/>
+        <line x1="4"   y1="50" x2="284" y2="50" stroke="#1e1e1e" stroke-width="1"/>
+        <line x1="4"   y1="20" x2="284" y2="20" stroke="#1e1e1e" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div style="padding-bottom:40px"></div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 24 — VIEW HISTORY · FULL LIST
+       ══════════════════════════════════ -->
+  <div class="scr" id="s24" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(0)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">AAPL · View history</span>
+        <span style="width:22px"></span>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="padding:32px 0 14px">
+        <div class="lbl">Calibration record</div>
+        <div style="font-size:13px;color:var(--t);margin-top:10px;line-height:1.5;letter-spacing:-0.01em">
+          Every saved view, refinement, and adjustment is tracked. Tap any entry for details.
+        </div>
+      </div>
+      <div id="s24-list"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 25 — VIEW HISTORY · ENTRY DETAIL
+       ══════════════════════════════════ -->
+  <div class="scr" id="s25" style="padding:0;display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(24)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">View detail</span>
+        <span style="width:22px"></span>
+      </div>
+      <hr class="div">
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="padding:32px 0 0">
+        <div class="lbl" id="s25-action">Refined view</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-top:14px">
+          <span class="flow-h" id="s25-prob">65%</span>
+          <span style="font-size:13px;color:var(--t);font-variant-numeric:tabular-nums" id="s25-delta"></span>
+        </div>
+      </div>
+
+      <div style="margin-top:36px">
+        <div class="vh-detail-row">
+          <span class="vh-detail-label">Horizon</span>
+          <span class="vh-detail-value" id="s25-horizon">2–3 years</span>
+        </div>
+        <div class="vh-detail-row">
+          <span class="vh-detail-label">Recorded</span>
+          <span class="vh-detail-value" id="s25-date">Feb 27, 2026</span>
+        </div>
+        <div class="vh-detail-row">
+          <span class="vh-detail-label">Judgment by</span>
+          <span class="vh-detail-value" id="s25-judge">—</span>
+        </div>
+      </div>
+
+      <div style="margin-top:36px">
+        <div class="lbl" style="margin-bottom:14px">Note</div>
+        <div style="font-size:14px;color:var(--s);line-height:1.6;letter-spacing:-0.01em" id="s25-note">—</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -2102,7 +3612,7 @@
         document.getElementById('ck-body').textContent  =
           `You've historically overstated probability by ${gap}%.`;
         document.getElementById('ck-acts').innerHTML = `
-          <button class="btn btn-hi"  onclick="go(2)">Adjust Probability</button>
+          <button class="btn btn-hi"  onclick="go(0)">Adjust Probability</button>
           <button class="btn btn-lo"  onclick="go(4)">Proceed Anyway</button>`;
         go(3);
       } else {
@@ -2113,7 +3623,11 @@
 
   /* ── Navigation ─────────────────────────────────── */
   function go(n) {
-    document.getElementById('s' + cur).classList.remove('on');
+    // Remove .on from every base screen so rapid calls can't leave multiples active.
+    // s3 and s13 are bottom-sheet overlays managed by show/hideCheck/Guardrail — leave them alone.
+    document.querySelectorAll('.scr.on').forEach(s => {
+      if (s.id !== 's3' && s.id !== 's13') s.classList.remove('on');
+    });
     const next = document.getElementById('s' + n);
     next.scrollTop = 0;
     requestAnimationFrame(() => next.classList.add('on'));
@@ -2407,6 +3921,19 @@
   }
   function closeCalDropdown() {
     document.getElementById('cal-mode-menu').classList.remove('open');
+  }
+
+  /* ── s23 (empty-state dashboard) handlers ────── */
+  function toggleS23Mode() {
+    document.getElementById('s23-mode-menu').classList.toggle('open');
+  }
+  function closeS23Mode() {
+    document.getElementById('s23-mode-menu').classList.remove('open');
+  }
+  function emptyToHypothetical() {
+    closeS23Mode();
+    go(5);
+    setTimeout(() => setCalMode('hypothetical'), 60);
   }
 
   function setCalMode(mode) {
@@ -2743,6 +4270,519 @@
     updateS2Accuracy();
   }
 
+  /* ── Capital Decision flow — state model ─────── */
+  const HORIZON_LBL = {
+    '1y':  '1 year',
+    '23y': '2–3 years',
+    '5y':  '5+ years',
+    // legacy keys (back-compat with s2)
+    '3y':  '3 years',
+    '5y_legacy': '5 years'
+  };
+  const HORIZON_DATES = {
+    '1y':  'Apr 1, 2027',
+    '23y': 'Apr 1, 2028',
+    '5y':  'Apr 1, 2031'
+  };
+
+  // Per-screen calibration state — keyed by screen id
+  const CALIB = {
+    s12: { prob: 50, horizon: '23y', reason: '' },
+    s15: { prob: 65, horizon: '23y', reason: '' },
+    s17: { prob: 65, horizon: '23y' },
+    s20: { prob: 72, horizon: '23y' },
+    s22: { prob: 72, horizon: '23y' }
+  };
+
+  // Position + view history
+  let OWNED = true;                   // demo: user already holds AAPL
+  let pickedAction = null;             // 'increase' | 'reduce'
+  let pickedReason = null;             // string key
+  let viewHistory = [
+    {
+      prob: 60,
+      horizon: '23y',
+      reason: 'Services growth offsetting iPhone plateau',
+      date: 'Jan 15, 2026',
+      action: 'initial_view',
+      delta: null
+    },
+    {
+      prob: 65,
+      horizon: '23y',
+      reason: 'Q1 earnings beat, FCF margin expanding',
+      date: 'Feb 27, 2026',
+      action: 'refined_view',
+      delta: 5
+    }
+  ];
+  let proceededFromGuardrail = false;
+  let pendingNav = null;               // where to go after dismissing guardrail
+
+  function setProb(scr, val) {
+    const v = parseInt(val, 10);
+    CALIB[scr].prob = v;
+    const num = document.getElementById(scr + '-prob-num');
+    if (num) num.textContent = v;
+    // Track style: linear gradient fill
+    const range = document.getElementById(scr + '-prob-range');
+    if (range) {
+      const pct = v;
+      range.style.background = `linear-gradient(to right, var(--p) ${pct}%, var(--divider) ${pct}%)`;
+    }
+    // s15/s20/s22 show delta vs initial value
+    if (scr === 's15') updateDelta('s15', CALIB.s12.prob, v);
+    if (scr === 's20') updateDelta('s20', currentView()?.prob ?? 0, v);
+    if (scr === 's22') updateDelta('s22', currentView()?.prob ?? 0, v);
+    // mirror to legacy confPct (used by s4 review)
+    confPct = v;
+  }
+
+  function updateDelta(scr, baseline, current) {
+    const el = document.getElementById(scr + '-delta');
+    if (!el) return;
+    const d = current - baseline;
+    const sign = d > 0 ? '+' : (d < 0 ? '−' : '');
+    el.textContent = sign + Math.abs(d) + '%';
+  }
+
+  function setHorizon(scr, h) {
+    CALIB[scr].horizon = h;
+    ['1y','23y','5y'].forEach(k => {
+      const btn = document.getElementById(scr + '-h-' + k);
+      if (btn) btn.classList.toggle('on', k === h);
+    });
+    // mirror to legacy judgePeriod for s4
+    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
+    judgePeriod = legacyMap[h] || '3y';
+  }
+
+  /* ── Capital Decision routing ────────────────── */
+  function capitalDecision() {
+    proceededFromGuardrail = false;
+    // Always enter through s6 (Increase / Reduce chooser), then s7 etc.
+    go(6);
+  }
+
+  function currentView() {
+    return viewHistory.length ? viewHistory[viewHistory.length - 1] : null;
+  }
+
+  /* ── Page 1 (s12) — Define your view ─────────── */
+  function continueFromDefine() {
+    // Guardrail: probability < 55% on initial path
+    if (CALIB.s12.prob < 55 && !proceededFromGuardrail) {
+      pendingNav = () => proceedToBuySetup();
+      // Reset to spec copy: title only, no body
+      document.getElementById('s13-title').textContent = 'This does not represent a strong edge.';
+      const body = document.getElementById('s13-body');
+      body.textContent = '';
+      body.style.display = 'none';
+      showGuardrail();
+      return;
+    }
+    proceedToBuySetup();
+  }
+
+  function showGuardrail() {
+    // Overlay — does NOT remove the underlying screen's .on
+    const el = document.getElementById('s13');
+    el.scrollTop = 0;
+    requestAnimationFrame(() => el.classList.add('on'));
+  }
+  function hideGuardrail() {
+    document.getElementById('s13').classList.remove('on');
+  }
+
+  function proceedToBuySetup() {
+    // Carry initial view into Buy setup
+    CALIB.s17.prob = CALIB.s12.prob;
+    CALIB.s17.horizon = CALIB.s12.horizon;
+    amtStr = '';
+    go(17);
+    setTimeout(() => {
+      const r = document.getElementById('s17-prob-range');
+      if (r) { r.value = CALIB.s17.prob; setProb('s17', CALIB.s17.prob); }
+      setHorizon('s17', CALIB.s17.horizon);
+      updateAmtDisplay();
+    }, 0);
+  }
+
+  function enterResearch() {
+    // Long path: skip guardrail (research counts as reflection)
+    proceededFromGuardrail = true;
+    go(14);
+  }
+
+  /* Go deeper is always visible now — no-op kept for back-compat */
+  function revealGoDeeper() {}
+
+  /* ── Page 2 (s13) guardrail ──────────────────── */
+  function dismissGuardrail() {
+    pendingNav = null;
+    hideGuardrail();
+  }
+  function proceedFromGuardrail() {
+    proceededFromGuardrail = true;
+    const fn = pendingNav;
+    pendingNav = null;
+    hideGuardrail();
+    setTimeout(() => { if (fn) fn(); }, 100);
+  }
+
+  /* ── Page 5 (s15) — Refine your view ─────────── */
+  function saveRefinedView() {
+    const initProb = CALIB.s12.prob;
+    const initHor  = CALIB.s12.horizon;
+    const newProb  = CALIB.s15.prob;
+    const newHor   = CALIB.s15.horizon;
+    const date = todayStr();
+    viewHistory.push({
+      prob: newProb,
+      horizon: newHor,
+      reason: document.getElementById('s15-reason')?.value || '',
+      date: date,
+      action: 'refined_view',
+      delta: newProb - initProb
+    });
+    // Populate s16
+    document.getElementById('s16-prob').textContent    = initProb + '% → ' + newProb + '%';
+    document.getElementById('s16-horizon').textContent = HORIZON_LBL[newHor] || newHor;
+    document.getElementById('s16-date').textContent    = date;
+    renderViewHistory();
+    go(16);
+  }
+
+  function todayStr() {
+    const d = new Date();
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  /* After "Done" on saved-view confirmation (s16):
+     - When in Increase flow → go to s8 shares amount
+     - Otherwise → back to stock detail */
+  function continueAfterSavedView() {
+    if (cdChoice === 'increase' && OWNED) {
+      // Continue into shares-amount step
+      const acct = ACCOUNTS.find(a => a.id === acctChoice) || ACCOUNTS[0];
+      document.getElementById('s8-action').textContent      = 'Buy';
+      document.getElementById('s8-acct-name').textContent   = acct.name;
+      document.getElementById('s8-acct-detail').textContent = acct.shares ? acct.shares : acct.cash + ' ' + acct.currency;
+      document.getElementById('s8-cost-lbl').textContent    = 'Estimated Cost';
+      sharesStr = '';
+      if (typeof updateSharesCalc === 'function') updateSharesCalc();
+      go(8);
+      return;
+    }
+    go(0);
+  }
+
+  /* ── Page 7 (s17) — Buy setup, hands off to s4 ─ */
+  let amtStr = '';
+
+  function amtNumpadTap(val) {
+    if (val === 'del') {
+      amtStr = amtStr.slice(0, -1);
+    } else if (amtStr.length < 9) {
+      // Strip leading zero so "0" + "5" → "5"
+      amtStr = (amtStr + val).replace(/^0+(\d)/, '$1');
+    }
+    updateAmtDisplay();
+  }
+
+  function updateAmtDisplay() {
+    const disp = document.getElementById('s17-amt-disp');
+    if (!disp) return;
+    const cursor = '<span class="cursor-blink" style="opacity:0.4;margin-left:1px">|</span>';
+    if (amtStr.length === 0) {
+      disp.innerHTML = '0' + cursor;
+    } else {
+      const formatted = parseInt(amtStr, 10).toLocaleString('en-US');
+      disp.innerHTML = formatted + cursor;
+    }
+    // Enable / disable Continue based on amount > 0
+    const btn = document.getElementById('s17-cont-btn');
+    if (btn) {
+      const valid = parseInt(amtStr, 10) > 0;
+      btn.style.opacity = valid ? '1' : '0.3';
+      btn.style.pointerEvents = valid ? 'auto' : 'none';
+    }
+  }
+
+  function continueFromBuySetup() {
+    // Prob/horizon already mirrored to confPct/judgePeriod via setProb/setHorizon
+    sharesStr = computeSharesFromAmount();
+    cdChoice = 'increase';
+    acctChoice = ACCOUNTS[0].id;
+    goToReview();
+  }
+
+  function computeSharesFromAmount() {
+    const cad = parseInt(amtStr, 10) || 0;
+    if (!cad) return '0';
+    return Math.floor(cad / (MKTPRICE * EXCHRATE)).toString();
+  }
+
+  /* ── Action picker (s18) ─────────────────────── */
+  function pickAction(action) {
+    pickedAction = action;
+    pickedReason = null;
+    const cur = currentView() || { prob: 72, horizon: '23y' };
+    if (action === 'increase') {
+      document.getElementById('s19-cur-prob').textContent    = cur.prob + '%';
+      document.getElementById('s19-cur-horizon').textContent = HORIZON_LBL[cur.horizon] || cur.horizon;
+      // Reset reason rows
+      document.querySelectorAll('#s19 .reason-row').forEach(r => r.classList.remove('sel'));
+      document.getElementById('s19-cont').style.opacity = '0.3';
+      document.getElementById('s19-cont').style.pointerEvents = 'none';
+      go(19);
+    } else if (action === 'reduce') {
+      document.getElementById('s21-cur-prob').textContent    = cur.prob + '%';
+      document.getElementById('s21-cur-horizon').textContent = HORIZON_LBL[cur.horizon] || cur.horizon;
+      document.querySelectorAll('#s21 .reason-row').forEach(r => r.classList.remove('sel'));
+      document.getElementById('s21-cont').style.opacity = '0.3';
+      document.getElementById('s21-cont').style.pointerEvents = 'none';
+      go(21);
+    }
+  }
+
+  function pickReason(rowEl, flow, key) {
+    pickedReason = key;
+    const containerSel = flow === 'inc' ? '#s19' : '#s21';
+    document.querySelectorAll(containerSel + ' .reason-row').forEach(r => r.classList.remove('sel'));
+    rowEl.classList.add('sel');
+    const contId = flow === 'inc' ? 's19-cont' : 's21-cont';
+    const cont = document.getElementById(contId);
+    if (cont) {
+      cont.style.opacity = '1';
+      cont.style.pointerEvents = 'auto';
+      // Override go(N) to go to the right next screen with state init
+      cont.onclick = () => {
+        const cur = currentView() || { prob: 72, horizon: '23y' };
+        const nextScr = flow === 'inc' ? 's20' : 's22';
+        CALIB[nextScr].prob = cur.prob;
+        CALIB[nextScr].horizon = cur.horizon;
+        go(parseInt(nextScr.slice(1), 10));
+        setTimeout(() => {
+          const r = document.getElementById(nextScr + '-prob-range');
+          if (r) { r.value = cur.prob; setProb(nextScr, cur.prob); }
+          setHorizon(nextScr, cur.horizon);
+        }, 0);
+      };
+    }
+  }
+
+  /* ── Increase confirmation (s20) ─────────────── */
+  function confirmIncrease() {
+    const cur = currentView() || { prob: 72, horizon: '23y' };
+    const newProb = CALIB.s20.prob;
+    const delta = newProb - cur.prob;
+    if (delta < 5 && !proceededFromGuardrail) {
+      document.getElementById('s13-title').textContent = 'Your conviction has not meaningfully increased.';
+      const body = document.getElementById('s13-body');
+      body.textContent = `A ${delta >= 0 ? '+' : ''}${delta}% change is not a strong reason to increase exposure.`;
+      body.style.display = '';
+      pendingNav = () => { proceededFromGuardrail = true; doIncrease(); };
+      showGuardrail();
+      return;
+    }
+    doIncrease();
+  }
+  function doIncrease() {
+    viewHistory.push({
+      prob: CALIB.s20.prob,
+      horizon: CALIB.s20.horizon,
+      reason: pickedReason || '',
+      date: todayStr(),
+      action: 'increase',
+      delta: CALIB.s20.prob - (currentView()?.prob ?? 0)
+    });
+    renderViewHistory();
+    // Hand off to existing review/execute
+    confPct = CALIB.s20.prob;
+    sharesStr = '10';
+    cdChoice = 'increase';
+    acctChoice = ACCOUNTS[0].id;
+    goToReview();
+  }
+
+  /* ── Reduce confirmation (s22) ───────────────── */
+  function confirmReduce() {
+    const newProb = CALIB.s22.prob;
+    if (newProb > 70 && !proceededFromGuardrail) {
+      document.getElementById('s13-title').textContent = 'Your stated probability remains high.';
+      const body = document.getElementById('s13-body');
+      body.textContent = 'Why reduce exposure if your edge is intact?';
+      body.style.display = '';
+      pendingNav = () => { proceededFromGuardrail = true; doReduce(); };
+      showGuardrail();
+      return;
+    }
+    doReduce();
+  }
+  function doReduce() {
+    viewHistory.push({
+      prob: CALIB.s22.prob,
+      horizon: CALIB.s22.horizon,
+      reason: pickedReason || '',
+      date: todayStr(),
+      action: 'reduce',
+      delta: CALIB.s22.prob - (currentView()?.prob ?? 0)
+    });
+    renderViewHistory();
+    confPct = CALIB.s22.prob;
+    sharesStr = '5';
+    cdChoice = 'decrease';
+    acctChoice = ACCOUNTS[0].id;
+    goToReview();
+  }
+
+  /* ── Full View History (s24) + entry detail (s25) ── */
+  const VH_ACTION_LBL = {
+    initial_view: 'Initial view',
+    refined_view: 'Refined view',
+    increase: 'Increase position',
+    reduce: 'Reduce position'
+  };
+
+  function showViewHistory() {
+    renderViewHistoryFull();
+    go(24);
+  }
+
+  function renderViewHistoryFull() {
+    const list = document.getElementById('s24-list');
+    if (!list) return;
+    list.innerHTML = '';
+    if (viewHistory.length === 0) {
+      list.innerHTML = '<div style="font-size:13px;color:var(--t);padding:20px 0">No saved views yet.</div>';
+      return;
+    }
+    // Newest first; map back to original index for detail navigation
+    viewHistory.slice().reverse().forEach((v, i) => {
+      const realIdx = viewHistory.length - 1 - i;
+      const isCurrent = i === 0;
+      const actionLbl = VH_ACTION_LBL[v.action] || v.action;
+      const deltaTxt = v.delta != null && v.delta !== 0
+        ? ` <span style="font-size:11px;color:var(--t);font-variant-numeric:tabular-nums;margin-left:6px">${v.delta > 0 ? '+' : '−'}${Math.abs(v.delta)}%</span>`
+        : '';
+      const currentTag = isCurrent
+        ? ' <span style="font-size:10px;color:var(--p);border:1px solid var(--d);padding:2px 6px;margin-left:8px;vertical-align:1px">Current</span>'
+        : '';
+      const row = document.createElement('div');
+      row.className = 'vh-item';
+      row.style.cursor = 'pointer';
+      row.style.webkitTapHighlightColor = 'transparent';
+      row.onclick = () => showViewDetail(realIdx);
+      row.innerHTML = `
+        <div class="vh-meta">
+          <div class="vh-prob">${v.prob}%${deltaTxt}${currentTag}</div>
+          <div class="vh-action">${actionLbl}</div>
+        </div>
+        <div class="vh-side">
+          <div class="vh-horizon">${HORIZON_LBL[v.horizon] || v.horizon}</div>
+          <div class="vh-date">${v.date}</div>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  let viewDetailIdx = 0;
+  function showViewDetail(idx) {
+    viewDetailIdx = idx;
+    const v = viewHistory[idx];
+    if (!v) return;
+    document.getElementById('s25-action').textContent = VH_ACTION_LBL[v.action] || v.action;
+    document.getElementById('s25-prob').textContent = v.prob + '%';
+    const deltaEl = document.getElementById('s25-delta');
+    if (v.delta == null || v.delta === 0) {
+      deltaEl.textContent = '';
+    } else {
+      const sign = v.delta > 0 ? '+' : '−';
+      deltaEl.textContent = `${sign}${Math.abs(v.delta)}% vs prior view`;
+    }
+    document.getElementById('s25-horizon').textContent = HORIZON_LBL[v.horizon] || v.horizon;
+    document.getElementById('s25-date').textContent = v.date;
+    document.getElementById('s25-judge').textContent = HORIZON_DATES[v.horizon] || '—';
+    document.getElementById('s25-note').textContent = v.reason || 'No note recorded.';
+    go(25);
+  }
+
+  /* ── View History rendering (on s0) ──────────── */
+  function renderViewHistory() {
+    const list = document.getElementById('s0-vh-list');
+    const empty = document.getElementById('s0-vh-empty');
+    const holdings = document.getElementById('s0-holdings');
+    if (!list || !empty) return;
+    list.innerHTML = '';
+    if (viewHistory.length === 0) {
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      // Newest first; preview only the 2 most recent on s0
+      [...viewHistory].reverse().slice(0, 2).forEach((v, i) => {
+        const isCurrent = i === 0;
+        const actionLbl = ({
+          initial_view: 'Initial view',
+          refined_view: 'Refined view',
+          increase: 'Increase',
+          reduce: 'Reduce'
+        })[v.action] || v.action;
+        const deltaTxt = v.delta != null && v.delta !== 0
+          ? ` <span style="font-size:11px;color:var(--t);font-variant-numeric:tabular-nums;margin-left:6px">${v.delta > 0 ? '+' : '−'}${Math.abs(v.delta)}%</span>`
+          : '';
+        const row = document.createElement('div');
+        row.className = 'vh-item';
+        row.innerHTML = `
+          <div class="vh-meta">
+            <div class="vh-prob">${v.prob}%${deltaTxt}<span class="vh-tag-current">Current</span></div>
+            <div class="vh-action">${actionLbl}</div>
+          </div>
+          <div class="vh-side">
+            <div class="vh-horizon">${HORIZON_LBL[v.horizon] || v.horizon}</div>
+            <div class="vh-date">${v.date}</div>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+    // Toggle holdings card based on OWNED
+    if (holdings) holdings.style.display = OWNED ? 'block' : 'none';
+  }
+
+  /* ── Fiscal research sparklines (s14) ────────── */
+  const FR_SPARKS = {
+    rev:      [365, 394, 383, 391, 391],
+    fcf:      [93, 111, 99, 95, 97],
+    gross:    [41.8, 43.3, 44.1, 45.0, 46.6],
+    opmargin: [29.8, 30.3, 29.8, 30.0, 30.3],
+    roic:     [27.0, 30.4, 35.3, 33.8, 34.5],
+    pe:       [22.8, 25.1, 27.4, 26.8, 28.6],
+    pfcf:     [19.1, 22.4, 21.6, 26.0, 29.1],
+    fcfyield: [4.5, 5.5, 4.7, 3.8, 3.4]
+  };
+  function renderSparklines() {
+    // YoY values pulled from FR_SPARKS data (last vs second-to-last)
+    document.querySelectorAll('#s14 .fr-row[data-spark]').forEach(row => {
+      const data = FR_SPARKS[row.dataset.spark];
+      const yoyEl = row.querySelector('[data-yoy]');
+      if (yoyEl && data && data.length >= 2) {
+        const last = data[data.length - 1];
+        const prev = data[data.length - 2];
+        const yoy = ((last - prev) / prev) * 100;
+        const sign = yoy >= 0 ? '+' : '−';
+        yoyEl.textContent = sign + Math.abs(yoy).toFixed(1) + '%';
+      }
+    });
+  }
+
+  /* ── Init on load ─────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    renderViewHistory();
+    renderSparklines();
+  });
+
   function selectPeriod(p) {
     judgePeriod = p;
     ['1y','3y','5y'].forEach(id => {
@@ -2771,7 +4811,7 @@
     document.getElementById('s4-cost').textContent     = n
       ? totalCAD.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' CAD'
       : '—';
-    document.getElementById('s4-exec-lbl').textContent  = 'Execute ' + action;
+    document.getElementById('s4-exec-lbl').textContent  = 'Hold to confirm';
     document.getElementById('s4-conf').textContent      = confPct + '%';
     document.getElementById('s4-judgment').textContent  = judgePeriod.toUpperCase() + ' · ' + JUDGE_DATES[judgePeriod];
 
@@ -2842,10 +4882,32 @@
   function goToShares() {
     const acct = ACCOUNTS.find(a => a.id === acctChoice);
     const isBuy = cdChoice === 'increase';
-    document.getElementById('s8-action').textContent     = isBuy ? 'Buy' : 'Sell';
+
+    // Increase flow detours through Refine view ("Has your view changed?")
+    // before the user enters a share amount.
+    if (isBuy) {
+      const cur = currentView() || { prob: 65, horizon: '23y' };
+      CALIB.s12.prob = cur.prob;
+      CALIB.s12.horizon = cur.horizon;
+      CALIB.s15.prob = cur.prob;
+      CALIB.s15.horizon = cur.horizon;
+      const initProbEl = document.getElementById('s15-init-prob');
+      const initHorEl  = document.getElementById('s15-init-horizon');
+      if (initProbEl) initProbEl.textContent = cur.prob + '%';
+      if (initHorEl)  initHorEl.textContent  = HORIZON_LBL[cur.horizon] || cur.horizon;
+      go(15);
+      setTimeout(() => {
+        const r = document.getElementById('s15-prob-range');
+        if (r) { r.value = cur.prob; setProb('s15', cur.prob); }
+        setHorizon('s15', cur.horizon);
+      }, 0);
+      return;
+    }
+
+    document.getElementById('s8-action').textContent     = 'Sell';
     document.getElementById('s8-acct-name').textContent  = acct.name;
     document.getElementById('s8-acct-detail').textContent = acct.shares ? acct.shares : acct.cash + ' ' + acct.currency;
-    document.getElementById('s8-cost-lbl').textContent   = isBuy ? 'Estimated Cost' : 'Estimated Value';
+    document.getElementById('s8-cost-lbl').textContent   = 'Estimated Value';
     sharesStr = '';
     updateSharesCalc();
     go(8);
