@@ -5233,8 +5233,58 @@
   /* ── Page 5 (s15) — Refine your view ─────────── */
   function saveRefinedView() {
     const initProb = CALIB.s12.prob;
-    const initHor  = CALIB.s12.horizon;
     const newProb  = CALIB.s15.prob;
+    const delta    = newProb - initProb;
+
+    // ── Guardrails — fire BEFORE saving, based on current flow context (cdChoice).
+    //    Each guardrail re-calls saveRefinedView() after the user taps Proceed.
+
+    // 1. Weak-edge: probability < 55%, regardless of flow
+    if (newProb < 55 && !proceededFromGuardrail) {
+      document.getElementById('s13-title').textContent = 'This does not represent a strong edge.';
+      const body = document.getElementById('s13-body');
+      body.textContent = '';
+      body.style.display = 'none';
+      pendingNav = () => { proceededFromGuardrail = true; saveRefinedView(); };
+      showGuardrail();
+      return;
+    }
+
+    // 2. Increase context: low conviction (Δ < +5%)
+    if (cdChoice === 'increase' && delta < 5 && !proceededFromGuardrail) {
+      document.getElementById('s13-title').textContent = 'Your conviction has not meaningfully increased.';
+      const body = document.getElementById('s13-body');
+      body.textContent = `A ${delta >= 0 ? '+' : ''}${delta}% change is not a strong reason to increase exposure.`;
+      body.style.display = '';
+      pendingNav = () => { proceededFromGuardrail = true; saveRefinedView(); };
+      showGuardrail();
+      return;
+    }
+
+    // 3. Reduce context: probability still > 70% — why reduce?
+    if (cdChoice === 'reduce' && newProb > 70 && !proceededFromGuardrail) {
+      document.getElementById('s13-title').textContent = 'Your stated probability remains high.';
+      const body = document.getElementById('s13-body');
+      body.textContent = 'Why reduce exposure if your edge is intact?';
+      body.style.display = '';
+      pendingNav = () => { proceededFromGuardrail = true; saveRefinedView(); };
+      showGuardrail();
+      return;
+    }
+
+    // 4. Exit context: probability still > 60% — why exit?
+    if (cdChoice === 'exit' && newProb > 60 && !proceededFromGuardrail) {
+      document.getElementById('s13-title').textContent = 'Your stated probability still indicates a positive edge.';
+      const body = document.getElementById('s13-body');
+      body.textContent = 'Why exit if your edge is intact?';
+      body.style.display = '';
+      pendingNav = () => { proceededFromGuardrail = true; saveRefinedView(); };
+      showGuardrail();
+      return;
+    }
+
+    // ── Past all guardrails — commit the refined view.
+    const initHor  = CALIB.s12.horizon;
     const newHor   = CALIB.s15.horizon;
     const date = todayStr();
     viewHistory.push({
@@ -5243,13 +5293,13 @@
       reason: document.getElementById('s15-reason')?.value || '',
       date: date,
       action: 'refined_view',
-      delta: newProb - initProb
+      delta: delta
     });
-    // Populate s16
     document.getElementById('s16-prob').textContent    = initProb + '% → ' + newProb + '%';
     document.getElementById('s16-horizon').textContent = HORIZON_LBL[newHor] || newHor;
     document.getElementById('s16-date').textContent    = date;
     renderViewHistory();
+    proceededFromGuardrail = false;  // reset for next save
     go(16);
   }
 
