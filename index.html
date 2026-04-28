@@ -548,6 +548,291 @@
       color: var(--s); font-weight: 400; margin-left: 4px;
     }
 
+    /* ─── All pages gallery (s33) — full-size grid ───── */
+    #s33 {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 500;
+      background: #0d0d0d;
+      padding: 0;
+      overflow: hidden;
+      border-radius: 0;
+    }
+    .gallery-header {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px 14px;
+      border-bottom: 1px solid var(--divider);
+      background: var(--bg);
+    }
+    .gallery-header-title {
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--t);
+      letter-spacing: -0.01em;
+    }
+    .gallery-header-meta {
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 10px;
+      color: var(--d);
+      letter-spacing: 0.06em;
+    }
+    .gallery-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 24px 64px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(393px, 1fr));
+      gap: 36px 24px;
+      justify-items: center;
+      align-items: start;
+      max-width: 1700px;
+      margin: 0 auto;
+    }
+    .gallery-card {
+      width: 393px;
+      display: flex;
+      flex-direction: column;
+    }
+    .gallery-title {
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--s);
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      padding: 4px 4px;
+    }
+    .gallery-title:hover { color: var(--p); }
+    .gallery-title-id {
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 10px;
+      color: var(--d);
+      letter-spacing: 0.06em;
+    }
+    .gallery-screen {
+      width: 393px;
+      min-height: 852px;
+      background: var(--bg);
+      position: relative;
+      border: 1px solid var(--divider);
+      overflow: visible;
+    }
+    /* Show full content of every cloned screen — no clipping, no scroll */
+    .gallery-screen > .scr {
+      position: relative !important;
+      inset: auto !important;
+      opacity: 1 !important;
+      width: 393px !important;
+      height: auto !important;
+      min-height: 852px !important;
+      overflow: visible !important;
+      pointer-events: none;
+      animation: none !important;
+      transition: none !important;
+    }
+    .gallery-screen > .scr * {
+      animation: none !important;
+      transition: none !important;
+    }
+    /* Force overlay sheets (s3, s13) into their on-screen position so they're visible in the gallery */
+    .gallery-screen > .scr .check-sheet {
+      transform: translateY(0) !important;
+    }
+
+    /* ─── Flow diagram (s32) — full-page, escapes phone shell ─── */
+    #s32 {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      z-index: 500;
+      background: var(--bg);
+      border-radius: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #s32 .flow-canvas-wrap { transition: width 200ms ease, height 200ms ease; }
+    #s32 .flow-canvas { transition: transform 200ms ease; }
+    .flow-toolbar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 16px;
+      flex-shrink: 0;
+      background: var(--bg);
+    }
+    .flow-mode-btn {
+      flex: 1;
+      padding: 9px 0;
+      background: none;
+      border: 1px solid var(--divider);
+      color: var(--t);
+      font-family: var(--font);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 140ms var(--ease), border-color 140ms var(--ease);
+    }
+    .flow-mode-btn.on {
+      color: var(--p);
+      border-color: var(--p);
+    }
+    .flow-hint {
+      flex-shrink: 0;
+      padding: 4px 16px 8px;
+      font-size: 11px;
+      color: var(--t);
+      letter-spacing: -0.01em;
+    }
+    .flow-scroll {
+      flex: 1;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+    .flow-canvas-wrap {
+      position: relative;
+      width: 800px;
+      height: 2800px;
+    }
+    .flow-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 800px;
+      height: 2800px;
+      transform-origin: 0 0;
+    }
+    .flow-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .flow-zoom-overlay {
+      position: absolute;
+      bottom: 18px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(35,38,39,0.92);
+      border: 1px solid var(--divider);
+      z-index: 200;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .flow-zoom-btn {
+      width: 36px;
+      height: 36px;
+      background: none;
+      border: none;
+      color: var(--p);
+      font-size: 18px;
+      font-weight: 300;
+      cursor: pointer;
+      font-family: var(--font);
+      -webkit-tap-highlight-color: transparent;
+      line-height: 1;
+      transition: background 140ms var(--ease);
+    }
+    .flow-zoom-btn:active { background: rgba(255,255,255,0.06); }
+    .flow-zoom-btn:disabled { opacity: 0.3; cursor: default; }
+    .flow-zoom-label {
+      font-size: 11px;
+      color: var(--t);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+      min-width: 40px;
+      text-align: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .flow-pill {
+      position: absolute;
+      background: var(--surface);
+      color: var(--p);
+      border: 1px solid var(--divider);
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: -0.01em;
+      transition: border-color 140ms var(--ease), background 140ms var(--ease);
+      z-index: 10;
+      width: 80px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .flow-pill:hover { border-color: var(--t); }
+    .flow-pill-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4px;
+      padding: 5px 7px;
+      background: var(--surface);
+      font-size: 10px;
+      color: var(--p);
+      letter-spacing: -0.01em;
+    }
+    .flow-pill-header > span:first-child {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .flow-pill .flow-pill-id {
+      font-size: 8px;
+      color: var(--t);
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .flow-pill.flow-pill-source {
+      background: var(--p);
+      border-color: var(--p);
+    }
+    .flow-pill.flow-pill-source .flow-pill-header { background: var(--p); color: var(--bg); }
+    .flow-pill.flow-pill-source .flow-pill-id { color: var(--bg); opacity: 0.6; }
+    .flow-pill-preview {
+      position: relative;
+      width: 80px;
+      height: 174px;
+      overflow: hidden;
+      background: var(--bg);
+      border-top: 1px solid var(--divider);
+      pointer-events: none;
+    }
+    .flow-pill-preview > .scr {
+      position: relative !important;
+      inset: auto !important;
+      opacity: 1 !important;
+      width: 393px !important;
+      height: 852px !important;
+      transform: scale(0.204);
+      transform-origin: top left;
+      pointer-events: none;
+      animation: none !important;
+      transition: none !important;
+    }
+    .flow-pill-preview > .scr * {
+      animation: none !important;
+      transition: none !important;
+    }
+
     /* Amount input (Page 7) */
     .amt-input-row {
       display: flex;
@@ -1518,19 +1803,6 @@
       <span class="sm-num">s13</span>
     </div>
 
-    <!-- s17 Buy Setup (short path) -->
-    <div class="sm-node" id="smn-17" onclick="smapGo(17)">
-      <div class="sm-node-left">
-        <div class="sm-indent" style="display:flex;align-items:stretch">
-          <div style="width:12px;flex-shrink:0"></div>
-          <div class="sm-line-v"></div>
-          <div class="sm-hook"></div>
-        </div>
-        <span class="sm-name" style="margin-left:6px">Buy Setup</span>
-      </div>
-      <span class="sm-num">s17</span>
-    </div>
-
     <!-- s18 Action Picker -->
     <div class="sm-node" id="smn-18" onclick="smapGo(18)">
       <div class="sm-node-left">
@@ -2232,6 +2504,13 @@
       <div class="radio-opt" onclick="selectCD('exit')">
         <span class="body-lg">Exit position</span>
         <div class="radio-circle" id="cd-exit"></div>
+      </div>
+      <div class="radio-opt" onclick="selectCD('initial')">
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <span class="body-lg">Initial position</span>
+          <span style="font-size:11px;color:var(--t);letter-spacing:-0.01em">For testing</span>
+        </div>
+        <div class="radio-circle" id="cd-initial"></div>
       </div>
     </div>
 
@@ -3045,23 +3324,23 @@
       <hr class="div">
     </div>
 
-    <div style="flex:1;overflow-y:auto;padding:0 16px 24px;display:flex;flex-direction:column;justify-content:center">
-      <div style="margin-bottom:48px">
+    <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
+      <div style="margin-top:36px;margin-bottom:32px">
         <div class="lbl" style="margin-bottom:14px">View saved</div>
         <div class="flow-h">This decision will be tracked.</div>
       </div>
 
-      <div style="background:var(--surface);padding:22px 18px">
-        <div class="lbl" style="margin-bottom:16px">AAPL · Apple Inc</div>
-        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--divider)">
+      <div>
+        <div class="lbl" style="margin-bottom:8px">AAPL · Apple Inc</div>
+        <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--divider)">
           <span style="font-size:13px;color:var(--s)">Probability</span>
           <span style="font-size:14px;color:var(--p);font-variant-numeric:tabular-nums" id="s16-prob">65% → 72%</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--divider)">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
           <span style="font-size:14px;color:var(--p)" id="s16-horizon">2–3 years</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:10px 0">
+        <div style="display:flex;justify-content:space-between;padding:14px 0">
           <span style="font-size:13px;color:var(--s)">Recorded</span>
           <span style="font-size:14px;color:var(--p)" id="s16-date">—</span>
         </div>
@@ -3913,6 +4192,68 @@
     </div>
   </div>
 
+  <!-- ══════════════════════════════════
+       SCREEN 32 — FLOW DIAGRAM (Sitemap as tree)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s32" style="display:flex;flex-direction:column">
+    <div style="padding-top:56px;flex-shrink:0;background:var(--bg)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(10)">‹</button>
+        <span style="font-size:13px;color:var(--t);letter-spacing:-0.01em">Flow diagram</span>
+        <div style="display:flex;align-items:center;gap:14px">
+          <button onclick="go(33)" style="background:none;border:1px solid var(--divider);color:var(--s);font-family:var(--font);font-size:11px;padding:7px 11px;cursor:pointer;letter-spacing:-0.01em;-webkit-tap-highlight-color:transparent">→ Gallery</button>
+          <button onclick="resetFlowLayout()" style="background:none;border:none;color:var(--t);font-family:var(--font);font-size:12px;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent">Reset</button>
+        </div>
+      </div>
+      <hr class="div">
+    </div>
+    <div class="flow-toolbar">
+      <button class="flow-mode-btn on" id="flow-mode-view"    onclick="setFlowMode('view')">View</button>
+      <button class="flow-mode-btn"    id="flow-mode-move"    onclick="setFlowMode('move')">Move</button>
+      <button class="flow-mode-btn"    id="flow-mode-connect" onclick="setFlowMode('connect')">Connect</button>
+      <button class="flow-mode-btn"    id="flow-mode-delete"  onclick="setFlowMode('delete')">Delete</button>
+    </div>
+    <div class="flow-hint" id="flow-hint">Tap any pill to navigate to that screen.</div>
+    <div class="flow-scroll">
+      <div class="flow-canvas-wrap" id="flow-canvas-wrap">
+        <div class="flow-canvas" id="flow-canvas">
+          <svg class="flow-svg" id="flow-svg" width="800" height="2800" preserveAspectRatio="xMinYMin meet" viewBox="0 0 800 2800">
+            <defs>
+              <marker id="flow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#929292"/>
+              </marker>
+            </defs>
+            <g id="flow-arrows"></g>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="flow-zoom-overlay">
+      <button class="flow-zoom-btn" onclick="flowZoomOut()" title="Zoom out">−</button>
+      <span class="flow-zoom-label" id="flow-zoom-label" onclick="flowZoomReset()" title="Reset zoom">100%</span>
+      <button class="flow-zoom-btn" onclick="flowZoomIn()" title="Zoom in">+</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 33 — ALL PAGES GALLERY (full-size grid)
+       ══════════════════════════════════ -->
+  <div class="scr" id="s33" style="display:flex;flex-direction:column">
+    <div class="gallery-header">
+      <div style="display:flex;align-items:center;gap:18px">
+        <button class="back-btn" style="padding:0;font-size:22px;color:var(--p)" onclick="go(10)">‹</button>
+        <span class="gallery-header-title">All Pages — Full View</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px">
+        <span class="gallery-header-meta" id="gallery-count">31 SCREENS</span>
+        <button onclick="go(32)" style="background:none;border:1px solid var(--divider);color:var(--s);font-family:var(--font);font-size:11px;padding:7px 11px;cursor:pointer;letter-spacing:-0.01em;-webkit-tap-highlight-color:transparent">→ Flow diagram</button>
+      </div>
+    </div>
+    <div class="gallery-scroll" id="gallery-scroll">
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -4058,16 +4399,33 @@
         if (inp) { inp.value = ''; inp.focus(); }
       }, 240);
     }
+    if (n === 32) {
+      // Lazy-build the diagram on first entry; otherwise just refresh arrows
+      if (!flowBuilt) {
+        setTimeout(buildFlowDiagram, 0);
+      } else {
+        setTimeout(drawFlowArrows, 0);
+      }
+    }
+    if (n === 33) {
+      // Lazy-build gallery on first entry
+      if (!galleryBuilt) {
+        setTimeout(buildGallery, 0);
+      }
+    }
   }
 
   function updateNav(n) { /* nav dots removed */ smapUpdateActive(n); }
 
   /* ── Sitemap panel ──────────────────────────────── */
   function smapToggle() {
-    const p = document.getElementById('sm-panel');
-    const b = document.getElementById('sm-backdrop');
-    const open = p.classList.toggle('open');
-    b.classList.toggle('open', open);
+    // Hamburger now opens the Flow diagram (s32) instead of the side panel
+    if (cur === 32) {
+      // If already on the diagram, exit back to main dashboard
+      go(10);
+    } else {
+      go(32);
+    }
   }
   function smapClose() {
     document.getElementById('sm-panel').classList.remove('open');
@@ -4831,17 +5189,23 @@
   }
 
   function proceedToBuySetup() {
-    // Carry initial view into Buy setup
-    CALIB.s17.prob = CALIB.s12.prob;
-    CALIB.s17.horizon = CALIB.s12.horizon;
-    amtStr = '';
-    go(17);
-    setTimeout(() => {
-      const r = document.getElementById('s17-prob-range');
-      if (r) { r.value = CALIB.s17.prob; setProb('s17', CALIB.s17.prob); }
-      setHorizon('s17', CALIB.s17.horizon);
-      updateAmtDisplay();
-    }, 0);
+    // Carry the Define-view state (probability + horizon) into the legacy state vars
+    // so s4 review picks them up correctly.
+    confPct      = CALIB.s12.prob;
+    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
+    judgePeriod  = legacyMap[CALIB.s12.horizon] || '3y';
+    cdChoice     = 'increase';
+    acctChoice   = ACCOUNTS[0].id;
+
+    // Set up s8 (Enter Shares) for the Buy flow and route there directly.
+    const acct = ACCOUNTS.find(a => a.id === acctChoice) || ACCOUNTS[0];
+    document.getElementById('s8-action').textContent      = 'Buy';
+    document.getElementById('s8-acct-name').textContent   = acct.name;
+    document.getElementById('s8-acct-detail').textContent = acct.shares ? acct.shares : acct.cash + ' ' + acct.currency;
+    document.getElementById('s8-cost-lbl').textContent    = 'Estimated Cost';
+    sharesStr = '';
+    if (typeof updateSharesCalc === 'function') updateSharesCalc();
+    go(8);
   }
 
   function enterResearch() {
@@ -5297,6 +5661,560 @@
     });
   }
 
+  /* ── Flow diagram (s32) ──────────────────────── */
+  const FLOW_PAGES_DEFAULT = [
+    // Top tier
+    { id: 10, name: 'Dashboard',           x: 360, y:   30 },
+    // Layer 1
+    { id: 11, name: 'Search',              x:  30, y:  260 },
+    { id:  0, name: 'Stock Detail',        x: 230, y:  260 },
+    { id:  5, name: 'Calibration',         x: 430, y:  260 },
+    { id: 23, name: 'Cal · Empty',         x: 630, y:  260 },
+    // Layer 2 — children of s0
+    { id: 14, name: 'Fiscal Research',     x:  30, y:  490 },
+    { id: 24, name: 'View History',        x: 230, y:  490 },
+    { id:  6, name: 'Capital Decision',    x: 430, y:  490 },
+    // Layer 3
+    { id: 25, name: 'View Detail',         x: 230, y:  720 },
+    { id:  7, name: 'Select Account',      x: 330, y:  720 },
+    { id: 28, name: 'Exit · Context',      x: 530, y:  720 },
+    // Layer 4 — forks
+    { id: 15, name: 'Refine View',         x: 330, y:  950 },
+    { id: 21, name: 'Reduce · Reason',     x: 430, y:  950 },
+    { id: 29, name: 'Exit · Reason',       x: 530, y:  950 },
+    // Layer 5
+    { id: 16, name: 'Saved',               x: 330, y: 1180 },
+    { id: 22, name: 'Reduce · Prob.',      x: 430, y: 1180 },
+    { id: 30, name: 'Exit · Updated',      x: 530, y: 1180 },
+    // Layer 6
+    { id:  8, name: 'Enter Shares',        x: 330, y: 1410 },
+    { id: 27, name: 'Reduce · Confirm',    x: 430, y: 1410 },
+    { id: 31, name: 'Exit · Confirm',      x: 530, y: 1410 },
+    // Layer 7
+    { id:  4, name: 'Review',              x: 430, y: 1640 },
+    // Layer 8
+    { id:  9, name: 'Order Filled',        x: 430, y: 1870 },
+    // Alternate flows
+    { id: 12, name: 'Define View',         x:  30, y: 2100 },
+    { id: 13, name: 'Guardrail',           x: 130, y: 2100 },
+    { id: 18, name: 'Action Picker',       x: 230, y: 2100 },
+    { id: 19, name: 'Increase · Reason',   x:  30, y: 2330 },
+    { id: 20, name: 'Increase · Prob.',    x: 130, y: 2330 },
+    { id: 26, name: 'Increase · Confirm',  x: 230, y: 2330 },
+    // Legacy
+    { id:  2, name: 'Confidence',          x:  30, y: 2560 },
+    { id:  3, name: 'Cal. Check',          x: 130, y: 2560 }
+  ];
+  const FLOW_CONNECTIONS_DEFAULT = [
+    { from: 10, to: 11 }, { from: 10, to:  0 }, { from: 10, to:  5 }, { from: 10, to: 23 },
+    { from:  0, to: 14 }, { from:  0, to: 24 }, { from:  0, to:  6 },
+    { from: 24, to: 25 },
+    { from:  6, to:  7 }, { from:  6, to: 28 },
+    { from:  7, to: 15 }, { from:  7, to: 21 },
+    { from: 15, to: 16 },
+    { from: 16, to:  8 },
+    { from:  8, to:  4 },
+    { from:  4, to:  9 },
+    { from:  9, to:  0 },
+    { from: 21, to: 22 }, { from: 22, to: 27 }, { from: 27, to:  4 },
+    { from: 28, to: 29 }, { from: 29, to: 30 }, { from: 29, to: 31 }, { from: 30, to: 31 }, { from: 31, to:  4 },
+    { from: 19, to: 20 }, { from: 20, to: 26 }, { from: 26, to:  4 },
+    { from: 14, to:  0 }
+  ];
+  let FLOW_PAGES = JSON.parse(JSON.stringify(FLOW_PAGES_DEFAULT));
+  let FLOW_CONNECTIONS = JSON.parse(JSON.stringify(FLOW_CONNECTIONS_DEFAULT));
+  let flowMode = 'view';
+  let flowSelectedSource = null;
+  let flowBuilt = false;
+
+  /* Zoom state */
+  let flowZoom = 1;
+  const FLOW_ZOOM_MIN  = 0.4;
+  const FLOW_ZOOM_MAX  = 2.5;
+  const FLOW_ZOOM_STEP = 1.2;
+  const FLOW_BASE_W = 800;
+  const FLOW_BASE_H = 2800;
+
+  function setFlowZoom(z) {
+    flowZoom = Math.max(FLOW_ZOOM_MIN, Math.min(FLOW_ZOOM_MAX, z));
+    const wrap   = document.getElementById('flow-canvas-wrap');
+    const canvas = document.getElementById('flow-canvas');
+    const label  = document.getElementById('flow-zoom-label');
+    if (wrap) {
+      wrap.style.width  = (FLOW_BASE_W * flowZoom) + 'px';
+      wrap.style.height = (FLOW_BASE_H * flowZoom) + 'px';
+    }
+    if (canvas) canvas.style.transform = 'scale(' + flowZoom + ')';
+    if (label)  label.textContent = Math.round(flowZoom * 100) + '%';
+  }
+  function flowZoomIn()    { setFlowZoom(flowZoom * FLOW_ZOOM_STEP); }
+  function flowZoomOut()   { setFlowZoom(flowZoom / FLOW_ZOOM_STEP); }
+  function flowZoomReset() { setFlowZoom(1); }
+
+  /* Ctrl/Cmd + scroll wheel → zoom around cursor.
+     Attach once on first build so the listener doesn't stack. */
+  let _flowWheelAttached = false;
+  function setupFlowWheelZoom() {
+    if (_flowWheelAttached) return;
+    const scrollEl = document.querySelector('#s32 .flow-scroll');
+    if (!scrollEl) return;
+    scrollEl.addEventListener('wheel', e => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+
+      // Wheel-friendly step (smaller than button step for finer control)
+      const factor  = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+      const newZoom = Math.max(FLOW_ZOOM_MIN, Math.min(FLOW_ZOOM_MAX, flowZoom * factor));
+      if (newZoom === flowZoom) return;
+
+      // Anchor zoom on cursor position so the canvas point under the cursor stays still.
+      const rect          = scrollEl.getBoundingClientRect();
+      const vCursorX      = e.clientX - rect.left;
+      const vCursorY      = e.clientY - rect.top;
+      const contentX      = vCursorX + scrollEl.scrollLeft;
+      const contentY      = vCursorY + scrollEl.scrollTop;
+      const canvasX       = contentX / flowZoom;
+      const canvasY       = contentY / flowZoom;
+
+      setFlowZoom(newZoom);
+
+      scrollEl.scrollLeft = canvasX * flowZoom - vCursorX;
+      scrollEl.scrollTop  = canvasY * flowZoom - vCursorY;
+    }, { passive: false });
+    _flowWheelAttached = true;
+  }
+
+  const FLOW_HINTS = {
+    view:    'Tap any pill to navigate to that screen. Ctrl+scroll to zoom.',
+    move:    'Drag any pill to reposition it. Ctrl+scroll to zoom.',
+    connect: 'Tap a source pill, then tap a target pill to draw an arrow.',
+    delete:  'Tap any pill to remove all arrows touching it.'
+  };
+
+  function setFlowMode(mode) {
+    flowMode = mode;
+    ['view','move','connect','delete'].forEach(m => {
+      const btn = document.getElementById('flow-mode-' + m);
+      if (btn) btn.classList.toggle('on', m === mode);
+    });
+    flowSelectedSource = null;
+    document.querySelectorAll('.flow-pill').forEach(p => p.classList.remove('flow-pill-source'));
+    const hint = document.getElementById('flow-hint');
+    if (hint) hint.textContent = FLOW_HINTS[mode] || '';
+  }
+
+  function buildFlowDiagram() {
+    const canvas = document.getElementById('flow-canvas');
+    if (!canvas) return;
+    setupFlowWheelZoom();
+    canvas.querySelectorAll('.flow-pill').forEach(p => p.remove());
+    FLOW_PAGES.forEach(page => {
+      const pill = document.createElement('div');
+      pill.className = 'flow-pill';
+      pill.dataset.pageId = page.id;
+      pill.style.left = page.x + 'px';
+      pill.style.top  = page.y + 'px';
+
+      // Header (label + id)
+      const header = document.createElement('div');
+      header.className = 'flow-pill-header';
+      header.innerHTML = '<span>' + page.name + '</span><span class="flow-pill-id">s' + page.id + '</span>';
+      pill.appendChild(header);
+
+      // Live screen preview — clone the actual #sN element, scale it down
+      const sourceScr = document.getElementById('s' + page.id);
+      if (sourceScr) {
+        const previewWrap = document.createElement('div');
+        previewWrap.className = 'flow-pill-preview';
+        const clone = sourceScr.cloneNode(true);
+        // Strip IDs to avoid DOM duplicates and ensure no JS targets these
+        clone.removeAttribute('id');
+        clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+        // Strip handlers so the preview is purely visual
+        clone.removeAttribute('onclick');
+        clone.querySelectorAll('[onclick],[oninput],[onchange]').forEach(el => {
+          el.removeAttribute('onclick');
+          el.removeAttribute('oninput');
+          el.removeAttribute('onchange');
+          el.style.pointerEvents = 'none';
+        });
+        previewWrap.appendChild(clone);
+        pill.appendChild(previewWrap);
+      }
+
+      pill.addEventListener('mousedown',  e => onFlowPillDown(e, pill, page));
+      pill.addEventListener('touchstart', e => onFlowPillDown(e, pill, page), { passive: false });
+      canvas.appendChild(pill);
+    });
+    drawFlowArrows();
+    flowBuilt = true;
+  }
+
+  function drawFlowArrows() {
+    const g = document.getElementById('flow-arrows');
+    if (!g) return;
+    g.innerHTML = '';
+    FLOW_CONNECTIONS.forEach(conn => {
+      const fromPage = FLOW_PAGES.find(p => p.id === conn.from);
+      const toPage   = FLOW_PAGES.find(p => p.id === conn.to);
+      if (!fromPage || !toPage) return;
+      const fromPill = document.querySelector('.flow-pill[data-page-id="' + conn.from + '"]');
+      const toPill   = document.querySelector('.flow-pill[data-page-id="' + conn.to + '"]');
+      if (!fromPill || !toPill) return;
+      const fw = fromPill.offsetWidth, fh = fromPill.offsetHeight;
+      const tw = toPill.offsetWidth,  th = toPill.offsetHeight;
+      // Edge-to-edge centerline
+      let x1 = fromPage.x + fw / 2, y1 = fromPage.y + fh / 2;
+      let x2 = toPage.x   + tw / 2, y2 = toPage.y   + th / 2;
+      // Offset endpoint to pill edge so arrow head sits flush
+      const dx = x2 - x1, dy = y2 - y1;
+      const dist = Math.hypot(dx, dy) || 1;
+      const ux = dx / dist, uy = dy / dist;
+      // Pull endpoints in by ~half-pill (rough — works visually)
+      x1 += ux * (fw / 2 + 2);  y1 += uy * (fh / 2 + 2);
+      x2 -= ux * (tw / 2 + 6);  y2 -= uy * (th / 2 + 6);
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M' + x1.toFixed(1) + ',' + y1.toFixed(1) + ' L' + x2.toFixed(1) + ',' + y2.toFixed(1));
+      path.setAttribute('stroke', '#929292');
+      path.setAttribute('stroke-width', '1');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('marker-end', 'url(#flow-arrow)');
+      g.appendChild(path);
+    });
+  }
+
+  function onFlowPillDown(e, pill, page) {
+    if (flowMode === 'view') {
+      // Click to navigate (no drag)
+      pill.addEventListener('click', function once() {
+        pill.removeEventListener('click', once);
+        go(page.id);
+      });
+      return;
+    }
+    if (flowMode === 'connect') {
+      e.preventDefault();
+      pill.addEventListener('click', function once() {
+        pill.removeEventListener('click', once);
+        if (flowSelectedSource === null) {
+          flowSelectedSource = page.id;
+          pill.classList.add('flow-pill-source');
+        } else if (flowSelectedSource === page.id) {
+          flowSelectedSource = null;
+          pill.classList.remove('flow-pill-source');
+        } else {
+          // Add connection if not already present
+          const exists = FLOW_CONNECTIONS.some(c => c.from === flowSelectedSource && c.to === page.id);
+          if (!exists) FLOW_CONNECTIONS.push({ from: flowSelectedSource, to: page.id });
+          drawFlowArrows();
+          flowSelectedSource = null;
+          document.querySelectorAll('.flow-pill').forEach(p => p.classList.remove('flow-pill-source'));
+        }
+      });
+      return;
+    }
+    if (flowMode === 'delete') {
+      pill.addEventListener('click', function once() {
+        pill.removeEventListener('click', once);
+        for (let i = FLOW_CONNECTIONS.length - 1; i >= 0; i--) {
+          const c = FLOW_CONNECTIONS[i];
+          if (c.from === page.id || c.to === page.id) FLOW_CONNECTIONS.splice(i, 1);
+        }
+        drawFlowArrows();
+      });
+      return;
+    }
+    if (flowMode === 'move') {
+      e.preventDefault();
+      const isTouch = e.type === 'touchstart';
+      const startX = isTouch ? e.touches[0].clientX : e.clientX;
+      const startY = isTouch ? e.touches[0].clientY : e.clientY;
+      const origX = page.x;
+      const origY = page.y;
+      let moved = false;
+      const onMove = (ev) => {
+        moved = true;
+        const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
+        const cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
+        // Drag delta is in screen pixels; canvas is scaled by flowZoom, so
+        // divide to convert back to canvas units.
+        page.x = Math.max(0, origX + (cx - startX) / flowZoom);
+        page.y = Math.max(0, origY + (cy - startY) / flowZoom);
+        pill.style.left = page.x + 'px';
+        pill.style.top  = page.y + 'px';
+        drawFlowArrows();
+        if (ev.cancelable) ev.preventDefault();
+      };
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('touchend', onUp);
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('touchmove', onMove, { passive: false });
+      document.addEventListener('mouseup', onUp);
+      document.addEventListener('touchend', onUp);
+    }
+  }
+
+  function resetFlowLayout() {
+    FLOW_PAGES = JSON.parse(JSON.stringify(FLOW_PAGES_DEFAULT));
+    FLOW_CONNECTIONS = JSON.parse(JSON.stringify(FLOW_CONNECTIONS_DEFAULT));
+    setFlowMode('view');
+    setFlowZoom(1);
+    buildFlowDiagram();
+  }
+
+  /* ── All Pages Gallery (s33) — full-size grid with state variants ──── */
+  // Each entry can specify:
+  //   id      — source screen ID
+  //   name    — card title (page name + variant)
+  //   setup   — optional callback receiving the cloned DOM, runs BEFORE IDs are stripped,
+  //             so it can use #s##-style selectors to set state
+  const GALLERY_VARIANTS = [
+    // ─── Discovery / dashboards ────────────────────────────────
+    { id: 10, name: 'Main Dashboard' },
+    { id: 11, name: 'Search · empty' },
+    { id: 11, name: 'Search · with results', setup: c => {
+      const inp = c.querySelector('#s11-input');
+      if (inp) inp.value = 'app';
+      const list = c.querySelector('#s11-results');
+      if (list) list.innerHTML = `
+        <div style="padding:14px 4px;border-bottom:1px solid var(--divider);display:flex;justify-content:space-between;align-items:baseline">
+          <div><div style="font-size:14px;color:var(--p);letter-spacing:-0.01em">Apple Inc</div><div style="font-size:11px;color:var(--t);margin-top:3px">AAPL · NASDAQ</div></div>
+          <span style="font-size:13px;color:var(--p);font-variant-numeric:tabular-nums">192.35 USD</span>
+        </div>
+        <div style="padding:14px 4px;border-bottom:1px solid var(--divider);display:flex;justify-content:space-between;align-items:baseline">
+          <div><div style="font-size:14px;color:var(--p);letter-spacing:-0.01em">Applied Materials</div><div style="font-size:11px;color:var(--t);margin-top:3px">AMAT · NASDAQ</div></div>
+          <span style="font-size:13px;color:var(--p);font-variant-numeric:tabular-nums">189.42 USD</span>
+        </div>
+        <div style="padding:14px 4px;border-bottom:1px solid var(--divider);display:flex;justify-content:space-between;align-items:baseline">
+          <div><div style="font-size:14px;color:var(--p);letter-spacing:-0.01em">Appian Corp</div><div style="font-size:11px;color:var(--t);margin-top:3px">APPN · NASDAQ</div></div>
+          <span style="font-size:13px;color:var(--p);font-variant-numeric:tabular-nums">31.20 USD</span>
+        </div>`;
+    }},
+    { id:  0, name: 'Stock Detail · owned (with history)' },
+    { id:  0, name: 'Stock Detail · not owned (no history)', setup: c => {
+      const h = c.querySelector('#s0-holdings');
+      if (h) h.style.display = 'none';
+      const list = c.querySelector('#s0-vh-list');
+      const empty = c.querySelector('#s0-vh-empty');
+      if (list) list.innerHTML = '';
+      if (empty) empty.style.display = 'block';
+    }},
+    { id: 14, name: 'Fiscal Research' },
+    { id: 24, name: 'View History · full list' },
+    { id: 25, name: 'View Detail' },
+
+    // ─── Capital Decision flow entry ───────────────────────────
+    { id:  6, name: 'Capital Decision · Increase' },
+    { id:  6, name: 'Capital Decision · Reduce', setup: c => {
+      c.querySelector('#cd-increase')?.classList.remove('on');
+      c.querySelector('#cd-reduce')?.classList.add('on');
+    }},
+    { id:  6, name: 'Capital Decision · Exit', setup: c => {
+      c.querySelector('#cd-increase')?.classList.remove('on');
+      c.querySelector('#cd-exit')?.classList.add('on');
+    }},
+    { id:  6, name: 'Capital Decision · Initial', setup: c => {
+      c.querySelector('#cd-increase')?.classList.remove('on');
+      c.querySelector('#cd-initial')?.classList.add('on');
+    }},
+    { id:  7, name: 'Select Account' },
+
+    // ─── Initial Buy flow ──────────────────────────────────────
+    { id: 12, name: 'Define View · default 50%' },
+    { id: 12, name: 'Define View · 75% with reason', setup: c => {
+      const num = c.querySelector('#s12-prob-num');
+      if (num) num.textContent = '75';
+      const r = c.querySelector('#s12-prob-range');
+      if (r) { r.value = 75; r.style.background = 'linear-gradient(to right, var(--p) 75%, var(--divider) 75%)'; }
+      const reason = c.querySelector('#s12-reason');
+      if (reason) reason.value = 'Services growth offsetting iPhone plateau';
+    }},
+    { id: 13, name: 'Guardrail · weak edge (<55%)' },
+    { id: 13, name: 'Guardrail · low conviction (+<5%)', setup: c => {
+      c.querySelector('#s13-title').textContent = 'Your conviction has not meaningfully increased.';
+      const b = c.querySelector('#s13-body');
+      b.textContent = 'A +3% change is not a strong reason to increase exposure.';
+      b.style.display = '';
+    }},
+    { id: 13, name: 'Guardrail · reduce with high prob', setup: c => {
+      c.querySelector('#s13-title').textContent = 'Your stated probability remains high.';
+      const b = c.querySelector('#s13-body');
+      b.textContent = 'Why reduce exposure if your edge is intact?';
+      b.style.display = '';
+    }},
+    { id: 13, name: 'Guardrail · exit with positive edge', setup: c => {
+      c.querySelector('#s13-title').textContent = 'Your stated probability still indicates a positive edge.';
+      const b = c.querySelector('#s13-body');
+      b.textContent = 'Why exit if your edge is intact?';
+      b.style.display = '';
+    }},
+    { id: 15, name: 'Refine View' },
+    { id: 16, name: 'Saved Confirmation' },
+    { id:  8, name: 'Enter Shares · empty' },
+    { id:  8, name: 'Enter Shares · 25 shares', setup: c => {
+      const disp = c.querySelector('#s8-shares-disp');
+      if (disp) disp.innerHTML = '25<span class="cursor-blink" style="opacity:0.4;margin-left:1px">|</span>';
+      const w = c.querySelector('#s8-weight'); if (w) { w.textContent = '1.84%'; w.style.color = ''; }
+      const cost = c.querySelector('#s8-cost'); if (cost) { cost.textContent = '6,539.90 CAD'; cost.style.color = ''; }
+      const review = c.querySelector('#s8-review-btn'); if (review) { review.style.opacity = '1'; review.removeAttribute('disabled'); }
+    }},
+    { id:  4, name: 'Review & Execute · Buy' },
+    { id:  4, name: 'Review & Execute · Sell', setup: c => {
+      const action = c.querySelector('#s4-action'); if (action) action.textContent = 'Sell';
+      const type = c.querySelector('#s4-type'); if (type) type.textContent = 'Market Sell';
+      const costLbl = c.querySelector('#s4-cost-lbl'); if (costLbl) costLbl.textContent = 'Estimated Value';
+    }},
+    { id:  9, name: 'Order Filled · Buy' },
+    { id:  9, name: 'Order Filled · Sell', setup: c => {
+      const type = c.querySelector('#s9-type'); if (type) type.textContent = 'Market Sell';
+      const header = c.querySelector('span#s9-action');
+      // Header text node ("Order Filled") doesn't change, but Type does
+    }},
+
+    // ─── Owned position actions ────────────────────────────────
+    { id: 18, name: 'Action Picker' },
+    { id: 19, name: 'Increase · Reason · selected', setup: c => {
+      const rows = c.querySelectorAll('#s19 .reason-row, .reason-row');
+      if (rows[0]) rows[0].classList.add('sel');
+      const cont = c.querySelector('#s19-cont');
+      if (cont) { cont.style.opacity = '1'; cont.style.pointerEvents = 'auto'; }
+    }},
+    { id: 20, name: 'Increase · Probability · default' },
+    { id: 20, name: 'Increase · Probability · horizon changed', setup: c => {
+      c.querySelector('#s20-yn-no')?.classList.remove('on');
+      c.querySelector('#s20-yn-yes')?.classList.add('on');
+      const sec = c.querySelector('#s20-horizon-section');
+      if (sec) sec.style.display = 'block';
+      const num = c.querySelector('#s20-prob-num'); if (num) num.textContent = '78';
+      const dlt = c.querySelector('#s20-delta'); if (dlt) dlt.textContent = '+6%';
+      const r = c.querySelector('#s20-prob-range');
+      if (r) { r.value = 78; r.style.background = 'linear-gradient(to right, var(--p) 78%, var(--divider) 78%)'; }
+    }},
+    { id: 26, name: 'Increase · Confirmation' },
+
+    { id: 21, name: 'Reduce · Reason · selected', setup: c => {
+      const rows = c.querySelectorAll('#s21 .reason-row, .reason-row');
+      if (rows[0]) rows[0].classList.add('sel');
+      const cont = c.querySelector('#s21-cont');
+      if (cont) { cont.style.opacity = '1'; cont.style.pointerEvents = 'auto'; }
+    }},
+    { id: 22, name: 'Reduce · Probability · default' },
+    { id: 22, name: 'Reduce · Probability · 55% updated', setup: c => {
+      const num = c.querySelector('#s22-prob-num'); if (num) num.textContent = '55';
+      const dlt = c.querySelector('#s22-delta'); if (dlt) dlt.textContent = '−7%';
+      const r = c.querySelector('#s22-prob-range');
+      if (r) { r.value = 55; r.style.background = 'linear-gradient(to right, var(--p) 55%, var(--divider) 55%)'; }
+    }},
+    { id: 27, name: 'Reduce · Confirmation' },
+
+    { id: 28, name: 'Exit · Context (5 months)' },
+    { id: 29, name: 'Exit · Reason · thesis weakened', setup: c => {
+      const rows = c.querySelectorAll('#s29 .reason-row, .reason-row');
+      if (rows[0]) rows[0].classList.add('sel');
+      const cont = c.querySelector('#s29-cont');
+      if (cont) { cont.style.opacity = '1'; cont.style.pointerEvents = 'auto'; }
+    }},
+    { id: 30, name: 'Exit · Updated belief · default' },
+    { id: 30, name: 'Exit · Updated belief · 48% horizon changed', setup: c => {
+      c.querySelector('#s30-yn-no')?.classList.remove('on');
+      c.querySelector('#s30-yn-yes')?.classList.add('on');
+      const sec = c.querySelector('#s30-horizon-section'); if (sec) sec.style.display = 'block';
+      const num = c.querySelector('#s30-prob-num'); if (num) num.textContent = '48';
+      const dlt = c.querySelector('#s30-delta'); if (dlt) dlt.textContent = '−14%';
+      const r = c.querySelector('#s30-prob-range');
+      if (r) { r.value = 48; r.style.background = 'linear-gradient(to right, var(--p) 48%, var(--divider) 48%)'; }
+    }},
+    { id: 31, name: 'Exit · Confirmation' },
+
+    // ─── Calibration dashboards ────────────────────────────────
+    { id:  5, name: 'Calibration · Actual data' },
+    { id:  5, name: 'Calibration · Hypothetical (sample)', setup: c => {
+      // Show the hypothetical banner that appears in hypo mode
+      const banner = c.querySelector('#hypo-banner');
+      if (banner) { banner.classList.add('show'); banner.style.maxHeight = '40px'; banner.style.opacity = '1'; }
+      const lbl = c.querySelector('#cal-mode-label'); if (lbl) lbl.textContent = 'Hypothetical';
+      const rt = c.querySelector('#opt-realtime'); if (rt) rt.classList.remove('active');
+      const hp = c.querySelector('#opt-hypo'); if (hp) hp.classList.add('active');
+      const hero = c.querySelector('#hero-n'); if (hero) hero.textContent = '66%';
+      const trend = c.querySelector('#hero-trend');
+      if (trend) { trend.textContent = '↑ +8% vs 6 months'; trend.className = 'hero-trend trend-up'; }
+      const sub = c.querySelector('#s5-hero-sub'); if (sub) sub.textContent = 'Avg stated confidence: 67%';
+      const m1 = c.querySelector('#mv1'); if (m1) m1.textContent = '67%';
+      const m2 = c.querySelector('#mv2'); if (m2) m2.textContent = '66%';
+      const m3 = c.querySelector('#mv3'); if (m3) m3.textContent = '−1%';
+      const ver = c.querySelector('#s5-verdict'); if (ver) ver.textContent = 'Well calibrated.';
+      const pend = c.querySelector('#s5-pending'); if (pend) pend.textContent = '4';
+    }},
+    { id: 23, name: 'Calibration · Empty (no record)' },
+
+    // ─── Legacy / overlay (mostly unreachable in normal flow) ──
+    { id:  2, name: 'Confidence (legacy)' },
+    { id:  3, name: 'Calibration Check (legacy overlay)' }
+  ];
+  let galleryBuilt = false;
+
+  // Make sure dynamic content has rendered into the live screens before we
+  // clone them. Runs once per gallery build (cheap to re-run, idempotent).
+  function prepareScreensForGallery() {
+    try { if (typeof buildDots === 'function') buildDots(); } catch (e) {}
+    try { if (typeof renderViewHistoryFull === 'function') renderViewHistoryFull(); } catch (e) {}
+    try { if (typeof renderViewHistory === 'function') renderViewHistory(); } catch (e) {}
+    try { if (typeof buildAcctList === 'function') buildAcctList(); } catch (e) {}
+    try { if (typeof _updateExtraStats === 'function') _updateExtraStats(); } catch (e) {}
+    try { if (typeof updateSharesCalc === 'function') updateSharesCalc(); } catch (e) {}
+  }
+
+  function buildGallery() {
+    prepareScreensForGallery();
+    const grid = document.getElementById('gallery-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    GALLERY_VARIANTS.forEach(variant => {
+      const card = document.createElement('div');
+      card.className = 'gallery-card';
+
+      const title = document.createElement('div');
+      title.className = 'gallery-title';
+      title.innerHTML = '<span>' + variant.name + '</span><span class="gallery-title-id">s' + variant.id + '</span>';
+      title.onclick = () => go(variant.id);
+      card.appendChild(title);
+
+      const screen = document.createElement('div');
+      screen.className = 'gallery-screen';
+      const sourceScr = document.getElementById('s' + variant.id);
+      if (sourceScr) {
+        const clone = sourceScr.cloneNode(true);
+        // Run state setup BEFORE stripping IDs so the function can use #s##-style selectors.
+        if (typeof variant.setup === 'function') {
+          try { variant.setup(clone); } catch (e) { console && console.warn && console.warn('variant setup failed', variant.name, e); }
+        }
+        // Strip IDs to avoid duplicates with the live document.
+        clone.removeAttribute('id');
+        clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+        clone.removeAttribute('onclick');
+        clone.querySelectorAll('[onclick],[oninput],[onchange]').forEach(el => {
+          el.removeAttribute('onclick');
+          el.removeAttribute('oninput');
+          el.removeAttribute('onchange');
+          el.style.pointerEvents = 'none';
+        });
+        // Force the cloned screen into its "on" state so anything CSS-gated by
+        // `.scr.on` (overlay sheets, dropdowns, etc.) is visible.
+        clone.classList.add('on');
+        screen.appendChild(clone);
+      }
+      card.appendChild(screen);
+      grid.appendChild(card);
+    });
+    const countEl = document.getElementById('gallery-count');
+    if (countEl) countEl.textContent = GALLERY_VARIANTS.length + ' STATES';
+    galleryBuilt = true;
+  }
+
   /* ── Init on load ─────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
     renderViewHistory();
@@ -5372,14 +6290,36 @@
     cdChoice = choice;
     document.getElementById('cd-increase').classList.toggle('on', choice === 'increase');
     document.getElementById('cd-reduce').classList.toggle('on',   choice === 'reduce');
-    const exitEl = document.getElementById('cd-exit');
-    if (exitEl) exitEl.classList.toggle('on', choice === 'exit');
+    const exitEl    = document.getElementById('cd-exit');
+    const initialEl = document.getElementById('cd-initial');
+    if (exitEl)    exitEl.classList.toggle('on',    choice === 'exit');
+    if (initialEl) initialEl.classList.toggle('on', choice === 'initial');
   }
 
-  /* s6 proceed — Increase/Reduce → s7 (account picker), Exit → direct to Exit context (s28) */
+  /* s6 proceed — routes by selected option:
+     · increase / reduce → s7 (account picker)
+     · exit              → s28 (exit context)
+     · initial           → s12 (Define view, Initial Buy flow) */
   function proceedFromS6() {
     if (cdChoice === 'exit') {
       pickAction('exit');
+    } else if (cdChoice === 'initial') {
+      proceededFromGuardrail = false;
+      // Pre-fill s12 with latest saved view (if any) for convenience
+      if (viewHistory.length > 0) {
+        const latest = currentView();
+        CALIB.s12.prob    = latest.prob;
+        CALIB.s12.horizon = latest.horizon;
+      } else {
+        CALIB.s12.prob    = 50;
+        CALIB.s12.horizon = '23y';
+      }
+      go(12);
+      setTimeout(() => {
+        const r = document.getElementById('s12-prob-range');
+        if (r) { r.value = CALIB.s12.prob; setProb('s12', CALIB.s12.prob); }
+        setHorizon('s12', CALIB.s12.horizon);
+      }, 0);
     } else {
       goToAcct();
     }
