@@ -5284,23 +5284,32 @@
     }
 
     // ── Past all guardrails — commit the refined view.
-    const initHor  = CALIB.s12.horizon;
-    const newHor   = CALIB.s15.horizon;
-    const date = todayStr();
+    const newHor = CALIB.s15.horizon;
+    const date   = todayStr();
     viewHistory.push({
       prob: newProb,
       horizon: newHor,
-      reason: document.getElementById('s15-reason')?.value || '',
+      reason: pickedReason || (document.getElementById('s15-reason')?.value || ''),
       date: date,
-      action: 'refined_view',
+      action: cdChoice === 'increase' ? 'increase' : 'refined_view',
       delta: delta
     });
-    document.getElementById('s16-prob').textContent    = initProb + '% → ' + newProb + '%';
-    document.getElementById('s16-horizon').textContent = HORIZON_LBL[newHor] || newHor;
-    document.getElementById('s16-date').textContent    = date;
+    confPct = newProb;
+    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
+    judgePeriod = legacyMap[newHor] || '3y';
     renderViewHistory();
     proceededFromGuardrail = false;  // reset for next save
-    go(16);
+
+    if (cdChoice === 'increase') {
+      // Increase exposure → continue into Enter Shares
+      setupS8AndGo();
+    } else {
+      // Initial Buy / refine path → Saved Confirmation
+      document.getElementById('s16-prob').textContent    = initProb + '% → ' + newProb + '%';
+      document.getElementById('s16-horizon').textContent = HORIZON_LBL[newHor] || newHor;
+      document.getElementById('s16-date').textContent    = date;
+      go(16);
+    }
   }
 
   function todayStr() {
@@ -5418,27 +5427,66 @@
       cont.style.opacity = '1';
       cont.style.pointerEvents = 'auto';
       cont.onclick = () => {
-        const cur = currentView() || { prob: 72, horizon: '23y' };
-        // Exit flow has conditional next screen — only show updated belief if reason is thesis/return
-        if (flow === 'exit' && key !== 'thesis' && key !== 'return') {
-          // Skip s30 entirely; jump straight to confirmation with unchanged probability
-          showExitConfirmation();
-          return;
+        // After picking reason, navigate to the action-specific
+        // "updated probability / belief" page. Same layout, slightly
+        // different copy per action.
+        const cur = currentView() || { prob: 65, horizon: '23y' };
+        proceededFromGuardrail = false;
+
+        if (flow === 'inc') {
+          // Increase → s15 (Refine View) with Initial-view recap
+          CALIB.s12.prob    = cur.prob;
+          CALIB.s12.horizon = cur.horizon;
+          CALIB.s15.prob    = cur.prob;
+          CALIB.s15.horizon = cur.horizon;
+          const initProbEl = document.getElementById('s15-init-prob');
+          const initHorEl  = document.getElementById('s15-init-horizon');
+          if (initProbEl) initProbEl.textContent = cur.prob + '%';
+          if (initHorEl)  initHorEl.textContent  = HORIZON_LBL[cur.horizon] || cur.horizon;
+          go(15);
+          setTimeout(() => {
+            const r = document.getElementById('s15-prob-range');
+            if (r) { r.value = cur.prob; setProb('s15', cur.prob); }
+            setHorizon('s15', cur.horizon);
+          }, 0);
+        } else if (flow === 'red') {
+          // Reduce → s22 (Updated view, "State your new probability")
+          CALIB.s22.prob    = cur.prob;
+          CALIB.s22.horizon = cur.horizon;
+          go(22);
+          setTimeout(() => {
+            const r = document.getElementById('s22-prob-range');
+            if (r) { r.value = cur.prob; setProb('s22', cur.prob); }
+            setHorizon('s22', cur.horizon);
+            setHorizonChanged('s22', 'no');
+          }, 0);
+        } else if (flow === 'exit') {
+          // Exit → s30 (Updated belief, "If evaluating today...")
+          CALIB.s30.prob    = cur.prob;
+          CALIB.s30.horizon = cur.horizon;
+          go(30);
+          setTimeout(() => {
+            const r = document.getElementById('s30-prob-range');
+            if (r) { r.value = cur.prob; setProb('s30', cur.prob); }
+            setHorizon('s30', cur.horizon);
+            setHorizonChanged('s30', 'no');
+          }, 0);
         }
-        const nextScr = flow === 'inc' ? 's20' : flow === 'red' ? 's22' : 's30';
-        if (CALIB[nextScr]) {
-          CALIB[nextScr].prob = cur.prob;
-          CALIB[nextScr].horizon = cur.horizon;
-        }
-        go(parseInt(nextScr.slice(1), 10));
-        setTimeout(() => {
-          const r = document.getElementById(nextScr + '-prob-range');
-          if (r) { r.value = cur.prob; setProb(nextScr, cur.prob); }
-          setHorizon(nextScr, cur.horizon);
-          setHorizonChanged(nextScr, 'no');
-        }, 0);
       };
     }
+  }
+
+  /* Helper — set up s8 (Enter Shares) for whichever action is committing. */
+  function setupS8AndGo() {
+    const acct  = ACCOUNTS.find(a => a.id === acctChoice) || ACCOUNTS[0];
+    const isBuy = cdChoice === 'increase';
+    document.getElementById('s8-action').textContent      = isBuy ? 'Buy' : 'Sell';
+    document.getElementById('s8-acct-name').textContent   = acct.name;
+    document.getElementById('s8-acct-detail').textContent = acct.shares ? acct.shares : acct.cash + ' ' + acct.currency;
+    document.getElementById('s8-cost-lbl').textContent    = isBuy ? 'Estimated Cost' : 'Estimated Value';
+    sharesStr = '';
+    if (typeof updateSharesCalc === 'function') updateSharesCalc();
+    go(8);
   }
 
   /* ── Increase confirmation (s20 → s26 → s4) ──── */
@@ -5481,45 +5529,37 @@
     goToReview();
   }
 
-  /* ── Reduce confirmation (s22 → s27 → s4) ────── */
+  /* ── Reduce flow: s22 → guardrail (>70%) → s8 ── */
   function confirmReduce() {
+    const cur = currentView() || { prob: 72, horizon: '23y' };
     const newProb = CALIB.s22.prob;
     if (newProb > 70 && !proceededFromGuardrail) {
       document.getElementById('s13-title').textContent = 'Your stated probability remains high.';
       const body = document.getElementById('s13-body');
       body.textContent = 'Why reduce exposure if your edge is intact?';
       body.style.display = '';
-      pendingNav = () => { proceededFromGuardrail = true; showReduceConfirmation(); };
+      pendingNav = () => { proceededFromGuardrail = true; confirmReduce(); };
       showGuardrail();
       return;
     }
-    showReduceConfirmation();
-  }
-  function showReduceConfirmation() {
-    const cur = currentView() || { prob: 72, horizon: '23y' };
-    document.getElementById('s27-prob').textContent    = cur.prob + '% → ' + CALIB.s22.prob + '%';
-    document.getElementById('s27-horizon').textContent = HORIZON_LBL[CALIB.s22.horizon] || CALIB.s22.horizon;
-    go(27);
-  }
-  function proceedAfterReduceConfirm() { doReduce(); }
-  function doReduce() {
+    // Past the guardrail — commit and continue into Enter Shares
     viewHistory.push({
-      prob: CALIB.s22.prob,
+      prob:    newProb,
       horizon: CALIB.s22.horizon,
-      reason: pickedReason || '',
-      date: todayStr(),
-      action: 'reduce',
-      delta: CALIB.s22.prob - (currentView()?.prob ?? 0)
+      reason:  pickedReason || '',
+      date:    todayStr(),
+      action:  'reduce',
+      delta:   newProb - cur.prob
     });
     renderViewHistory();
-    confPct = CALIB.s22.prob;
-    sharesStr = '5';
-    cdChoice = 'decrease';
-    acctChoice = ACCOUNTS[0].id;
-    goToReview();
+    confPct = newProb;
+    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
+    judgePeriod = legacyMap[CALIB.s22.horizon] || '3y';
+    proceededFromGuardrail = false;
+    setupS8AndGo();
   }
 
-  /* ── Exit flow (s28 → s29 → [s30 conditional] → s31 → s4) ── */
+  /* ── Exit flow: s30 → guardrail (>60%) → s8 ── */
   function confirmExit() {
     // Called from s30 Continue. Check the >60% guardrail.
     const cur = currentView() || { prob: 62, horizon: '23y' };
@@ -5529,11 +5569,25 @@
       const body = document.getElementById('s13-body');
       body.textContent = 'Why exit if your edge is intact?';
       body.style.display = '';
-      pendingNav = () => { proceededFromGuardrail = true; showExitConfirmation(); };
+      pendingNav = () => { proceededFromGuardrail = true; confirmExit(); };
       showGuardrail();
       return;
     }
-    showExitConfirmation();
+    // Past the guardrail — commit and continue into Enter Shares
+    viewHistory.push({
+      prob:    newProb,
+      horizon: CALIB.s30.horizon,
+      reason:  pickedReason || '',
+      date:    todayStr(),
+      action:  'exit',
+      delta:   newProb - cur.prob
+    });
+    renderViewHistory();
+    confPct = newProb;
+    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
+    judgePeriod = legacyMap[CALIB.s30.horizon] || '3y';
+    proceededFromGuardrail = false;
+    setupS8AndGo();
   }
 
   function showExitConfirmation() {
@@ -6346,15 +6400,13 @@
     if (initialEl) initialEl.classList.toggle('on', choice === 'initial');
   }
 
-  /* s6 proceed — routes by selected option:
-     · increase / reduce → s7 (account picker)
-     · exit              → s28 (exit context)
-     · initial           → s12 (Define view, Initial Buy flow) */
+  /* s6 proceed — all action paths now go: s7 (account) → reason picker → s8 (shares).
+     · increase / reduce / exit → s7
+     · initial                  → s12 (Define view, Initial Buy flow) */
   function proceedFromS6() {
-    if (cdChoice === 'exit') {
-      pickAction('exit');
-    } else if (cdChoice === 'initial') {
-      proceededFromGuardrail = false;
+    proceededFromGuardrail = false;
+    pickedReason = null;
+    if (cdChoice === 'initial') {
       // Pre-fill s12 with latest saved view (if any) for convenience
       if (viewHistory.length > 0) {
         const latest = currentView();
@@ -6371,6 +6423,7 @@
         setHorizon('s12', CALIB.s12.horizon);
       }, 0);
     } else {
+      // increase / reduce / exit all flow through the account picker
       goToAcct();
     }
   }
@@ -6401,37 +6454,30 @@
 
 
   function goToShares() {
-    const acct = ACCOUNTS.find(a => a.id === acctChoice);
-    const isBuy = cdChoice === 'increase';
+    // After s7 (account picker), all three actions go to their reason-picker page.
+    const cur = currentView() || { prob: 65, horizon: '23y' };
+    pickedReason = null;
 
-    // Increase flow detours through Refine view ("Has your view changed?")
-    // before the user enters a share amount.
-    if (isBuy) {
-      const cur = currentView() || { prob: 65, horizon: '23y' };
-      CALIB.s12.prob = cur.prob;
-      CALIB.s12.horizon = cur.horizon;
-      CALIB.s15.prob = cur.prob;
-      CALIB.s15.horizon = cur.horizon;
-      const initProbEl = document.getElementById('s15-init-prob');
-      const initHorEl  = document.getElementById('s15-init-horizon');
-      if (initProbEl) initProbEl.textContent = cur.prob + '%';
-      if (initHorEl)  initHorEl.textContent  = HORIZON_LBL[cur.horizon] || cur.horizon;
-      go(15);
-      setTimeout(() => {
-        const r = document.getElementById('s15-prob-range');
-        if (r) { r.value = cur.prob; setProb('s15', cur.prob); }
-        setHorizon('s15', cur.horizon);
-      }, 0);
-      return;
+    if (cdChoice === 'increase') {
+      document.getElementById('s19-cur-prob').textContent    = cur.prob + '%';
+      document.getElementById('s19-cur-horizon').textContent = HORIZON_LBL[cur.horizon] || cur.horizon;
+      document.querySelectorAll('#s19 .reason-row').forEach(r => r.classList.remove('sel'));
+      const cont = document.getElementById('s19-cont');
+      if (cont) { cont.style.opacity = '0.3'; cont.style.pointerEvents = 'none'; cont.onclick = null; }
+      go(19);
+    } else if (cdChoice === 'reduce') {
+      document.getElementById('s21-cur-prob').textContent    = cur.prob + '%';
+      document.getElementById('s21-cur-horizon').textContent = HORIZON_LBL[cur.horizon] || cur.horizon;
+      document.querySelectorAll('#s21 .reason-row').forEach(r => r.classList.remove('sel'));
+      const cont = document.getElementById('s21-cont');
+      if (cont) { cont.style.opacity = '0.3'; cont.style.pointerEvents = 'none'; cont.onclick = null; }
+      go(21);
+    } else if (cdChoice === 'exit') {
+      document.querySelectorAll('#s29 .reason-row').forEach(r => r.classList.remove('sel'));
+      const cont = document.getElementById('s29-cont');
+      if (cont) { cont.style.opacity = '0.3'; cont.style.pointerEvents = 'none'; cont.onclick = null; }
+      go(29);
     }
-
-    document.getElementById('s8-action').textContent     = 'Sell';
-    document.getElementById('s8-acct-name').textContent  = acct.name;
-    document.getElementById('s8-acct-detail').textContent = acct.shares ? acct.shares : acct.cash + ' ' + acct.currency;
-    document.getElementById('s8-cost-lbl').textContent   = 'Estimated Value';
-    sharesStr = '';
-    updateSharesCalc();
-    go(8);
   }
 
   const MKTPRICE = 192.35, PORTVAL = 285000;
