@@ -103,6 +103,11 @@
     }
     .scr::-webkit-scrollbar { display: none; }
     .scr.on { opacity: 1; pointer-events: all; }
+    /* Hard-block clicks on every descendant of an inactive screen, even if
+       inline styles set pointer-events:auto. Without this, hidden screens'
+       buttons that share a pinned-bottom y-coordinate with the active
+       screen can intercept taps and silently re-run their handlers. */
+    .scr:not(.on) * { pointer-events: none !important; }
 
     /* ─── Type scale ──────────────────────────────── */
     .lbl {
@@ -277,16 +282,24 @@
       transition: color 140ms var(--ease);
     }
     .reason-row.sel .reason-row-text { color: var(--p); }
+    /* Reason picker tick — matches the .radio-circle style used on s6 */
     .reason-tick {
-      width: 8px; height: 8px;
+      width: 15px; height: 15px;
       border-radius: 50%;
-      border: 1px solid var(--d);
+      border: 1.5px solid var(--d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
-      transition: background 140ms var(--ease), border-color 140ms var(--ease);
+      transition: border-color 160ms var(--ease);
     }
-    .reason-row.sel .reason-tick {
+    .reason-row.sel .reason-tick { border-color: var(--p); }
+    .reason-row.sel .reason-tick::after {
+      content: '';
+      display: block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
       background: var(--p);
-      border-color: var(--p);
     }
 
     /* Delta display chip */
@@ -896,6 +909,23 @@
     .period-btn.on {
       color: var(--p);
     }
+    /* Multi-line period button — year on top, judgment date below */
+    .period-btn.period-btn-multi {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      line-height: 1.15;
+      padding: 8px 2px;
+    }
+    .period-btn-multi .period-btn-year { font-size: 13px; font-weight: 400; }
+    .period-btn-multi .period-btn-date {
+      font-size: 9px;
+      color: var(--d);
+      letter-spacing: 0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .period-btn-multi.on .period-btn-date { color: var(--t); }
 
     /* ─── Screen 4: Review & Execute ──────────────── */
     #s4 { gap: 0; }
@@ -1027,6 +1057,18 @@
       opacity: 0; transition: opacity 150ms;
     }
     .char-ct.show { opacity: 1; }
+
+    /* ─── AI calibration insight (s4) ────────────── */
+    .ai-eyebrow { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+    .ai-eyebrow-dot { width:5px; height:5px; border-radius:50%; background:var(--p); animation: aiPulse 1.6s ease-in-out infinite; }
+    @keyframes aiPulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+    .ai-thinking { display:inline-flex; gap:5px; align-items:center; padding:4px 0; }
+    .ai-thinking-dot { width:5px; height:5px; border-radius:50%; background:var(--s); animation: aiThink 1.4s infinite ease-in-out both; }
+    .ai-thinking-dot:nth-child(2) { animation-delay: 0.18s; }
+    .ai-thinking-dot:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes aiThink { 0%, 80%, 100% { opacity: 0.2; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
+    .ai-caret { display:inline-block; width:6px; height:13px; vertical-align:-2px; margin-left:2px; background:var(--p); animation: aiCaret 1s steps(2, end) infinite; }
+    @keyframes aiCaret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
     /* ─── Screen 3: Calibration check ────────────── */
     /* ─── Screen 3: Calibration Check (bottom sheet) ── */
@@ -2019,22 +2061,30 @@
         </div>
       </div>
 
-      <!-- Holdings card (conditional on OWNED) -->
-      <div id="s0-holdings" style="background:var(--surface);padding:18px 16px;margin-top:28px;display:none">
-        <div style="margin-bottom:16px">
-          <div style="display:flex;align-items:baseline;gap:10px">
-            <span style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">18,950.00 <span style="font-size:13px;color:var(--t)">CAD</span></span>
-            <span style="font-size:15px;color:var(--p)">+42.6%</span>
+      <!-- Holdings (conditional on OWNED) — left-aligned, hairline-separated -->
+      <div id="s0-holdings" style="margin-top:32px;display:none">
+        <div style="padding:6px 0 18px">
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">18,950.00</span>
+            <span style="font-size:13px;color:var(--t)">CAD</span>
           </div>
           <div style="font-size:12px;color:var(--t);margin-top:4px">Market Value</div>
         </div>
-        <hr style="border:none;border-top:1px solid var(--divider);margin:0 0 16px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-end">
-          <div>
-            <div style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p)">12.2%</div>
-            <div style="font-size:12px;color:var(--t);margin-top:4px">Portfolio Weight</div>
+        <div style="padding:6px 0 18px">
+          <div style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">12.2%</div>
+          <div style="font-size:12px;color:var(--t);margin-top:4px">Portfolio Weight</div>
+        </div>
+        <div style="padding:6px 0 18px">
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span style="font-size:22px;font-weight:400;letter-spacing:-0.02em;color:var(--p);font-variant-numeric:tabular-nums">+5,640.00</span>
+            <span style="font-size:13px;color:var(--t)">CAD</span>
+            <span style="font-size:14px;color:var(--s);margin-left:4px;font-variant-numeric:tabular-nums">(+42.4%)</span>
           </div>
-          <span style="font-size:18px;color:var(--t);line-height:1">›</span>
+          <div style="font-size:12px;color:var(--t);margin-top:4px">Unrealized P/L</div>
+        </div>
+        <div style="padding:6px 0 0;cursor:pointer;-webkit-tap-highlight-color:transparent">
+          <span style="font-size:13px;color:var(--s);letter-spacing:-0.01em">View Holdings</span>
+          <span style="font-size:13px;color:var(--t);margin-left:6px;line-height:1">›</span>
         </div>
       </div>
 
@@ -2234,21 +2284,34 @@
         <span class="body-md" id="s4-cost">421.57 CAD</span>
       </div>
 
-      <!-- Calibration section (grouped per design rule) -->
-      <div style="margin:18px 14px 0;padding:18px 16px;background:var(--surface)">
+      <!-- Calibration section (separated by spacing, no surface bg) -->
+      <div style="margin:32px 14px 0;padding:0 0">
         <div class="lbl" style="margin-bottom:14px">Calibration</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--divider)">
           <span class="body-md" style="color:var(--s)">Probability</span>
           <span class="body-md" id="s4-conf">60%</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0">
           <span class="body-md" style="color:var(--s)">Time horizon</span>
           <span class="body-md" id="s4-judgment">Jul 1, 2028</span>
         </div>
       </div>
 
+      <!-- AI calibration insight — generates an alignment paragraph from
+           the user's prior probability vs the just-committed one. Shows
+           a thinking indicator, then types out the verdict. -->
+      <div id="s4-ai-section" style="margin:40px 14px 0">
+        <div class="ai-eyebrow" style="margin-bottom:20px">
+          <span class="ai-eyebrow-dot"></span>
+          <span class="lbl">AI · calibration insight</span>
+        </div>
+        <div id="s4-ai-body" style="font-size:13px;color:var(--s);line-height:1.7;letter-spacing:-0.01em;min-height:72px">
+          <span class="ai-thinking"><span class="ai-thinking-dot"></span><span class="ai-thinking-dot"></span><span class="ai-thinking-dot"></span></span>
+        </div>
+      </div>
+
       <!-- Accountability copy -->
-      <div style="padding:24px 16px 8px">
+      <div style="padding:40px 16px 16px">
         <div style="font-size:13px;color:var(--t);line-height:1.55;letter-spacing:-0.01em">
           This decision will be tracked. Your stated probability and horizon become part of your calibration record.
         </div>
@@ -2596,6 +2659,17 @@
         <span class="body-md" style="color:var(--s)" id="s8-cost-lbl">Estimated Cost</span>
         <span class="body-md" id="s8-cost" style="color:var(--t)">−</span>
       </div>
+
+      <!-- Calibration recap — pulled from currentView() so the user sees the
+           probability + horizon they just committed to before placing the order. -->
+      <div class="form-row" style="margin-top:18px">
+        <span class="body-md" style="color:var(--s)">Updated probability</span>
+        <span class="body-md" id="s8-prob" style="font-variant-numeric:tabular-nums">—</span>
+      </div>
+      <div class="form-row">
+        <span class="body-md" style="color:var(--s)">Updated horizon</span>
+        <span class="body-md" id="s8-horizon">—</span>
+      </div>
     </div>
 
     <!-- Spacer -->
@@ -2666,14 +2740,14 @@
         <span class="body-md" id="s9-cost">6,716.67 CAD</span>
       </div>
 
-      <!-- Calibration section (grouped per design rule) -->
-      <div style="margin-top:18px;padding:18px 16px;background:var(--surface)">
+      <!-- Calibration section (separated by spacing, no surface bg) -->
+      <div style="margin-top:32px;padding:0 0">
         <div class="lbl" style="margin-bottom:14px">Calibration</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--divider)">
           <span class="body-md" style="color:var(--s)">Probability</span>
           <span class="body-md" id="s9-conf">60%</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0">
           <span class="body-md" style="color:var(--s)">Time horizon</span>
           <span class="body-md" id="s9-horizon">3Y · Apr 1, 2029</span>
         </div>
@@ -2923,6 +2997,21 @@
     </div>
 
     <div class="cal-block">
+      <span class="cal-block-label">What is calibration?</span>
+      <span class="cal-block-body">Calibration is the alignment between your stated confidence and your actual hit rate. When you say you are 70% confident on a trade, calibration measures how often a 70% prediction actually resolves correctly across many decisions.</span>
+    </div>
+
+    <div class="cal-block">
+      <span class="cal-block-label">Why you need to be calibrated</span>
+      <span class="cal-block-body">Conviction without calibration is opinion. Position sizing, diversification, and risk all depend on probabilities being honest. A 70% that behaves like 55% is not just wrong — it is expensive. Calibration converts intuition into evidence, and evidence into better-sized bets.</span>
+    </div>
+
+    <div class="cal-block">
+      <span class="cal-block-label">The cost of not tracking</span>
+      <span class="cal-block-body">Untracked decisions decay into narrative. Memory favors winners; bias rewrites losers. Compounded over many trades, miscalibration is one of the largest sources of underperformance — larger than fees, larger than timing. The error stays invisible until you measure it. Most investors discover their overconfidence only in hindsight, after capital has already been mispriced for years.</span>
+    </div>
+
+    <div class="cal-block">
       <span class="cal-block-label">How to read this chart</span>
       <span class="cal-block-body">Each circle represents a prediction recorded before a trade was placed. Stated confidence is plotted on the X axis. Actual outcome — whether the stock outperformed the market — is on the Y axis.</span>
     </div>
@@ -2938,8 +3027,8 @@
     </div>
 
     <div class="cal-block">
-      <span class="cal-block-label">Why it matters</span>
-      <span class="cal-block-body">Calibration data enables more precise position sizing — allocating capital based on demonstrated edge rather than perceived conviction.</span>
+      <span class="cal-block-label">Position sizing &amp; edge</span>
+      <span class="cal-block-body">Calibration data enables more precise position sizing — allocating capital based on demonstrated edge rather than perceived conviction. The investor who knows their hit rate is 58% on high-conviction calls sizes differently than one who assumes it is 75%.</span>
     </div>
   </div>
 
@@ -3005,9 +3094,11 @@
         <div class="calib-row">
           <div class="calib-row-label">Time horizon</div>
           <div class="period-wrap">
-            <button class="period-btn" id="s12-h-1y"  onclick="setHorizon('s12','1y')">1Y</button>
-            <button class="period-btn on" id="s12-h-23y" onclick="setHorizon('s12','23y')">2–3Y</button>
-            <button class="period-btn" id="s12-h-5y"  onclick="setHorizon('s12','5y')">5+Y</button>
+            <button class="period-btn period-btn-multi"    id="s12-h-1y" onclick="setHorizon('s12','1y')"><span class="period-btn-year">1Y</span><span class="period-btn-date" data-h-date="1y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s12-h-2y" onclick="setHorizon('s12','2y')"><span class="period-btn-year">2Y</span><span class="period-btn-date" data-h-date="2y">—</span></button>
+            <button class="period-btn period-btn-multi on" id="s12-h-3y" onclick="setHorizon('s12','3y')"><span class="period-btn-year">3Y</span><span class="period-btn-date" data-h-date="3y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s12-h-4y" onclick="setHorizon('s12','4y')"><span class="period-btn-year">4Y</span><span class="period-btn-date" data-h-date="4y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s12-h-5y" onclick="setHorizon('s12','5y')"><span class="period-btn-year">5Y</span><span class="period-btn-date" data-h-date="5y">—</span></button>
           </div>
         </div>
 
@@ -3257,7 +3348,10 @@
     <div style="flex:1;overflow-y:auto;padding:0 16px 24px">
       <div style="margin-top:36px">
         <div class="lbl" style="margin-bottom:14px">Refine your view</div>
-        <div class="flow-h">Has your view changed?</div>
+        <div class="flow-h">Has the expected outcome improved?</div>
+        <div style="font-size:13px;color:var(--t);line-height:1.55;margin-top:10px;letter-spacing:-0.01em">
+          Capital should only be increased when expected returns improve.
+        </div>
       </div>
 
       <!-- Initial view recap -->
@@ -3269,7 +3363,7 @@
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
-          <span style="font-size:13px;color:var(--p)" id="s15-init-horizon">2–3 years</span>
+          <span style="font-size:13px;color:var(--p)" id="s15-init-horizon">3 years</span>
         </div>
       </div>
 
@@ -3295,9 +3389,11 @@
         <div class="calib-row">
           <div class="calib-row-label">Updated horizon</div>
           <div class="period-wrap">
-            <button class="period-btn" id="s15-h-1y"  onclick="setHorizon('s15','1y')">1Y</button>
-            <button class="period-btn on" id="s15-h-23y" onclick="setHorizon('s15','23y')">2–3Y</button>
-            <button class="period-btn" id="s15-h-5y"  onclick="setHorizon('s15','5y')">5+Y</button>
+            <button class="period-btn period-btn-multi"    id="s15-h-1y" onclick="setHorizon('s15','1y')"><span class="period-btn-year">1Y</span><span class="period-btn-date" data-h-date="1y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s15-h-2y" onclick="setHorizon('s15','2y')"><span class="period-btn-year">2Y</span><span class="period-btn-date" data-h-date="2y">—</span></button>
+            <button class="period-btn period-btn-multi on" id="s15-h-3y" onclick="setHorizon('s15','3y')"><span class="period-btn-year">3Y</span><span class="period-btn-date" data-h-date="3y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s15-h-4y" onclick="setHorizon('s15','4y')"><span class="period-btn-year">4Y</span><span class="period-btn-date" data-h-date="4y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s15-h-5y" onclick="setHorizon('s15','5y')"><span class="period-btn-year">5Y</span><span class="period-btn-date" data-h-date="5y">—</span></button>
           </div>
         </div>
 
@@ -3306,13 +3402,15 @@
           <input class="thesis" id="s15-reason" placeholder="What changed?" style="width:100%">
         </div>
       </div>
+    </div>
 
-      <div style="display:flex;justify-content:flex-end;padding-top:32px">
-        <button class="act-btn" onclick="saveRefinedView()">
-          <span class="act-arrow">→</span>
-          <span>Save view</span>
-        </button>
-      </div>
+    <!-- Pinned bottom action — outside the scroll area so it can never be
+         clipped by overflow:auto when the body grows past viewport height -->
+    <div style="flex-shrink:0;padding:14px 16px 18px;display:flex;justify-content:flex-end">
+      <button class="act-btn" onclick="saveRefinedView()">
+        <span class="act-arrow">→</span>
+        <span>Continue</span>
+      </button>
     </div>
   </div>
 
@@ -3338,7 +3436,7 @@
         </div>
         <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--divider)">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
-          <span style="font-size:14px;color:var(--p)" id="s16-horizon">2–3 years</span>
+          <span style="font-size:14px;color:var(--p)" id="s16-horizon">3 years</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:14px 0">
           <span style="font-size:13px;color:var(--s)">Recorded</span>
@@ -3403,9 +3501,11 @@
         <div class="calib-row">
           <div class="calib-row-label">Time horizon</div>
           <div class="period-wrap">
-            <button class="period-btn" id="s17-h-1y"  onclick="setHorizon('s17','1y')">1Y</button>
-            <button class="period-btn on" id="s17-h-23y" onclick="setHorizon('s17','23y')">2–3Y</button>
-            <button class="period-btn" id="s17-h-5y"  onclick="setHorizon('s17','5y')">5+Y</button>
+            <button class="period-btn period-btn-multi"    id="s17-h-1y" onclick="setHorizon('s17','1y')"><span class="period-btn-year">1Y</span><span class="period-btn-date" data-h-date="1y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s17-h-2y" onclick="setHorizon('s17','2y')"><span class="period-btn-year">2Y</span><span class="period-btn-date" data-h-date="2y">—</span></button>
+            <button class="period-btn period-btn-multi on" id="s17-h-3y" onclick="setHorizon('s17','3y')"><span class="period-btn-year">3Y</span><span class="period-btn-date" data-h-date="3y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s17-h-4y" onclick="setHorizon('s17','4y')"><span class="period-btn-year">4Y</span><span class="period-btn-date" data-h-date="4y">—</span></button>
+            <button class="period-btn period-btn-multi"    id="s17-h-5y" onclick="setHorizon('s17','5y')"><span class="period-btn-year">5Y</span><span class="period-btn-date" data-h-date="5y">—</span></button>
           </div>
         </div>
       </div>
@@ -3456,16 +3556,16 @@
         <div class="flow-sub">You hold a position. Each adjustment is recorded against the saved view.</div>
       </div>
 
-      <!-- Current view summary -->
-      <div style="background:var(--surface);padding:18px 16px;margin-top:24px">
+      <!-- Current view summary (clean, separated by spacing) -->
+      <div style="margin-top:32px">
         <div class="lbl" style="margin-bottom:14px">Current view</div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0">
+        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--divider)">
           <span style="font-size:13px;color:var(--s)">Probability</span>
           <span style="font-size:13px;color:var(--p);font-variant-numeric:tabular-nums" id="s18-cur-prob">72%</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0">
+        <div style="display:flex;justify-content:space-between;padding:12px 0">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
-          <span style="font-size:13px;color:var(--p)" id="s18-cur-horizon">2–3 years</span>
+          <span style="font-size:13px;color:var(--p)" id="s18-cur-horizon">3 years</span>
         </div>
       </div>
 
@@ -3514,7 +3614,7 @@
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0">
           <span style="font-size:13px;color:var(--s)">Current horizon</span>
-          <span style="font-size:13px;color:var(--p)" id="s19-cur-horizon">2–3 years</span>
+          <span style="font-size:13px;color:var(--p)" id="s19-cur-horizon">3 years</span>
         </div>
       </div>
 
@@ -3525,13 +3625,14 @@
         <div class="reason-row" onclick="pickReason(this,'inc','return')"><span class="reason-row-text">Expected return improved</span><span class="reason-tick"></span></div>
         <div class="reason-row" onclick="pickReason(this,'inc','none')"><span class="reason-row-text">No clear reason</span><span class="reason-tick"></span></div>
       </div>
+    </div>
 
-      <div style="display:flex;justify-content:flex-end;padding-top:32px">
-        <button class="act-btn" id="s19-cont" onclick="go(20)" style="opacity:0.3;pointer-events:none">
-          <span class="act-arrow">→</span>
-          <span>Continue</span>
-        </button>
-      </div>
+    <!-- Pinned bottom action -->
+    <div style="flex-shrink:0;padding:14px 16px 18px;display:flex;justify-content:flex-end">
+      <button class="act-btn" id="s19-cont" onclick="continueFromIncreaseReason()" style="padding:14px 4px;visibility:hidden;pointer-events:none">
+        <span class="act-arrow">→</span>
+        <span>Continue</span>
+      </button>
     </div>
   </div>
 
@@ -3582,9 +3683,11 @@
           <div id="s20-horizon-section" style="margin-top:18px;display:none">
             <div class="calib-row-label" style="margin-bottom:12px">New time horizon</div>
             <div class="period-wrap">
-              <button class="period-btn" id="s20-h-1y"  onclick="setHorizon('s20','1y')">1Y</button>
-              <button class="period-btn on" id="s20-h-23y" onclick="setHorizon('s20','23y')">2–3Y</button>
-              <button class="period-btn" id="s20-h-5y"  onclick="setHorizon('s20','5y')">5+Y</button>
+              <button class="period-btn period-btn-multi"    id="s20-h-1y" onclick="setHorizon('s20','1y')"><span class="period-btn-year">1Y</span><span class="period-btn-date" data-h-date="1y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s20-h-2y" onclick="setHorizon('s20','2y')"><span class="period-btn-year">2Y</span><span class="period-btn-date" data-h-date="2y">—</span></button>
+              <button class="period-btn period-btn-multi on" id="s20-h-3y" onclick="setHorizon('s20','3y')"><span class="period-btn-year">3Y</span><span class="period-btn-date" data-h-date="3y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s20-h-4y" onclick="setHorizon('s20','4y')"><span class="period-btn-year">4Y</span><span class="period-btn-date" data-h-date="4y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s20-h-5y" onclick="setHorizon('s20','5y')"><span class="period-btn-year">5Y</span><span class="period-btn-date" data-h-date="5y">—</span></button>
             </div>
           </div>
         </div>
@@ -3626,7 +3729,7 @@
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
-          <span style="font-size:13px;color:var(--p)" id="s21-cur-horizon">2–3 years</span>
+          <span style="font-size:13px;color:var(--p)" id="s21-cur-horizon">3 years</span>
         </div>
       </div>
 
@@ -3638,13 +3741,14 @@
         <div class="reason-row" onclick="pickReason(this,'red','vol')"><span class="reason-row-text">Volatility</span><span class="reason-tick"></span></div>
         <div class="reason-row" onclick="pickReason(this,'red','none')"><span class="reason-row-text">No clear reason</span><span class="reason-tick"></span></div>
       </div>
+    </div>
 
-      <div style="display:flex;justify-content:flex-end;padding-top:32px">
-        <button class="act-btn" id="s21-cont" onclick="go(22)" style="opacity:0.3;pointer-events:none">
-          <span class="act-arrow">→</span>
-          <span>Continue</span>
-        </button>
-      </div>
+    <!-- Pinned bottom action -->
+    <div style="flex-shrink:0;padding:14px 16px 18px;display:flex;justify-content:flex-end">
+      <button class="act-btn" id="s21-cont" onclick="continueFromReduceReason()" style="padding:14px 4px;visibility:hidden;pointer-events:none">
+        <span class="act-arrow">→</span>
+        <span>Continue</span>
+      </button>
     </div>
   </div>
 
@@ -3694,9 +3798,11 @@
           <div id="s22-horizon-section" style="margin-top:18px;display:none">
             <div class="calib-row-label" style="margin-bottom:12px">New time horizon</div>
             <div class="period-wrap">
-              <button class="period-btn" id="s22-h-1y"  onclick="setHorizon('s22','1y')">1Y</button>
-              <button class="period-btn on" id="s22-h-23y" onclick="setHorizon('s22','23y')">2–3Y</button>
-              <button class="period-btn" id="s22-h-5y"  onclick="setHorizon('s22','5y')">5+Y</button>
+              <button class="period-btn period-btn-multi"    id="s22-h-1y" onclick="setHorizon('s22','1y')"><span class="period-btn-year">1Y</span><span class="period-btn-date" data-h-date="1y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s22-h-2y" onclick="setHorizon('s22','2y')"><span class="period-btn-year">2Y</span><span class="period-btn-date" data-h-date="2y">—</span></button>
+              <button class="period-btn period-btn-multi on" id="s22-h-3y" onclick="setHorizon('s22','3y')"><span class="period-btn-year">3Y</span><span class="period-btn-date" data-h-date="3y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s22-h-4y" onclick="setHorizon('s22','4y')"><span class="period-btn-year">4Y</span><span class="period-btn-date" data-h-date="4y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s22-h-5y" onclick="setHorizon('s22','5y')"><span class="period-btn-year">5Y</span><span class="period-btn-date" data-h-date="5y">—</span></button>
             </div>
           </div>
         </div>
@@ -3869,7 +3975,7 @@
       <div style="margin-top:36px">
         <div class="vh-detail-row">
           <span class="vh-detail-label">Horizon</span>
-          <span class="vh-detail-value" id="s25-horizon">2–3 years</span>
+          <span class="vh-detail-value" id="s25-horizon">3 years</span>
         </div>
         <div class="vh-detail-row">
           <span class="vh-detail-label">Recorded</span>
@@ -3907,15 +4013,15 @@
         <div class="flow-h">You are increasing your position.</div>
       </div>
 
-      <div style="margin-top:32px;padding:22px 18px;background:var(--surface)">
+      <div style="margin-top:32px">
         <div class="lbl" style="margin-bottom:14px">Calibration · updated</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--divider)">
           <span style="font-size:13px;color:var(--s)">Probability</span>
           <span style="font-size:14px;color:var(--p);font-variant-numeric:tabular-nums" id="s26-prob">62% → 68%</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
-          <span style="font-size:14px;color:var(--p)" id="s26-horizon">2–3 years</span>
+          <span style="font-size:14px;color:var(--p)" id="s26-horizon">3 years</span>
         </div>
       </div>
 
@@ -3957,15 +4063,15 @@
         <div class="flow-h">You are reducing exposure.</div>
       </div>
 
-      <div style="margin-top:32px;padding:22px 18px;background:var(--surface)">
+      <div style="margin-top:32px">
         <div class="lbl" style="margin-bottom:14px">Calibration · updated</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--divider)">
           <span style="font-size:13px;color:var(--s)">Probability</span>
           <span style="font-size:14px;color:var(--p);font-variant-numeric:tabular-nums" id="s27-prob">62% → 55%</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
-          <span style="font-size:14px;color:var(--p)" id="s27-horizon">2–3 years</span>
+          <span style="font-size:14px;color:var(--p)" id="s27-horizon">3 years</span>
         </div>
       </div>
 
@@ -4015,17 +4121,17 @@
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
-          <span style="font-size:13px;color:var(--p)" id="s28-cur-horizon">2–3 years</span>
+          <span style="font-size:13px;color:var(--p)" id="s28-cur-horizon">3 years</span>
         </div>
       </div>
 
-      <div style="margin-top:24px;padding:18px;background:var(--surface)">
-        <div class="lbl" style="margin-bottom:10px">Holding duration</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="margin-top:32px">
+        <div class="lbl" style="margin-bottom:14px">Holding duration</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0">
           <span style="font-size:13px;color:var(--s)">You are exiting after</span>
           <span style="font-size:18px;color:var(--p);font-variant-numeric:tabular-nums;letter-spacing:-0.01em" id="s28-held">5 months</span>
         </div>
-        <div style="font-size:11px;color:var(--t);margin-top:10px;line-height:1.5">
+        <div style="font-size:11px;color:var(--t);margin-top:14px;line-height:1.5">
           A premature exit is a calibration event. The reason and updated view below will be recorded against your commitment.
         </div>
       </div>
@@ -4067,8 +4173,9 @@
       </div>
     </div>
 
+    <!-- Pinned bottom action -->
     <div style="flex-shrink:0;padding:14px 16px 18px;display:flex;justify-content:flex-end">
-      <button class="act-btn" id="s29-cont" style="padding:14px 4px;opacity:0.3;pointer-events:none">
+      <button class="act-btn" id="s29-cont" onclick="continueFromExitReason()" style="padding:14px 4px;visibility:hidden;pointer-events:none">
         <span class="act-arrow">→</span>
         <span>Continue</span>
       </button>
@@ -4121,9 +4228,11 @@
           <div id="s30-horizon-section" style="margin-top:18px;display:none">
             <div class="calib-row-label" style="margin-bottom:12px">New time horizon</div>
             <div class="period-wrap">
-              <button class="period-btn" id="s30-h-1y"  onclick="setHorizon('s30','1y')">1Y</button>
-              <button class="period-btn on" id="s30-h-23y" onclick="setHorizon('s30','23y')">2–3Y</button>
-              <button class="period-btn" id="s30-h-5y"  onclick="setHorizon('s30','5y')">5+Y</button>
+              <button class="period-btn period-btn-multi"    id="s30-h-1y" onclick="setHorizon('s30','1y')"><span class="period-btn-year">1Y</span><span class="period-btn-date" data-h-date="1y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s30-h-2y" onclick="setHorizon('s30','2y')"><span class="period-btn-year">2Y</span><span class="period-btn-date" data-h-date="2y">—</span></button>
+              <button class="period-btn period-btn-multi on" id="s30-h-3y" onclick="setHorizon('s30','3y')"><span class="period-btn-year">3Y</span><span class="period-btn-date" data-h-date="3y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s30-h-4y" onclick="setHorizon('s30','4y')"><span class="period-btn-year">4Y</span><span class="period-btn-date" data-h-date="4y">—</span></button>
+              <button class="period-btn period-btn-multi"    id="s30-h-5y" onclick="setHorizon('s30','5y')"><span class="period-btn-year">5Y</span><span class="period-btn-date" data-h-date="5y">—</span></button>
             </div>
           </div>
         </div>
@@ -4157,19 +4266,19 @@
         <div class="flow-h">You are exiting early.</div>
       </div>
 
-      <div style="margin-top:32px;padding:22px 18px;background:var(--surface)">
+      <div style="margin-top:32px">
         <div class="lbl" style="margin-bottom:14px">Calibration · updated</div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--divider)">
           <span style="font-size:13px;color:var(--s)">Held</span>
           <span style="font-size:14px;color:var(--p)" id="s31-held">5 months vs 3-year plan</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--divider)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--divider)">
           <span style="font-size:13px;color:var(--s)">Probability</span>
           <span style="font-size:14px;color:var(--p);font-variant-numeric:tabular-nums" id="s31-prob">62% → 48%</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0">
           <span style="font-size:13px;color:var(--s)">Horizon</span>
-          <span style="font-size:14px;color:var(--p)" id="s31-horizon">2–3 years</span>
+          <span style="font-size:14px;color:var(--p)" id="s31-horizon">3 years</span>
         </div>
       </div>
 
@@ -4387,11 +4496,25 @@
     });
     const next = document.getElementById('s' + n);
     next.scrollTop = 0;
+    // Also reset any inner scrollable bodies — many screens use a
+    // `flex:1; overflow-y:auto` body whose scrollTop persists across navigations.
+    next.querySelectorAll('div').forEach(d => { if (d.scrollTop) d.scrollTop = 0; });
     requestAnimationFrame(() => next.classList.add('on'));
     cur = n;
     updateNav(n);
     if (n === 2)  updateS2Accuracy();
+    if (n === 4)  renderAIInsight();
     if (n === 5)  animDash();
+    if (n === 8) {
+      // Recap the probability + horizon the user just committed to. Pulls
+      // from currentView() (= latest viewHistory entry) so it's correct
+      // for both the Increase and Initial Buy flows.
+      const view = currentView() || { prob: CALIB.s12.prob || 65, horizon: CALIB.s12.horizon || '3y' };
+      const probEl = document.getElementById('s8-prob');
+      const horEl  = document.getElementById('s8-horizon');
+      if (probEl) probEl.textContent = view.prob + '%';
+      if (horEl)  horEl.textContent  = HORIZON_LBL[view.horizon] || view.horizon;
+    }
     if (n === 11) {
       renderSearch('');
       setTimeout(() => {
@@ -4981,13 +5104,11 @@
   function showCalInfo() {
     closeCalDropdown();
     document.getElementById('cal-modal').classList.add('show');
-    document.querySelectorAll('.ghost-dot').forEach(el => el.style.opacity = '0.5');
     // Scroll s5 so the chart sits fully in the upper half above the modal
     document.getElementById('s5').scrollTo({ top: 80, behavior: 'smooth' });
   }
   function hideCalInfo() {
     document.getElementById('cal-modal').classList.remove('show');
-    document.querySelectorAll('.ghost-dot').forEach(el => el.style.opacity = '0');
   }
 
   function hideDotInfo() {
@@ -5045,28 +5166,41 @@
   }
 
   /* ── Capital Decision flow — state model ─────── */
+  // Compute "today + N years" for judgment-date display.
+  function _yearsFromNow(n, opts) {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + n);
+    return d.toLocaleDateString('en-US', opts || { month: 'short', day: 'numeric', year: 'numeric' });
+  }
   const HORIZON_LBL = {
     '1y':  '1 year',
-    '23y': '2–3 years',
-    '5y':  '5+ years',
-    // legacy keys (back-compat with s2)
+    '2y':  '2 years',
     '3y':  '3 years',
-    '5y_legacy': '5 years'
+    '4y':  '4 years',
+    '5y':  '5 years',
+    // back-compat for older seed entries
+    '23y': '3 years'
   };
+  // Recomputed live so it always tracks "now + N years"
   const HORIZON_DATES = {
-    '1y':  'Apr 1, 2027',
-    '23y': 'Apr 1, 2028',
-    '5y':  'Apr 1, 2031'
+    get '1y'() { return _yearsFromNow(1); },
+    get '2y'() { return _yearsFromNow(2); },
+    get '3y'() { return _yearsFromNow(3); },
+    get '4y'() { return _yearsFromNow(4); },
+    get '5y'() { return _yearsFromNow(5); },
+    get '23y'() { return _yearsFromNow(3); }
   };
+  // Map legacy '23y' → canonical '3y' for any state references
+  function normalizeHorizon(h) { return h === '23y' ? '3y' : h; }
 
   // Per-screen calibration state — keyed by screen id
   const CALIB = {
-    s12: { prob: 50, horizon: '23y', reason: '' },
-    s15: { prob: 65, horizon: '23y', reason: '' },
-    s17: { prob: 65, horizon: '23y' },
-    s20: { prob: 72, horizon: '23y' },
-    s22: { prob: 72, horizon: '23y' },
-    s30: { prob: 62, horizon: '23y' }
+    s12: { prob: 50, horizon: '3y', reason: '' },
+    s15: { prob: 65, horizon: '3y', reason: '' },
+    s17: { prob: 65, horizon: '3y' },
+    s20: { prob: 72, horizon: '3y' },
+    s22: { prob: 72, horizon: '3y' },
+    s30: { prob: 62, horizon: '3y' }
   };
 
   // Exit-flow state — months held demo value
@@ -5079,7 +5213,7 @@
   let viewHistory = [
     {
       prob: 60,
-      horizon: '23y',
+      horizon: '3y',
       reason: 'Services growth offsetting iPhone plateau',
       date: 'Jan 15, 2026',
       action: 'initial_view',
@@ -5087,7 +5221,7 @@
     },
     {
       prob: 65,
-      horizon: '23y',
+      horizon: '3y',
       reason: 'Q1 earnings beat, FCF margin expanding',
       date: 'Feb 27, 2026',
       action: 'refined_view',
@@ -5107,6 +5241,11 @@
     if (range) {
       const pct = v;
       range.style.background = `linear-gradient(to right, var(--p) ${pct}%, var(--divider) ${pct}%)`;
+      // Mirror the live property to the HTML `value` attribute so the
+      // input's defaultValue tracks the user's drag. Eliminates any path
+      // where a stray reset would snap the thumb back to its hard-coded
+      // initial (e.g. value="65" in markup).
+      range.setAttribute('value', v);
     }
     // s15/s20/s22/s30 show delta vs initial value
     if (scr === 's15') updateDelta('s15', CALIB.s12.prob, v);
@@ -5123,17 +5262,19 @@
     const d = current - baseline;
     const sign = d > 0 ? '+' : (d < 0 ? '−' : '');
     el.textContent = sign + Math.abs(d) + '%';
+    // Hide the chip entirely when delta is 0 — a "0%" badge on first entry
+    // looks redundant next to the unchanged probability number.
+    el.style.visibility = d === 0 ? 'hidden' : '';
   }
 
   function setHorizon(scr, h) {
-    CALIB[scr].horizon = h;
-    ['1y','23y','5y'].forEach(k => {
+    h = normalizeHorizon(h);
+    if (CALIB[scr]) CALIB[scr].horizon = h;
+    ['1y','2y','3y','4y','5y'].forEach(k => {
       const btn = document.getElementById(scr + '-h-' + k);
       if (btn) btn.classList.toggle('on', k === h);
     });
-    // mirror to legacy judgePeriod for s4
-    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
-    judgePeriod = legacyMap[h] || '3y';
+    judgePeriod = h;
   }
 
   /* "Has your time horizon changed?" — Yes/No gate. */
@@ -5192,8 +5333,7 @@
     // Carry the Define-view state (probability + horizon) into the legacy state vars
     // so s4 review picks them up correctly.
     confPct      = CALIB.s12.prob;
-    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
-    judgePeriod  = legacyMap[CALIB.s12.horizon] || '3y';
+    judgePeriod  = normalizeHorizon(CALIB.s12.horizon);
     cdChoice     = 'increase';
     acctChoice   = ACCOUNTS[0].id;
 
@@ -5218,15 +5358,35 @@
   function revealGoDeeper() {}
 
   /* ── Page 2 (s13) guardrail ──────────────────── */
+  /* Defensive: force every calibration slider on the underlying screen to
+     re-render its thumb at CALIB[scr].prob. Some browsers leave a stale
+     thumb position after a transparent overlay closes, which made the
+     slider appear to "snap back" to its HTML default. */
+  function _resyncCalibSliders() {
+    ['s12','s15','s17','s20','s22','s30'].forEach(scr => {
+      const r = document.getElementById(scr + '-prob-range');
+      if (!r) return;
+      const v = CALIB[scr]?.prob;
+      if (typeof v === 'number') {
+        r.value = v;
+        r.style.background = `linear-gradient(to right, var(--p) ${v}%, var(--divider) ${v}%)`;
+        const num = document.getElementById(scr + '-prob-num');
+        if (num) num.textContent = v;
+      }
+    });
+  }
   function dismissGuardrail() {
     pendingNav = null;
+    proceededFromGuardrail = false;  // reset so next Continue re-evaluates guardrails fresh
     hideGuardrail();
+    _resyncCalibSliders();
   }
   function proceedFromGuardrail() {
     proceededFromGuardrail = true;
     const fn = pendingNav;
     pendingNav = null;
     hideGuardrail();
+    _resyncCalibSliders();
     setTimeout(() => { if (fn) fn(); }, 100);
   }
 
@@ -5250,33 +5410,15 @@
       return;
     }
 
-    // 2. Increase context: low conviction (Δ < +5%)
-    if (cdChoice === 'increase' && delta < 5 && !proceededFromGuardrail) {
+    // 2. Low conviction — fires on s15 whenever the refined probability is
+    //    not meaningfully higher than the initial view (Δ < +5%).
+    //    s15 is the Refine View screen used by the Increase flow and the
+    //    Initial Buy research path; in both cases a small delta means the
+    //    user has not built a stronger case for committing capital.
+    if (delta < 5 && !proceededFromGuardrail) {
       document.getElementById('s13-title').textContent = 'Your conviction has not meaningfully increased.';
       const body = document.getElementById('s13-body');
-      body.textContent = `A ${delta >= 0 ? '+' : ''}${delta}% change is not a strong reason to increase exposure.`;
-      body.style.display = '';
-      pendingNav = () => { proceededFromGuardrail = true; saveRefinedView(); };
-      showGuardrail();
-      return;
-    }
-
-    // 3. Reduce context: probability still > 70% — why reduce?
-    if (cdChoice === 'reduce' && newProb > 70 && !proceededFromGuardrail) {
-      document.getElementById('s13-title').textContent = 'Your stated probability remains high.';
-      const body = document.getElementById('s13-body');
-      body.textContent = 'Why reduce exposure if your edge is intact?';
-      body.style.display = '';
-      pendingNav = () => { proceededFromGuardrail = true; saveRefinedView(); };
-      showGuardrail();
-      return;
-    }
-
-    // 4. Exit context: probability still > 60% — why exit?
-    if (cdChoice === 'exit' && newProb > 60 && !proceededFromGuardrail) {
-      document.getElementById('s13-title').textContent = 'Your stated probability still indicates a positive edge.';
-      const body = document.getElementById('s13-body');
-      body.textContent = 'Why exit if your edge is intact?';
+      body.textContent = `A ${delta >= 0 ? '+' : ''}${delta}% change is not a strong reason to commit more capital.`;
       body.style.display = '';
       pendingNav = () => { proceededFromGuardrail = true; saveRefinedView(); };
       showGuardrail();
@@ -5295,8 +5437,7 @@
       delta: delta
     });
     confPct = newProb;
-    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
-    judgePeriod = legacyMap[newHor] || '3y';
+    judgePeriod = normalizeHorizon(newHor);
     renderViewHistory();
     proceededFromGuardrail = false;  // reset for next save
 
@@ -5387,19 +5528,19 @@
     pickedAction = action;
     pickedReason = null;
     proceededFromGuardrail = false;
-    const cur = currentView() || { prob: 72, horizon: '23y' };
+    const cur = currentView() || { prob: 72, horizon: '3y' };
     if (action === 'increase') {
       document.getElementById('s19-cur-prob').textContent    = cur.prob + '%';
       document.getElementById('s19-cur-horizon').textContent = HORIZON_LBL[cur.horizon] || cur.horizon;
       document.querySelectorAll('#s19 .reason-row').forEach(r => r.classList.remove('sel'));
-      document.getElementById('s19-cont').style.opacity = '0.3';
+      document.getElementById('s19-cont').style.visibility = 'hidden';
       document.getElementById('s19-cont').style.pointerEvents = 'none';
       go(19);
     } else if (action === 'reduce') {
       document.getElementById('s21-cur-prob').textContent    = cur.prob + '%';
       document.getElementById('s21-cur-horizon').textContent = HORIZON_LBL[cur.horizon] || cur.horizon;
       document.querySelectorAll('#s21 .reason-row').forEach(r => r.classList.remove('sel'));
-      document.getElementById('s21-cont').style.opacity = '0.3';
+      document.getElementById('s21-cont').style.visibility = 'hidden';
       document.getElementById('s21-cont').style.pointerEvents = 'none';
       go(21);
     } else if (action === 'exit') {
@@ -5410,7 +5551,7 @@
       // Reset reason rows on s29 + horizon-changed gate on s30
       document.querySelectorAll('#s29 .reason-row').forEach(r => r.classList.remove('sel'));
       const cont = document.getElementById('s29-cont');
-      if (cont) { cont.style.opacity = '0.3'; cont.style.pointerEvents = 'none'; cont.onclick = null; }
+      if (cont) { cont.style.visibility = 'hidden'; cont.style.pointerEvents = 'none'; }
       setHorizonChanged('s30', 'no');
       go(28);
     }
@@ -5424,56 +5565,65 @@
     const contId = flow === 'inc' ? 's19-cont' : flow === 'red' ? 's21-cont' : 's29-cont';
     const cont = document.getElementById(contId);
     if (cont) {
-      cont.style.opacity = '1';
+      cont.style.visibility = 'visible';
       cont.style.pointerEvents = 'auto';
-      cont.onclick = () => {
-        // After picking reason, navigate to the action-specific
-        // "updated probability / belief" page. Same layout, slightly
-        // different copy per action.
-        const cur = currentView() || { prob: 65, horizon: '23y' };
-        proceededFromGuardrail = false;
-
-        if (flow === 'inc') {
-          // Increase → s15 (Refine View) with Initial-view recap
-          CALIB.s12.prob    = cur.prob;
-          CALIB.s12.horizon = cur.horizon;
-          CALIB.s15.prob    = cur.prob;
-          CALIB.s15.horizon = cur.horizon;
-          const initProbEl = document.getElementById('s15-init-prob');
-          const initHorEl  = document.getElementById('s15-init-horizon');
-          if (initProbEl) initProbEl.textContent = cur.prob + '%';
-          if (initHorEl)  initHorEl.textContent  = HORIZON_LBL[cur.horizon] || cur.horizon;
-          go(15);
-          setTimeout(() => {
-            const r = document.getElementById('s15-prob-range');
-            if (r) { r.value = cur.prob; setProb('s15', cur.prob); }
-            setHorizon('s15', cur.horizon);
-          }, 0);
-        } else if (flow === 'red') {
-          // Reduce → s22 (Updated view, "State your new probability")
-          CALIB.s22.prob    = cur.prob;
-          CALIB.s22.horizon = cur.horizon;
-          go(22);
-          setTimeout(() => {
-            const r = document.getElementById('s22-prob-range');
-            if (r) { r.value = cur.prob; setProb('s22', cur.prob); }
-            setHorizon('s22', cur.horizon);
-            setHorizonChanged('s22', 'no');
-          }, 0);
-        } else if (flow === 'exit') {
-          // Exit → s30 (Updated belief, "If evaluating today...")
-          CALIB.s30.prob    = cur.prob;
-          CALIB.s30.horizon = cur.horizon;
-          go(30);
-          setTimeout(() => {
-            const r = document.getElementById('s30-prob-range');
-            if (r) { r.value = cur.prob; setProb('s30', cur.prob); }
-            setHorizon('s30', cur.horizon);
-            setHorizonChanged('s30', 'no');
-          }, 0);
-        }
-      };
     }
+  }
+
+  /* Stable Continue handlers for each reason picker — bound directly via
+     inline onclick on the button. Each one carries the current view forward
+     into its action-specific "updated probability / belief" page. */
+  function continueFromIncreaseReason() {
+    if (!pickedReason) return;
+    proceededFromGuardrail = false;
+    cdChoice = 'increase';
+    const cur = currentView() || { prob: 65, horizon: '3y' };
+    CALIB.s12.prob    = cur.prob;
+    CALIB.s12.horizon = cur.horizon;
+    CALIB.s15.prob    = cur.prob;
+    CALIB.s15.horizon = cur.horizon;
+    const initProbEl = document.getElementById('s15-init-prob');
+    const initHorEl  = document.getElementById('s15-init-horizon');
+    if (initProbEl) initProbEl.textContent = cur.prob + '%';
+    if (initHorEl)  initHorEl.textContent  = HORIZON_LBL[cur.horizon] || cur.horizon;
+    go(15);
+    setTimeout(() => {
+      const r = document.getElementById('s15-prob-range');
+      if (r) { r.value = cur.prob; setProb('s15', cur.prob); }
+      setHorizon('s15', cur.horizon);
+    }, 0);
+  }
+
+  function continueFromReduceReason() {
+    if (!pickedReason) return;
+    proceededFromGuardrail = false;
+    cdChoice = 'reduce';
+    const cur = currentView() || { prob: 72, horizon: '3y' };
+    CALIB.s22.prob    = cur.prob;
+    CALIB.s22.horizon = cur.horizon;
+    go(22);
+    setTimeout(() => {
+      const r = document.getElementById('s22-prob-range');
+      if (r) { r.value = cur.prob; setProb('s22', cur.prob); }
+      setHorizon('s22', cur.horizon);
+      setHorizonChanged('s22', 'no');
+    }, 0);
+  }
+
+  function continueFromExitReason() {
+    if (!pickedReason) return;
+    proceededFromGuardrail = false;
+    cdChoice = 'exit';
+    const cur = currentView() || { prob: 62, horizon: '3y' };
+    CALIB.s30.prob    = cur.prob;
+    CALIB.s30.horizon = cur.horizon;
+    go(30);
+    setTimeout(() => {
+      const r = document.getElementById('s30-prob-range');
+      if (r) { r.value = cur.prob; setProb('s30', cur.prob); }
+      setHorizon('s30', cur.horizon);
+      setHorizonChanged('s30', 'no');
+    }, 0);
   }
 
   /* Helper — set up s8 (Enter Shares) for whichever action is committing. */
@@ -5489,9 +5639,91 @@
     go(8);
   }
 
+  /* ── AI calibration insight (s4 review) ──────────────────────────────
+     Reads cdChoice + the latest two viewHistory entries, picks an
+     alignment paragraph, then fakes a "thinking → typing" reveal so the
+     user reads it instead of skipping past static copy. */
+  function generateCalibrationInsight() {
+    const cur = currentView();
+    if (!cur) return 'No prior calibration on file. Once this trade is recorded, future actions will be benchmarked against it.';
+    const prev   = viewHistory.length >= 2 ? viewHistory[viewHistory.length - 2] : null;
+    const prob   = cur.prob;
+    const action = cdChoice;
+    const delta  = prev ? prob - prev.prob : 0;
+    const sign   = delta > 0 ? '+' : '';
+
+    // Initial buy / no prior reference — judge on absolute probability
+    if (action === 'initial' || !prev) {
+      if (prob >= 75) return `Strong starting position. ${prob}% sits well above the 50/50 mark — log the thesis so you can audit it against the outcome.`;
+      if (prob >= 60) return `Reasonable edge at ${prob}%, but not exceptional. Size the position to reflect that this is a thesis you are still refining.`;
+      if (prob >= 50) return `Borderline edge at ${prob}%. Keep the position small until conviction strengthens or the thesis confirms.`;
+      return `Below 50% — you are betting against your own probability. Reconsider before placing the order.`;
+    }
+
+    // Increase exposure
+    if (action === 'increase') {
+      if (delta >= 10) return `Aligned. Your conviction has moved from ${prev.prob}% to ${prob}% (${sign}${delta}%) — a meaningful shift before committing more capital.`;
+      if (delta >= 5)  return `Modest support. The ${sign}${delta}% increase justifies adding exposure, but the move is incremental — keep position sizing proportional.`;
+      if (delta >= 1)  return `Weak signal. A ${sign}${delta}% change is thin justification for adding capital. This is the pattern that erodes returns over time.`;
+      if (delta === 0) return `Inconsistent. Your probability is unchanged at ${prob}% but you are committing more capital. Pause and articulate what new information justifies the increase.`;
+      return `Inconsistent. You are increasing exposure while your conviction has fallen by ${Math.abs(delta)}%. The action contradicts your stated view — reconsider before confirming.`;
+    }
+
+    // Reduce exposure
+    if (action === 'reduce') {
+      if (delta <= -10) return `Aligned. Your view has weakened from ${prev.prob}% to ${prob}% (${delta}%). Trimming exposure is consistent with that change.`;
+      if (delta <= -5)  return `Reasonable. A ${delta}% drop in conviction supports a partial reduction.`;
+      if (delta <= -1)  return `Mixed signal. A ${delta}% change is a thin reason to sell — make sure this is not driven by short-term price action.`;
+      if (delta === 0)  return `Inconsistent. Your probability is unchanged at ${prob}% but you are cutting exposure. Either the thesis has changed and the slider should reflect it, or this trade is being driven by something other than your view.`;
+      return `Inconsistent. You are reducing exposure while your stated probability has risen by ${delta}%. The action contradicts the view — pause before confirming.`;
+    }
+
+    // Exit position
+    if (action === 'exit') {
+      if (delta <= -20) return `Aligned. Your probability dropped from ${prev.prob}% to ${prob}% (${delta}%) — a thesis change of this size justifies a full exit.`;
+      if (delta <= -10) return `Reasonable. A ${delta}% conviction shift is a defensible reason to close the position.`;
+      if (delta <= -1)  return `Be careful. A ${delta}% change is a thin basis for a full exit. Make sure this is driven by the thesis, not price action or impatience.`;
+      if (delta === 0)  return `Suspicious. Your probability is unchanged at ${prob}% but you are exiting entirely. This looks like an emotion-driven sell — reconsider before confirming.`;
+      return `Suspicious. You are exiting while your probability has risen by ${delta}%. Closing a position you have grown more confident in is the textbook calibration error.`;
+    }
+
+    return 'Decision logged. Review against outcome at horizon.';
+  }
+
+  let _aiInsightTimer = null;
+  let _aiTypeTimer    = null;
+  function renderAIInsight() {
+    const body = document.getElementById('s4-ai-body');
+    if (!body) return;
+    if (_aiInsightTimer) clearTimeout(_aiInsightTimer);
+    if (_aiTypeTimer)    clearTimeout(_aiTypeTimer);
+    // Reset to thinking state
+    body.innerHTML = '<span class="ai-thinking"><span class="ai-thinking-dot"></span><span class="ai-thinking-dot"></span><span class="ai-thinking-dot"></span></span>';
+    const text = generateCalibrationInsight();
+    // Brief "thinking" pause, then type out the verdict. Caret at the
+    // tail so it reads as "being written" rather than appearing whole.
+    _aiInsightTimer = setTimeout(() => {
+      body.innerHTML = '<span id="s4-ai-text"></span><span class="ai-caret"></span>';
+      const target = body.querySelector('#s4-ai-text');
+      let i = 0;
+      const step = () => {
+        if (!target) return;
+        if (i >= text.length) {
+          // Stop the caret once the line lands
+          const c = body.querySelector('.ai-caret');
+          if (c) c.remove();
+          return;
+        }
+        target.textContent += text.charAt(i++);
+        _aiTypeTimer = setTimeout(step, 16);
+      };
+      step();
+    }, 1100);
+  }
+
   /* ── Increase confirmation (s20 → s26 → s4) ──── */
   function confirmIncrease() {
-    const cur = currentView() || { prob: 72, horizon: '23y' };
+    const cur = currentView() || { prob: 72, horizon: '3y' };
     const newProb = CALIB.s20.prob;
     const delta = newProb - cur.prob;
     if (delta < 5 && !proceededFromGuardrail) {
@@ -5506,7 +5738,7 @@
     showAddConfirmation();
   }
   function showAddConfirmation() {
-    const cur = currentView() || { prob: 72, horizon: '23y' };
+    const cur = currentView() || { prob: 72, horizon: '3y' };
     document.getElementById('s26-prob').textContent    = cur.prob + '% → ' + CALIB.s20.prob + '%';
     document.getElementById('s26-horizon').textContent = HORIZON_LBL[CALIB.s20.horizon] || CALIB.s20.horizon;
     go(26);
@@ -5531,7 +5763,7 @@
 
   /* ── Reduce flow: s22 → guardrail (>70%) → s8 ── */
   function confirmReduce() {
-    const cur = currentView() || { prob: 72, horizon: '23y' };
+    const cur = currentView() || { prob: 72, horizon: '3y' };
     const newProb = CALIB.s22.prob;
     if (newProb > 70 && !proceededFromGuardrail) {
       document.getElementById('s13-title').textContent = 'Your stated probability remains high.';
@@ -5553,8 +5785,7 @@
     });
     renderViewHistory();
     confPct = newProb;
-    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
-    judgePeriod = legacyMap[CALIB.s22.horizon] || '3y';
+    judgePeriod = normalizeHorizon(CALIB.s22.horizon);
     proceededFromGuardrail = false;
     setupS8AndGo();
   }
@@ -5562,7 +5793,7 @@
   /* ── Exit flow: s30 → guardrail (>60%) → s8 ── */
   function confirmExit() {
     // Called from s30 Continue. Check the >60% guardrail.
-    const cur = currentView() || { prob: 62, horizon: '23y' };
+    const cur = currentView() || { prob: 62, horizon: '3y' };
     const newProb = CALIB.s30.prob;
     if (newProb > 60 && !proceededFromGuardrail) {
       document.getElementById('s13-title').textContent = 'Your stated probability still indicates a positive edge.';
@@ -5584,18 +5815,21 @@
     });
     renderViewHistory();
     confPct = newProb;
-    const legacyMap = { '1y': '1y', '23y': '3y', '5y': '5y' };
-    judgePeriod = legacyMap[CALIB.s30.horizon] || '3y';
+    judgePeriod = normalizeHorizon(CALIB.s30.horizon);
     proceededFromGuardrail = false;
     setupS8AndGo();
   }
 
   function showExitConfirmation() {
-    const cur = currentView() || { prob: 62, horizon: '23y' };
+    const cur = currentView() || { prob: 62, horizon: '3y' };
     const usesUpdated = pickedReason === 'thesis' || pickedReason === 'return';
     const newProb = usesUpdated ? CALIB.s30.prob : cur.prob;
     const newHor  = usesUpdated ? CALIB.s30.horizon : cur.horizon;
-    const horizonYears = cur.horizon === '5y' ? '5+' : cur.horizon === '23y' ? '2–3' : '1';
+    const horizonYears = cur.horizon === '5y' ? '5'
+                       : cur.horizon === '4y' ? '4'
+                       : cur.horizon === '3y' ? '3'
+                       : cur.horizon === '2y' ? '2'
+                       : '1';
     document.getElementById('s31-held').textContent    = exitMonthsHeld + (exitMonthsHeld === 1 ? ' month' : ' months') + ' vs ' + horizonYears + '-year plan';
     document.getElementById('s31-prob').textContent    = cur.prob + '% → ' + newProb + '%';
     document.getElementById('s31-horizon').textContent = HORIZON_LBL[newHor] || newHor;
@@ -5603,7 +5837,7 @@
   }
 
   function proceedAfterExitConfirm() {
-    const cur = currentView() || { prob: 62, horizon: '23y' };
+    const cur = currentView() || { prob: 62, horizon: '3y' };
     const usesUpdated = pickedReason === 'thesis' || pickedReason === 'return';
     const newProb = usesUpdated ? CALIB.s30.prob : cur.prob;
     const newHor  = usesUpdated ? CALIB.s30.horizon : cur.horizon;
@@ -6319,10 +6553,27 @@
     galleryBuilt = true;
   }
 
+  /* Populate every `data-h-date="Ny"` span with a short month-year label
+     computed from today + N years. Idempotent — safe to run multiple times. */
+  function populateHorizonDates() {
+    const fmt = { month: 'short', year: 'numeric' };  // e.g. "Apr 2027"
+    document.querySelectorAll('[data-h-date]').forEach(el => {
+      const key = el.dataset.hDate;
+      const n = parseInt(key, 10);
+      if (!isNaN(n)) el.textContent = _yearsFromNow(n, fmt);
+    });
+  }
+
   /* ── Init on load ─────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
     renderViewHistory();
     renderSparklines();
+    populateHorizonDates();
+    // Coerce every <button> to type="button". Without an explicit type attr
+    // browsers default to "submit" — and on some touch/iframe paths a submit
+    // button fires an implicit form-submit attempt that looks like a page
+    // refresh, swallowing the navigation triggered by onclick.
+    document.querySelectorAll('button:not([type])').forEach(b => { b.type = 'button'; });
   });
 
   function selectPeriod(p) {
@@ -6355,7 +6606,10 @@
       : '—';
     document.getElementById('s4-exec-lbl').textContent  = 'Hold to confirm';
     document.getElementById('s4-conf').textContent      = confPct + '%';
-    document.getElementById('s4-judgment').textContent  = judgePeriod.toUpperCase() + ' · ' + JUDGE_DATES[judgePeriod];
+    // Use HORIZON_DATES (covers 1y/2y/3y/4y/5y) — JUDGE_DATES is legacy 1/3/5 only
+    const _horKey = normalizeHorizon(judgePeriod);
+    const _horDate = HORIZON_DATES[_horKey] || JUDGE_DATES[_horKey] || '';
+    document.getElementById('s4-judgment').textContent  = _horKey.toUpperCase() + (_horDate ? ' · ' + _horDate : '');
 
     // Only trigger calibration warning if confidence is misaligned by > 15%
     const acc = getUserAccuracy();
@@ -6414,7 +6668,7 @@
         CALIB.s12.horizon = latest.horizon;
       } else {
         CALIB.s12.prob    = 50;
-        CALIB.s12.horizon = '23y';
+        CALIB.s12.horizon = '3y';
       }
       go(12);
       setTimeout(() => {
@@ -6455,7 +6709,7 @@
 
   function goToShares() {
     // After s7 (account picker), all three actions go to their reason-picker page.
-    const cur = currentView() || { prob: 65, horizon: '23y' };
+    const cur = currentView() || { prob: 65, horizon: '3y' };
     pickedReason = null;
 
     if (cdChoice === 'increase') {
@@ -6463,19 +6717,19 @@
       document.getElementById('s19-cur-horizon').textContent = HORIZON_LBL[cur.horizon] || cur.horizon;
       document.querySelectorAll('#s19 .reason-row').forEach(r => r.classList.remove('sel'));
       const cont = document.getElementById('s19-cont');
-      if (cont) { cont.style.opacity = '0.3'; cont.style.pointerEvents = 'none'; cont.onclick = null; }
+      if (cont) { cont.style.visibility = 'hidden'; cont.style.pointerEvents = 'none'; }
       go(19);
     } else if (cdChoice === 'reduce') {
       document.getElementById('s21-cur-prob').textContent    = cur.prob + '%';
       document.getElementById('s21-cur-horizon').textContent = HORIZON_LBL[cur.horizon] || cur.horizon;
       document.querySelectorAll('#s21 .reason-row').forEach(r => r.classList.remove('sel'));
       const cont = document.getElementById('s21-cont');
-      if (cont) { cont.style.opacity = '0.3'; cont.style.pointerEvents = 'none'; cont.onclick = null; }
+      if (cont) { cont.style.visibility = 'hidden'; cont.style.pointerEvents = 'none'; }
       go(21);
     } else if (cdChoice === 'exit') {
       document.querySelectorAll('#s29 .reason-row').forEach(r => r.classList.remove('sel'));
       const cont = document.getElementById('s29-cont');
-      if (cont) { cont.style.opacity = '0.3'; cont.style.pointerEvents = 'none'; cont.onclick = null; }
+      if (cont) { cont.style.visibility = 'hidden'; cont.style.pointerEvents = 'none'; }
       go(29);
     }
   }
